@@ -1,0 +1,42 @@
+# Minecraft サーバー設定
+# itzg/minecraft-server Helm Chart 用の values.yaml
+
+minecraftServer:
+  eula: "TRUE"
+  version: "LATEST"
+  type: "VANILLA"
+  difficulty: "normal"
+  whitelist: ""
+  ops: ""
+  icon: ""
+  maxPlayers: 20
+  maxWorldSize: 29999984
+  allowNether: true
+  announcePlayerAchievements: true
+  enableCommandBlock: true
+  forcegameMode: false
+  generateStructures: true
+  hardcore: false
+  snooperEnabled: true
+  maxBuildHeight: 256
+  spawnAnimals: true
+  spawnMonsters: true
+  spawnNPCs: true
+  viewDistance: 10
+  levelSeed: ""
+  gameMode: survival
+  motd: "Welcome to Minecraft on K3s!"
+
+persistence:
+  dataDir:
+    enabled: true
+    storageClassName: nfs-client
+    size: 10Gi
+
+resources:
+  requests:
+    memory: 2Gi
+    cpu: 500m
+  limits:
+    memory: 4Gi
+    cpu: 2000m

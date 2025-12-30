@@ -1,0 +1,7 @@
+nfs:
+  server: 192.168.0.9      # TrueNASのIP
+  path: /mnt/public/k3s    # TrueNASで作ったパス
+  
+storageClass:
+  name: nfs-client            # これを後で指定する
+  defaultClass: true          # 何も指定しなかったらこれをデフォルトにする
