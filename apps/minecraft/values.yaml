@@ -23,7 +23,7 @@ minecraft:
     
     # OP権限を付与するユーザー
     ops:
-      - youkan0124
+      - Youkan0124
   
   service:
     type: LoadBalancer
