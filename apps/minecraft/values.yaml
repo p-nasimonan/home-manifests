@@ -21,9 +21,8 @@ minecraft:
     viewDistance: 10
     gameMode: survival
     
-    # OP権限を付与するユーザー
-    ops:
-      - Youkan0124
+    env:
+      OPS: "Youkan0124"
   
   service:
     type: LoadBalancer
