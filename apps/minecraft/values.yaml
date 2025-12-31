@@ -43,3 +43,16 @@ minecraft:
     limits:
       memory: 4Gi
       cpu: 2000m
+  
+  # ヘルスチェック設定（Java起動遅延を許す設定）
+  livenessProbe:
+    initialDelaySeconds: 60   # 最初の60秒はチェックしない
+    periodSeconds: 10         # 10秒ごとにチェック
+    failureThreshold: 30      # 30回失敗まで許す（＝300秒待機）
+    timeoutSeconds: 5         # 返答待ち時間を5秒に延長
+    
+  readinessProbe:
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    failureThreshold: 30
+    timeoutSeconds: 5
