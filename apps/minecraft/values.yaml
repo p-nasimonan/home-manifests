@@ -1,42 +1,46 @@
 # Minecraft サーバー設定
 # itzg/minecraft-server Helm Chart 用の values.yaml
+# ラッパーチャート構造: 全ての設定を minecraft: の下にネスト
 
-minecraftServer:
-  eula: "TRUE"
-  version: "LATEST"
-  type: "VANILLA"
-  difficulty: "normal"
-  whitelist: ""
-  ops: ""
-  icon: ""
-  maxPlayers: 20
-  maxWorldSize: 29999984
-  allowNether: true
-  announcePlayerAchievements: true
-  enableCommandBlock: true
-  forcegameMode: false
-  generateStructures: true
-  hardcore: false
-  snooperEnabled: true
-  maxBuildHeight: 256
-  spawnAnimals: true
-  spawnMonsters: true
-  spawnNPCs: true
-  viewDistance: 10
-  levelSeed: ""
-  gameMode: survival
-  motd: "Welcome to Minecraft on K3s!"
-
-persistence:
-  dataDir:
-    enabled: true
-    storageClassName: nfs-client
-    size: 10Gi
-
-resources:
-  requests:
-    memory: 2Gi
-    cpu: 500m
-  limits:
-    memory: 4Gi
-    cpu: 2000m
+minecraft:
+  minecraftServer:
+    eula: "TRUE"
+    version: "1.20.4"
+    type: "PAPER"  # 軽量サーバー（VANILLA より推奨）
+    difficulty: "normal"
+    motd: "Welcome to My Home K3s Server"
+    memory: 4G    # メモリ割り当て
+    maxPlayers: 20
+    allowNether: true
+    enableCommandBlock: true
+    generateStructures: true
+    hardcore: false
+    spawnAnimals: true
+    spawnMonsters: true
+    spawnNPCs: true
+    viewDistance: 10
+    gameMode: survival
+    
+    # OP権限を付与するユーザー（あなたのMinecraft IDに変更）
+    ops:
+      - "youkan0124"
+  
+  service:
+    type: LoadBalancer
+    # ★重要: サーバーに割り当てる固定IPを指定（環境に合わせて変更）
+    loadBalancerIP: 192.168.0.220
+    port: 25565
+  
+  persistence:
+    dataDir:
+      enabled: true
+      size: 20Gi
+      storageClassName: nfs-client
+  
+  resources:
+    requests:
+      memory: 2Gi
+      cpu: 500m
+    limits:
+      memory: 4Gi
+      cpu: 2000m
