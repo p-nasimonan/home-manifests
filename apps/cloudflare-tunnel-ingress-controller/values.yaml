@@ -1,0 +1,8 @@
+cf-ingress:
+  # IngressClass をこれに設定します
+  ingressClass:
+    name: cloudflare-tunnel
+    isDefaultClass: false
+    
+  # 必要に応じてレプリカ数など
+  replicaCount: 1

@@ -33,7 +33,7 @@ minecraft:
 
   minecraftServer:
     eula: "TRUE"
-    version: "1.20.4"
+    version: "1.20.6"
     type: "PAPER"  # 軽量サーバー（VANILLA より推奨）
     difficulty: "normal"
     motd: "Welcome to My Home K3s Server"
@@ -62,10 +62,13 @@ minecraft:
       - 52867   # WarpGUI
       - 90741   # PingCheck
       - 44497   # BossBar Message
-      - 274     # Dynmap
       - 96927   # DecentHolograms
       - 101066  # Death Chest
       - 8695    # AdvancedBan
+    
+    # 直接 URL でダウンロードするプラグイン（Spiget 非対応）
+    pluginUrls:
+      - https://www.curseforge.com/api/v1/mods/31620/files/6769644/download
     
     # Dynmap 用のポート公開設定
     extraPorts:
@@ -75,11 +78,14 @@ minecraft:
         service:
           enabled: true
           embedded: false
-          type: LoadBalancer
+          type: ClusterIP  # Cloudflare Tunnel 経由なので ClusterIP で OK
           port: 8123
-          loadBalancerIP: 192.168.0.210
         ingress:
-          enabled: false  # LoadBalancer 使用時は Ingress 不要
+          enabled: true
+          ingressClassName: cloudflare
+          hosts:
+            - name: dynmap.youkan.uk
+              path: /
   
   persistence:
     dataDir:
