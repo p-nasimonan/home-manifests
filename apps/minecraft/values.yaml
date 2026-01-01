@@ -3,6 +3,34 @@
 # ラッパーチャート形式: 依存チャート名で階層化
 
 minecraft:
+  image:
+    repository: itzg/minecraft-server
+    tag: latest
+    pullPolicy: Always
+
+  replicaCount: 1
+
+  podSecurityContext:
+    runAsUser: 1000
+    runAsGroup: 3000
+    runAsNonRoot: true
+    fsGroup: 2000
+    seccompProfile:
+      type: RuntimeDefault
+
+  securityContext:
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
   minecraftServer:
     eula: "TRUE"
     version: "1.20.4"
@@ -28,6 +56,30 @@ minecraft:
     serviceType: LoadBalancer
     servicePort: 25565
     loadBalancerIP: 192.168.0.220
+    
+    # Spigot プラグイン（Spigot リソース ID で自動ダウンロード）
+    spigetResources:
+      - 52867   # WarpGUI
+      - 90741   # PingCheck
+      - 44497   # BossBar Message
+      - 274     # Dynmap
+      - 96927   # DecentHolograms
+      - 101066  # Death Chest
+      - 8695    # AdvancedBan
+    
+    # Dynmap 用のポート公開設定
+    extraPorts:
+      - name: dynmap
+        containerPort: 8123
+        protocol: TCP
+        service:
+          enabled: true
+          embedded: false
+          type: LoadBalancer
+          port: 8123
+          loadBalancerIP: 192.168.0.210
+        ingress:
+          enabled: false  # LoadBalancer 使用時は Ingress 不要
   
   persistence:
     dataDir:
@@ -37,21 +89,34 @@ minecraft:
   
   resources:
     requests:
-      memory: 2Gi
-      cpu: 500m
-    limits:
       memory: 4Gi
-      cpu: 2000m
+      cpu: 1000m
+    limits:
+      memory: 16Gi
+      cpu: 4000m
   
   # ヘルスチェック設定（Java起動遅延を許す設定）
   livenessProbe:
+    command:
+      - mc-health
     initialDelaySeconds: 60   # 最初の60秒はチェックしない
     periodSeconds: 10         # 10秒ごとにチェック
     failureThreshold: 30      # 30回失敗まで許す（＝300秒待機）
     timeoutSeconds: 5         # 返答待ち時間を5秒に延長
+    successThreshold: 1
     
   readinessProbe:
+    command:
+      - mc-health
     initialDelaySeconds: 60
     periodSeconds: 10
     failureThreshold: 30
     timeoutSeconds: 5
+    successThreshold: 1
+
+  startupProbe:
+    command:
+      - mc-health
+    enabled: false
+    failureThreshold: 30
+    periodSeconds: 10
