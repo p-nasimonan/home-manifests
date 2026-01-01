@@ -18,11 +18,12 @@ spec:
       targetRevision: 0.0.12
       helm:
         valuesObject:
-          secretRef:
-              name: "my-cf-creds"
-              apiTokenKey: "api-token"
-              accountIDKey: "cloudflare-account-id"
-              tunnelNameKey: "cloudflare-tunnel-name"
+          cloudflare:
+            secretRef:
+                name: "my-cf-creds"
+                apiTokenKey: "api-token"
+                accountIDKey: "cloudflare-account-id"
+                tunnelNameKey: "cloudflare-tunnel-name"
           cf-ingress:
             ingressClass:
               name: cloudflare
