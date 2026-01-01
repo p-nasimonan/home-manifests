@@ -20,6 +20,9 @@ spec:
         valuesObject:
           secretRef:
               name: "my-cf-creds"
+              apiTokenKey: "api-token"
+              accountIDKey: "cloudflare-account-id"
+              tunnelNameKey: "cloudflare-tunnel-name"
           cf-ingress:
             ingressClass:
               name: cloudflare
