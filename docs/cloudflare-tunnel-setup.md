@@ -103,6 +103,7 @@ kubectl create secret generic my-cf-creds \
   --from-literal=apiToken="あなたのAPIトークン" \
   --from-literal=accountId="あなたのアカウントID" \
    --from-literal=cloudflare-tunnel-name=home-kube \
+   --namespace cloudflare-tunnel-ingress-controller \
   --dry-run=client -o yaml > cloudflare-api-raw-secret.yaml
 
 # Sealed Secret に変換（K3s サーバーの公開鍵を使用）
