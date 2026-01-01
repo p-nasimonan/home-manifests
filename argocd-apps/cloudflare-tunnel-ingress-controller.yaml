@@ -11,7 +11,6 @@ spec:
     repoURL: https://github.com/p-nasimonan/home-manifests.git
     targetRevision: main
     path: apps/cloudflare-tunnel-ingress-controller
-    
   destination:
     server: https://kubernetes.default.svc
     namespace: cloudflare-tunnel-ingress-controller
@@ -21,3 +20,4 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - ServerSideApply=true
