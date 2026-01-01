@@ -1,5 +1,24 @@
 # Cloudflare Tunnel セットアップ手順
 ---
+ローカルマシン（開発環境）
+    ↓
+1️⃣ Secret を作成 → kubeseal で暗号化 → Sealed Secret
+    ↓
+2️⃣ Git に暗号化状態で保存（argocd-apps/secrets/cloudflare-api-sealed.yaml）
+    ↓
+3️⃣ Git プッシュ
+    ↓
+K3s サーバー上の ArgoCD
+    ↓
+4️⃣ Sealed Secret を自動検出・適用
+    ↓
+K3s の Sealed Secrets Controller
+    ↓
+5️⃣ 秘密鍵で復号化 → Secret に変換
+    ↓
+Pod（Cloudflare Tunnel Controller）
+    ↓
+6️⃣ Secret から値を読み込み → 実行
 
 ## ステップ 1: Cloudflare API Token の取得（ローカルマシン - Webブラウザ）
 
@@ -84,8 +103,8 @@ kubectl create secret generic my-cf-creds \
   --from-literal=apiToken="あなたのAPIトークン" \
   --from-literal=accountId="あなたのアカウントID" \
    --from-literal=cloudflare-tunnel-name=home-kube \
-  --dry-run=client -o yaml > apps/cloudflare-tunnel-ingress-controller/templates/raw-secret.yaml
+  --dry-run=client -o yaml > cloudflare-api-raw-secret.yaml
 
 # Sealed Secret に変換（K3s サーバーの公開鍵を使用）
-kubeseal -f apps/cloudflare-tunnel-ingress-controller/templates/raw-secret.yaml -w apps/cloudflare-tunnel-ingress-controller/templates/secret.yaml --cert ~/my-sealed-secrets-public-key.crt --namespace cloudflare-tunnel-ingress-controller
+kubeseal -f cloudflare-api-raw-secret.yaml -w cloudflare-api-sealed.yaml --cert ~/my-sealed-secrets-public-key.crt --namespace cloudflare-tunnel-ingress-controller
 ```
