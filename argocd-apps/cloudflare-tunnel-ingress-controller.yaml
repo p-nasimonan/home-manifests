@@ -18,8 +18,8 @@ spec:
       targetRevision: 0.0.12
       helm:
         valuesObject:
-          cloudflare:
-            secretName: "my-cf-creds"
+          secretRef:
+              name: "my-cf-creds"
           cf-ingress:
             ingressClass:
               name: cloudflare
