@@ -21,8 +21,8 @@ minecraft:
     viewDistance: 10
     gameMode: survival
     
-    env:
-      OPS: "Youkan0124"
+    # OP権限を付与するユーザー
+    ops: Youkan0124
     
     # Service 設定（itzg チャート v5.0.0 形式）
     serviceType: LoadBalancer
