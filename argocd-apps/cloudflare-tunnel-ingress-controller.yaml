@@ -20,15 +20,14 @@ spec:
         valuesObject:
           cloudflare:
             secretRef:
-                name: "my-cf-creds"
-                apiTokenKey: "api-token"
-                accountIDKey: "cloudflare-account-id"
-                tunnelNameKey: "cloudflare-tunnel-name"
-          cf-ingress:
-            ingressClass:
-              name: cloudflare
-              isDefaultClass: false
-            replicaCount: 1
+              name: "my-cf-creds"
+              apiTokenKey: "api-token"
+              accountIDKey: "cloudflare-account-id"
+              tunnelNameKey: "cloudflare-tunnel-name"
+          ingressClass:
+            name: cloudflare
+            isDefaultClass: false
+          replicaCount: 1
   destination:
     server: https://kubernetes.default.svc
     namespace: cloudflare-tunnel-ingress-controller
