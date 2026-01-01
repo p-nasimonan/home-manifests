@@ -87,6 +87,5 @@ kubectl create secret generic my-cf-creds \
   --dry-run=client -o yaml > apps/cloudflare-tunnel-ingress-controller/templates/raw-secret.yaml
 
 # Sealed Secret に変換（K3s サーバーの公開鍵を使用）
-kubeseal -f apps/cloudflare-tunnel-ingress-controller/templates/raw-secret.yaml -w apps/cloudflare-tunnel-ingress-controller/templates/secret.yaml --cert ~/my-sealed-secrets-public-key.crt
-
+kubeseal -f apps/cloudflare-tunnel-ingress-controller/templates/raw-secret.yaml -w apps/cloudflare-tunnel-ingress-controller/templates/secret.yaml --cert ~/my-sealed-secrets-public-key.crt --namespace cloudflare-tunnel-ingress-controller
 ```
