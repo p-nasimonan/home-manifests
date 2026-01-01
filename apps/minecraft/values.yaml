@@ -9,7 +9,7 @@ minecraft:
     type: "PAPER"  # 軽量サーバー（VANILLA より推奨）
     difficulty: "normal"
     motd: "Welcome to My Home K3s Server"
-    memory: 4G    # メモリ割り当て
+    memory: 16G    # メモリ割り当て
     maxPlayers: 20
     allowNether: true
     enableCommandBlock: true
