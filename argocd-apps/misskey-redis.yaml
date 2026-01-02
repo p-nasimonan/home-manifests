@@ -5,16 +5,23 @@ metadata:
   namespace: argocd
 spec:
   project: default
-  sources:
-    - repoURL: https://charts.bitnami.com/bitnami
-      chart: redis
-      targetRevision: 19.5.2
-      helm:
-        valueFiles:
-          - $values/apps/misskey/redis.values.yaml
-    - repoURL: https://github.com/p-nasimonan/home-manifests.git
-      targetRevision: main
-      ref: values
+  source:
+    repoURL: https://charts.bitnami.com/bitnami
+    chart: redis
+    targetRevision: 19.5.2
+    helm:
+      valuesObject:
+        architecture: standalone
+        fullnameOverride: misskey-redis
+        auth:
+          enabled: true
+          existingSecret: misskey-secrets
+          existingSecretPasswordKey: REDIS_PASSWORD
+        master:
+          persistence:
+            enabled: true
+            size: 5Gi
+            storageClass: nfs-client
   destination:
     server: https://kubernetes.default.svc
     namespace: misskey

@@ -5,16 +5,25 @@ metadata:
   namespace: argocd
 spec:
   project: default
-  sources:
-    - repoURL: https://charts.bitnami.com/bitnami
-      chart: postgresql
-      targetRevision: 12.12.10
-      helm:
-        valueFiles:
-          - $values/apps/misskey/postgresql.values.yaml
-    - repoURL: https://github.com/p-nasimonan/home-manifests.git
-      targetRevision: main
-      ref: values
+  source:
+    repoURL: https://charts.bitnami.com/bitnami
+    chart: postgresql
+    targetRevision: 12.12.10
+    helm:
+      valuesObject:
+        global:
+          storageClass: nfs-client
+        auth:
+          username: misskey
+          database: misskey
+          existingSecret: misskey-secrets
+          secretKeys:
+            adminPasswordKey: POSTGRES_PASSWORD
+        primary:
+          persistence:
+            enabled: true
+            size: 20Gi
+        fullnameOverride: misskey-postgresql
   destination:
     server: https://kubernetes.default.svc
     namespace: misskey
