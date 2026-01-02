@@ -76,6 +76,6 @@ kubectl create secret generic "$SECRET_NAME" \
 
 echo "✅ Sealed secret created: $SEALED_FILE"
 echo ""
-cat $SEALED_FILE"
+cat "$SEALED_FILE"
 echo ""
 echo "💡 After pushing, ArgoCD will automatically apply the sealed secret to the cluster"
