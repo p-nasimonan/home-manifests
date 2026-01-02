@@ -11,7 +11,7 @@ spec:
     path: apps/misskey
     directory:
       recurse: false
-      include: misskey.yaml
+      include: '{misskey.yaml,config.yaml}'
   destination:
     server: https://kubernetes.default.svc
     namespace: misskey

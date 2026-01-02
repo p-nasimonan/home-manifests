@@ -31,50 +31,31 @@ spec:
           env:
             - name: NODE_ENV
               value: production
-            - name: MISSKEY_URL
-              value: "https://mi.youkan.uk"
-            - name: DATABASE_URL
-              valueFrom:
-                secretKeyRef:
-                  name: misskey-secrets
-                  key: DATABASE_URL
-            - name: REDIS_HOST
-              value: misskey-redis-master
-            - name: REDIS_PORT
-              value: "6379"
-            - name: REDIS_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: misskey-secrets
-                  key: REDIS_PASSWORD
-            - name: MEILISEARCH_HOST
-              value: meilisearch
-            - name: MEILISEARCH_PORT
-              value: "7700"
-            - name: MEILI_MASTER_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: misskey-secrets
-                  key: MEILISEARCH_MASTER_KEY
-            - name: MISSKEY_SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: misskey-secrets
-                  key: MISSKEY_SECRET_KEY
-            - name: MISSKEY_SIGNING_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: misskey-secrets
-                  key: MISSKEY_SIGNING_KEY
-            - name: POSTGRES_PASSWORD
+            # データベース設定（ConfigMap default.yml で参照）
+            - name: MISSKEY_DB_PASS
               valueFrom:
                 secretKeyRef:
                   name: misskey-secrets
                   key: POSTGRES_PASSWORD
+            # Redis設定（ConfigMap default.yml で参照）
+            - name: MISSKEY_REDIS_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: misskey-secrets
+                  key: REDIS_PASSWORD
+            # Meilisearch設定（ConfigMap default.yml で参照）
+            - name: MISSKEY_MEILISEARCH_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: misskey-secrets
+                  key: MEILISEARCH_MASTER_KEY
           ports:
             - name: http
               containerPort: 3000
           volumeMounts:
+            - name: config
+              mountPath: /misskey/.config
+              readOnly: true
             - name: uploads
               mountPath: /misskey/files
           resources:
@@ -85,6 +66,9 @@ spec:
               cpu: 2000m
               memory: 4Gi
       volumes:
+        - name: config
+          configMap:
+            name: misskey-config
         - name: uploads
           persistentVolumeClaim:
             claimName: misskey-uploads
