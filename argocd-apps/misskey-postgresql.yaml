@@ -8,12 +8,14 @@ spec:
   source:
     repoURL: https://charts.bitnami.com/bitnami
     chart: postgresql
-    targetRevision: 12.12.10
+    targetRevision: 16.4.x 
     helm:
       valuesObject:
         global:
           storageClass: nfs-client
         image:
+          registry: public.ecr.aws
+          repository: bitnami/postgresql
           tag: 16.6.0-debian-12-r3
         auth:
           username: misskey
