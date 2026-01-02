@@ -10,13 +10,11 @@ spec:
       chart: redis
       targetRevision: 19.5.2
       helm:
-        valueFiles: []
+        valueFiles:
+          - $values/apps/misskey/redis.values.yaml
     - repoURL: https://github.com/p-nasimonan/home-manifests.git
       targetRevision: main
-      path: apps/misskey
-      helm:
-        valueFiles:
-          - redis.values.yaml
+      ref: values
   destination:
     server: https://kubernetes.default.svc
     namespace: misskey

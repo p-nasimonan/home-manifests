@@ -10,13 +10,11 @@ spec:
       chart: postgresql
       targetRevision: 12.12.10
       helm:
-        valueFiles: []
+        valueFiles:
+          - $values/apps/misskey/postgresql.values.yaml
     - repoURL: https://github.com/p-nasimonan/home-manifests.git
       targetRevision: main
-      path: apps/misskey
-      helm:
-        valueFiles:
-          - postgresql.values.yaml
+      ref: values
   destination:
     server: https://kubernetes.default.svc
     namespace: misskey
