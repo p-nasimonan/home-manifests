@@ -24,6 +24,7 @@ spec:
           existingSecret: misskey-secrets
           secretKeys:
             adminPasswordKey: POSTGRES_PASSWORD
+            userPasswordKey: POSTGRES_PASSWORD
         primary:
           persistence:
             enabled: true
