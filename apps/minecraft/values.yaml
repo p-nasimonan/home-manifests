@@ -59,6 +59,10 @@ minecraft:
     
     # Spigot プラグイン（Spigot リソース ID で自動ダウンロード）
     spigetResources:
+      - 19254   # ViaVersion（バージョン互換性）
+      - 27448   # ViaBackwards（1.9.x～1.19.x クライアント対応）
+      - 52109   # ViaRewind（1.8.9 など古いバージョンクライアント対応）
+      - 19510   # OldCombatMechanics（1.8 の戦闘メカニクスに戻す）
       - 52867   # WarpGUI
       - 90741   # PingCheck
       - 44497   # BossBar Message
