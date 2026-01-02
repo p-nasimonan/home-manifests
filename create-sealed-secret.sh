@@ -46,21 +46,6 @@ elif [ -f "$CERT_PATH" ] && [ -s "$CERT_PATH" ]; then
 # エラー
 else
   echo "❌ Error: Could not fetch or find sealed-secrets public key"
-  echo ""
-  echo "🔍 Debugging steps (run on k3s-server-1):"
-  echo "   1. Check if sealed-secrets is installed:"
-  echo "      sudo kubectl get pods -n kube-system | grep sealed"
-  echo "      sudo kubectl get pods -n sealed-secrets 2>/dev/null | grep sealed"
-  echo ""
-  echo "   2. Check available secrets:"
-  echo "      sudo kubectl get secret -n kube-system"
-  echo "      sudo kubectl get secret -n sealed-secrets 2>/dev/null"
-  echo ""
-  echo "   3. If found, get the certificate manually:"
-  echo "      sudo kubectl get secret <secret-name> -n <namespace> -o jsonpath='{.data.tls\.crt}' | base64 -d > ~/sealing-key.crt"
-  echo ""
-  echo "📝 Then copy to local machine:"
-  echo "   scp k3s-1:~/sealing-key.crt ~/my-sealed-secrets-public-key.crt"
   exit 1
 fi
 
@@ -91,11 +76,6 @@ kubectl create secret generic "$SECRET_NAME" \
 
 echo "✅ Sealed secret created: $SEALED_FILE"
 echo ""
-echo "📝 Next steps:"
-echo "   1. Review the sealed secret: cat $SEALED_FILE"
-echo "   2. Commit and push:"
-echo "      git add $SEALED_FILE"
-echo "      git commit -m \"chore: add $SECRET_NAME sealed secret\""
-echo "      git push"
+cat $SEALED_FILE"
 echo ""
 echo "💡 After pushing, ArgoCD will automatically apply the sealed secret to the cluster"
