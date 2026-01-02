@@ -26,16 +26,37 @@ spec:
       labels:
         app: misskey
     spec:
-      containers:
-        - name: misskey
-          image: misskey/misskey:2026.1.0-alpha.0
+      initContainers:
+        - name: config-generator
+          image: busybox:1.35
+          command:
+            - sh
+            - -c
+            - |
+              mkdir -p /misskey/.config
+              cat > /misskey/.config/default.yml <<EOF
+              url: https://mi.youkan.uk
+              port: 3000
+              db:
+                host: $DB_HOST
+                port: $DB_PORT
+                db: $DB_NAME
+                user: $DB_USER
+                pass: $DB_PASS
+              redis:
+                host: $REDIS_HOST
+                port: $REDIS_PORT
+                pass: $REDIS_PASS
+              meilisearch:
+                host: $MEILISEARCH_HOST
+                apiKey: $MEILISEARCH_API_KEY
+              id: $MISSKEY_ID
+              allowedPrivateNetworks: []
+              drive:
+                storage: fs
+                baseUrl: https://mi.youkan.uk/files
+              EOF
           env:
-            - name: NODE_ENV
-              value: production
-            # Misskey URL
-            - name: MISSKEY_URL
-              value: https://mi.youkan.uk
-            # Database
             - name: DB_HOST
               value: misskey-postgresql
             - name: DB_PORT
@@ -49,7 +70,6 @@ spec:
                 secretKeyRef:
                   name: misskey-secrets
                   key: POSTGRES_PASSWORD
-            # Redis
             - name: REDIS_HOST
               value: misskey-redis-master
             - name: REDIS_PORT
@@ -59,7 +79,6 @@ spec:
                 secretKeyRef:
                   name: misskey-secrets
                   key: REDIS_PASSWORD
-            # Meilisearch
             - name: MEILISEARCH_HOST
               value: http://meilisearch:7700
             - name: MEILISEARCH_API_KEY
@@ -67,13 +86,23 @@ spec:
                 secretKeyRef:
                   name: misskey-secrets
                   key: MEILISEARCH_MASTER_KEY
-            # ID generation
             - name: MISSKEY_ID
               value: aidx
+          volumeMounts:
+            - name: config-volume
+              mountPath: /misskey/.config
+      containers:
+        - name: misskey
+          image: misskey/misskey:2026.1.0-alpha.0
+          env:
+            - name: NODE_ENV
+              value: production
           ports:
             - name: http
               containerPort: 3000
           volumeMounts:
+            - name: config-volume
+              mountPath: /misskey/.config
             - name: uploads
               mountPath: /misskey/files
           resources:
@@ -84,6 +113,8 @@ spec:
               cpu: 2000m
               memory: 4Gi
       volumes:
+        - name: config-volume
+          emptyDir: {}
         - name: uploads
           persistentVolumeClaim:
             claimName: misskey-uploads
