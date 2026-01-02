@@ -13,10 +13,13 @@ spec:
       valuesObject:
         architecture: standalone
         fullnameOverride: misskey-redis
+        global:
+          storageClass: nfs-client
+          security:
+            allowInsecureImages: true
         image:
-          registry: public.ecr.aws
           repository: bitnami/redis
-          tag: 7.2.4-debian-12-r10
+          tag: latest
         auth:
           enabled: true
           existingSecret: misskey-secrets
@@ -26,10 +29,6 @@ spec:
             enabled: true
             size: 5Gi
             storageClass: nfs-client
-      global:
-          storageClass: nfs-client
-          security:
-            allowInsecureImages: true
   destination:
     server: https://kubernetes.default.svc
     namespace: misskey
