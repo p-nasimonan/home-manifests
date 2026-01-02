@@ -26,6 +26,10 @@ spec:
             enabled: true
             size: 5Gi
             storageClass: nfs-client
+      global:
+          storageClass: nfs-client
+          security:
+            allowInsecureImages: true
   destination:
     server: https://kubernetes.default.svc
     namespace: misskey
