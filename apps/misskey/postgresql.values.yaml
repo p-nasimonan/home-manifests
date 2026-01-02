@@ -1,0 +1,17 @@
+global:
+  storageClass: nfs-client
+
+auth:
+  username: misskey
+  database: misskey
+  # パスワードは SealedSecret から参照
+  existingSecret: misskey-secrets
+  secretKeys:
+    adminPasswordKey: POSTGRES_PASSWORD
+
+primary:
+  persistence:
+    enabled: true
+    size: 20Gi
+
+fullnameOverride: misskey-postgresql
