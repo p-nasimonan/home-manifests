@@ -13,6 +13,8 @@ spec:
       valuesObject:
         global:
           storageClass: nfs-client
+          security:
+            allowInsecureImages: true
         image:
           registry: public.ecr.aws
           repository: bitnami/postgresql

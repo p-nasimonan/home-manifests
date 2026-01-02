@@ -14,7 +14,9 @@ spec:
         architecture: standalone
         fullnameOverride: misskey-redis
         image:
-          tag: 7.4.2-debian-12-r0
+          registry: public.ecr.aws
+          repository: bitnami/redis
+          tag: 7.2.4-debian-12-r10
         auth:
           enabled: true
           existingSecret: misskey-secrets
