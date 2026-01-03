@@ -1,16 +1,4 @@
 ---
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: misskey-uploads
-  namespace: misskey
-spec:
-  accessModes: ["ReadWriteOnce"]
-  storageClassName: nfs-client
-  resources:
-    requests:
-      storage: 20Gi
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -55,11 +43,19 @@ spec:
                 index: mi_youkan_uk
               fulltextSearch:
                 provider: meilisearch
+              drive:
+                storage: s3
+              objectStorage:
+                bucket: misskey
+                prefix: ""
+                endpoint: 192.168.0.9:9000
+                region: us-east-1
+                accessKey: $MINIO_ACCESS_KEY
+                secretKey: $MINIO_SECRET_KEY
+                useSSL: true
+                baseUrl: https://s3.youkan.uk/misskey
               id: $MISSKEY_ID
               allowedPrivateNetworks: []
-              drive:
-                storage: fs
-                baseUrl: https://mi.youkan.uk/files
               EOF
           env:
             - name: DB_HOST
@@ -95,6 +91,16 @@ spec:
                   key: MEILISEARCH_MASTER_KEY
             - name: MISSKEY_ID
               value: aidx
+            - name: MINIO_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: misskey-secrets
+                  key: MINIO_ACCESS_KEY
+            - name: MINIO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: misskey-secrets
+                  key: MINIO_SECRET_KEY
           volumeMounts:
             - name: config-volume
               mountPath: /misskey/.config
@@ -110,8 +116,6 @@ spec:
           volumeMounts:
             - name: config-volume
               mountPath: /misskey/.config
-            - name: uploads
-              mountPath: /misskey/files
           resources:
             requests:
               cpu: 500m
@@ -122,9 +126,6 @@ spec:
       volumes:
         - name: config-volume
           emptyDir: {}
-        - name: uploads
-          persistentVolumeClaim:
-            claimName: misskey-uploads
 ---
 apiVersion: v1
 kind: Service
