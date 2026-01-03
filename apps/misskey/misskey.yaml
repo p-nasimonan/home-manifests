@@ -51,6 +51,8 @@ spec:
                 host: $MEILISEARCH_HOST
                 port: $MEILISEARCH_PORT
                 apiKey: $MEILISEARCH_API_KEY
+                ssl: false
+                index: misskey_index
               id: $MISSKEY_ID
               allowedPrivateNetworks: []
               drive:
