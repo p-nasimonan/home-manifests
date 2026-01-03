@@ -52,7 +52,7 @@ spec:
                 port: $MEILISEARCH_PORT
                 apiKey: $MEILISEARCH_API_KEY
                 ssl: false
-                index: misskey_index
+                index: mi_youkan_uk
               id: $MISSKEY_ID
               allowedPrivateNetworks: []
               drive:
