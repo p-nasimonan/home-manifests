@@ -49,6 +49,7 @@ spec:
                 pass: $REDIS_PASS
               meilisearch:
                 host: $MEILISEARCH_HOST
+                port: $MEILISEARCH_PORT
                 apiKey: $MEILISEARCH_API_KEY
               id: $MISSKEY_ID
               allowedPrivateNetworks: []
@@ -80,7 +81,9 @@ spec:
                   name: misskey-secrets
                   key: REDIS_PASSWORD
             - name: MEILISEARCH_HOST
-              value: http://meilisearch:7700
+              value: meilisearch
+            - name: MEILISEARCH_PORT
+              value: "7700"
             - name: MEILISEARCH_API_KEY
               valueFrom:
                 secretKeyRef:
