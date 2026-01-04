@@ -48,14 +48,16 @@ spec:
               objectStorage:
                 bucket: misskey
                 prefix: ""
-                endpoint: 192.168.0.9:9000
+                endpoint: http://192.168.0.9:9000
                 region: us-east-1
                 accessKey: $MINIO_ACCESS_KEY
                 secretKey: $MINIO_SECRET_KEY
-                useSSL: true
+                useSSL: false
+                s3ForcePathStyle: true
                 baseUrl: https://s3.youkan.uk/misskey
               id: $MISSKEY_ID
-              allowedPrivateNetworks: []
+              allowedPrivateNetworks:
+                - 192.168.0.0/24
               EOF
           env:
             - name: DB_HOST
