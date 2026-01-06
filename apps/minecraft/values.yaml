@@ -59,7 +59,12 @@ minecraft:
     
     # ネットワーク最適化（接続安定性向上）
     networkCompressionThreshold: -1  # 圧縮を無効化してレイテンシー低下
-    playerIdleTimeout: 100  # タイムアウトを100秒
+    playerIdleTimeout: 100  # タイムアウト
+    tcpNodelay: true  # TCP Nagle無効化（遅延低減）
+    keepAliveInterval: 15  # キープアライブを15秒ごと
+    
+    # JVM最適化
+    jvmOpts: "-XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+ParallelRefProcEnabled"
     
     # Spigot プラグイン（Spigot リソース ID で自動ダウンロード）
     spigetResources:
