@@ -105,7 +105,7 @@ minecraft:
   persistence:
     dataDir:
       enabled: true
-      size: 20Gi
+      Size: 20Gi
       storageClassName: nfs-client
   
   resources:
