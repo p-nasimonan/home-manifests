@@ -57,6 +57,10 @@ minecraft:
     servicePort: 25565
     loadBalancerIP: 192.168.0.220
     
+    # ネットワーク最適化（接続安定性向上）
+    networkCompressionThreshold: -1  # 圧縮を無効化してレイテンシー低下
+    playerIdleTimeout: 100  # タイムアウトを100秒
+    
     # Spigot プラグイン（Spigot リソース ID で自動ダウンロード）
     spigetResources:
       - 52867   # WarpGUI
