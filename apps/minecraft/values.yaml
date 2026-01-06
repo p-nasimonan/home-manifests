@@ -68,6 +68,7 @@ minecraft:
       - 96927   # DecentHolograms
       - 101066  # Death Chest
       - 8695    # AdvancedBan
+      - 81254
     
     # 直接 URL でダウンロードするプラグイン（GitHub リリース）
     pluginUrls:
@@ -116,6 +117,21 @@ minecraft:
     limits:
       memory: 16Gi
       cpu: 4000m
+  
+  # ConfigMapのボリューム設定（MiniMOTD用外部設定ファイル）
+  extraVolumes:
+    - name: minimotd-config-vol
+      configMap:
+        name: minimotd-external-config
+        items:
+          - key: main.conf
+            path: main.conf
+  
+  # ConfigMapのマウント設定
+  extraVolumeMounts:
+    - name: minimotd-config-vol
+      mountPath: /data/plugins/MiniMOTD/
+      readOnly: true
   
   # ヘルスチェック設定（Java起動遅延を許す設定）
   livenessProbe:

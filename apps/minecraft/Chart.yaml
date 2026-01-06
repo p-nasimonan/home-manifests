@@ -1,9 +1,9 @@
 apiVersion: v2
-name: my-minecraft
-description: A wrapper chart for minecraft server on K3s
+name: my-minecraft-server
+description: A wrapper chart for Minecraft Server with external config management
 type: application
 version: 0.1.0
-appVersion: "1.20.4"
+appVersion: "1.20.6"
 dependencies:
   - name: minecraft
     version: 5.0.0
