@@ -1,6 +1,7 @@
 # Minecraft サーバー設定
 # itzg/minecraft-server Helm Chart 用の values.yaml
 # ラッパーチャート形式: 依存チャート名で階層化
+
 minecraft:
   image:
     repository: itzg/minecraft-server
@@ -33,10 +34,10 @@ minecraft:
   minecraftServer:
     eula: "TRUE"
     version: "1.20.6"
-    type: "PAPER"
+    type: "PAPER"  # 軽量サーバー（VANILLA より推奨）
     difficulty: "normal"
     motd: "ようかんのサーバーへようこそー"
-    memory: 14G
+    memory: 14G    # メモリ割り当て（16GiB制限内で余裕を持たせる）
     maxPlayers: 20
     allowNether: true
     enableCommandBlock: true
@@ -51,17 +52,15 @@ minecraft:
     # OP権限を付与するユーザー
     ops: Youkan0124
     
-    # Service 設定
+    # Service 設定（itzg チャート v5.0.0 形式）
     serviceType: LoadBalancer
     servicePort: 25565
     loadBalancerIP: 192.168.0.220
     
-    externalTrafficPolicy: Local
-    
     # JVM最適化
     jvmOpts: "-XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+ParallelRefProcEnabled"
     
-    # Spigot プラグイン
+    # Spigot プラグイン（Spigot リソース ID で自動ダウンロード）
     spigetResources:
       - 52867   # WarpGUI
       - 90741   # PingCheck
@@ -70,13 +69,13 @@ minecraft:
       - 101066  # Death Chest
       - 8695    # AdvancedBan
     
-    # 直接 URL でダウンロードするプラグイン
+    # 直接 URL でダウンロードするプラグイン（GitHub リリース）
     pluginUrls:
-      - https://github.com/ViaVersion/ViaVersion/releases/download/5.7.0/ViaVersion-5.7.0.jar
-      - https://github.com/ViaVersion/ViaBackwards/releases/download/5.7.0/ViaBackwards-5.7.0.jar
-      - https://github.com/ViaVersion/ViaRewind/releases/download/4.0.13/ViaRewind-4.0.13.jar
-      - https://github.com/kernitus/BukkitOldCombatMechanics/releases/download/v2.2.0/OldCombatMechanics-v2.2.0.jar
-      - https://www.curseforge.com/api/v1/mods/31620/files/6769644/download
+      - https://github.com/ViaVersion/ViaVersion/releases/download/5.7.0/ViaVersion-5.7.0.jar  # ViaVersion
+      - https://github.com/ViaVersion/ViaBackwards/releases/download/5.7.0/ViaBackwards-5.7.0.jar  # ViaBackwards
+      - https://github.com/ViaVersion/ViaRewind/releases/download/4.0.13/ViaRewind-4.0.13.jar  # ViaRewind
+      - https://github.com/kernitus/BukkitOldCombatMechanics/releases/download/v2.2.0/OldCombatMechanics-v2.2.0.jar  # OldCombatMechanics
+      - https://www.curseforge.com/api/v1/mods/31620/files/6769644/download  # Dynmap
     
     # Dynmap 用のポート公開設定
     extraPorts:
@@ -86,7 +85,7 @@ minecraft:
         service:
           enabled: true
           embedded: false
-          type: ClusterIP
+          type: ClusterIP  # Cloudflare Tunnel 経由なので ClusterIP で OK
           port: 8123
         ingress:
           enabled: true
@@ -95,12 +94,13 @@ minecraft:
             - name: dynmap.youkan.uk
               path: /
   
-  ## 環境変数
+  ## Additional minecraft container environment variables
+  ## Values can be either variable values or `valueFrom` yaml
   extraEnv:
-    # ネットワーク最適化
-    NETWORK_COMPRESSION_THRESHOLD: "-1"
-    PLAYER_IDLE_TIMEOUT: "600"
-    JVM_XX_OPTS: "-Djava.net.preferIPv4Stack=true"
+    # ネットワーク最適化（接続安定性向上）
+    NETWORK_COMPRESSION_THRESHOLD: "-1"  # 圧縮を完全に無効化
+    PLAYER_IDLE_TIMEOUT: "600"  # タイムアウトを10分に延長
+    JVM_XX_OPTS: "-Djava.net.preferIPv4Stack=true"  # IPv4優先化でパケットトラブル低減
 
   persistence:
     dataDir:
@@ -116,14 +116,14 @@ minecraft:
       memory: 16Gi
       cpu: 4000m
   
-  # ヘルスチェック設定
+  # ヘルスチェック設定（Java起動遅延を許す設定）
   livenessProbe:
     command:
       - mc-health
-    initialDelaySeconds: 60
-    periodSeconds: 10
-    failureThreshold: 30
-    timeoutSeconds: 5
+    initialDelaySeconds: 60   # 最初の60秒はチェックしない
+    periodSeconds: 10         # 10秒ごとにチェック
+    failureThreshold: 30      # 30回失敗まで許す（＝300秒待機）
+    timeoutSeconds: 5         # 返答待ち時間を5秒に延長
     successThreshold: 1
     
   readinessProbe:
@@ -138,6 +138,6 @@ minecraft:
   startupProbe:
     command:
       - mc-health
-    enabled: true 
+    enabled: false
     failureThreshold: 30
     periodSeconds: 10
