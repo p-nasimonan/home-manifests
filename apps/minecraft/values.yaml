@@ -1,164 +1,145 @@
-# itzg/minecraft-server values.yaml
-# ベース: チャートバージョン 5.0.0 以降対応
+# Wrapper Chart用 values.yaml
+# 親チャートから子チャート(minecraft)を設定する形式
 
-image:
-  repository: itzg/minecraft-server
-  tag: latest
-  pullPolicy: Always
+minecraft:
+  image:
+    repository: itzg/minecraft-server
+    tag: latest
+    pullPolicy: Always
 
-# ステートフルセットではなくDeploymentを使用（ストレージ設定による）
-workloadAsStatefulSet: false
+  # ---------------------------------------------------------
+  # リソースとメモリ設定
+  # ---------------------------------------------------------
+  resources:
+    requests:
+      memory: 4Gi
+      cpu: 1000m
+    limits:
+      memory: 16Gi
+      cpu: 4000m
 
-podSecurityContext:
-  runAsUser: 1000
-  runAsGroup: 3000
-  runAsNonRoot: true
-  fsGroup: 2000
-
-securityContext:
-  capabilities:
-    drop:
-      - ALL
-  readOnlyRootFilesystem: true
-  allowPrivilegeEscalation: false
-
-# ---------------------------------------------------------
-# リソースとメモリ設定（重要）
-# ---------------------------------------------------------
-resources:
-  requests:
-    memory: 4Gi
-    cpu: 1000m
-  limits:
-    memory: 16Gi  # コンテナの制限（OOM Killer発動ライン）
-    cpu: 4000m
-
-# ---------------------------------------------------------
-# サーバー設定本体
-# ---------------------------------------------------------
-minecraftServer:
-  eula: "TRUE"
-  version: "1.20.6"
-  type: "PAPER"
-  difficulty: "normal"
-  motd: "ようかんのサーバーへようこそ"
-  
-  # Javaヒープサイズ（コンテナ制限16Giに対して余裕を持たせる）
-  memory: 14G
-  
-  maxPlayers: 20
-  allowNether: true
-  enableCommandBlock: true
-  generateStructures: true
-  hardcore: false
-  spawnAnimals: true
-  spawnMonsters: true
-  spawnNPCs: true
-  viewDistance: 10
-  gameMode: survival
-  
-  ops: "Youkan0124"
-  
-  # JVM最適化オプション
-  jvmOpts: "-XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+ParallelRefProcEnabled"
-
-  # -------------------------------------------------------
-  # Service設定
-  # -------------------------------------------------------
-  serviceType: LoadBalancer
-  servicePort: 25565
-  loadBalancerIP: "192.168.0.220"
-  
-  # ★重要: これをLocalにしないと接続が切れます
-  externalTrafficPolicy: Local
-
-  # -------------------------------------------------------
-  # プラグイン設定
-  # -------------------------------------------------------
-  # SpigotリソースID
-  spigetResources:
-    - 52867   # WarpGUI
-    - 90741   # PingCheck
-    - 44497   # BossBar Message
-    - 96927   # DecentHolograms
-    - 101066  # Death Chest
-    - 8695    # AdvancedBan
+  # ---------------------------------------------------------
+  # サーバー設定本体
+  # ---------------------------------------------------------
+  minecraftServer:
+    eula: "TRUE"
+    version: "1.20.6"
+    type: "PAPER"
+    difficulty: "normal"
+    motd: "Welcome to My Home K3s Server"
     
-  # 直接URL指定
-  pluginUrls:
-    - https://github.com/ViaVersion/ViaVersion/releases/download/5.7.0/ViaVersion-5.7.0.jar
-    - https://github.com/ViaVersion/ViaBackwards/releases/download/5.7.0/ViaBackwards-5.7.0.jar
-    - https://github.com/ViaVersion/ViaRewind/releases/download/4.0.13/ViaRewind-4.0.13.jar
-    - https://github.com/kernitus/BukkitOldCombatMechanics/releases/download/v2.2.0/OldCombatMechanics-v2.2.0.jar
-    - https://www.curseforge.com/api/v1/mods/31620/files/6769644/download
+    # メモリ設定 (コンテナ制限16Giに対して余裕を持たせる)
+    memory: 14G
+    
+    maxPlayers: 20
+    allowNether: true
+    enableCommandBlock: true
+    generateStructures: true
+    hardcore: false
+    spawnAnimals: true
+    spawnMonsters: true
+    spawnNPCs: true
+    viewDistance: 10
+    gameMode: survival
+    
+    ops: "Youkan0124"
+    
+    # JVM最適化
+    jvmOpts: "-XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+ParallelRefProcEnabled"
 
-# ---------------------------------------------------------
-# 環境変数（接続切れ対策）
-# ---------------------------------------------------------
-extraEnv:
-  # 圧縮を無効化してCPU負荷とパケットエラーを減らす
-  NETWORK_COMPRESSION_THRESHOLD: "-1"
-  # タイムアウト延長
-  PLAYER_IDLE_TIMEOUT: "600"
-  # MTU問題対策
-  JVM_XX_OPTS: "-Djava.net.preferIPv4Stack=true"
+    # -------------------------------------------------------
+    # Service設定 (接続安定化)
+    # -------------------------------------------------------
+    serviceType: LoadBalancer
+    servicePort: 25565
+    loadBalancerIP: "192.168.0.220"
+    
+    # ★重要: これをLocalにしないと接続が切れます
+    externalTrafficPolicy: Local
 
-# ---------------------------------------------------------
-# 追加ポート（Dynmap用）
-# ---------------------------------------------------------
-extraPorts:
-  - name: dynmap
-    containerPort: 8123
-    protocol: TCP
-    service:
+    # -------------------------------------------------------
+    # プラグイン設定
+    # -------------------------------------------------------
+    spigetResources:
+      - 52867   # WarpGUI
+      - 90741   # PingCheck
+      - 44497   # BossBar Message
+      - 96927   # DecentHolograms
+      - 101066  # Death Chest
+      - 8695    # AdvancedBan
+    
+    pluginUrls:
+      - https://github.com/ViaVersion/ViaVersion/releases/download/5.7.0/ViaVersion-5.7.0.jar
+      - https://github.com/ViaVersion/ViaBackwards/releases/download/5.7.0/ViaBackwards-5.7.0.jar
+      - https://github.com/ViaVersion/ViaRewind/releases/download/4.0.13/ViaRewind-4.0.13.jar
+      - https://github.com/kernitus/BukkitOldCombatMechanics/releases/download/v2.2.0/OldCombatMechanics-v2.2.0.jar
+      - https://www.curseforge.com/api/v1/mods/31620/files/6769644/download
+
+  # ---------------------------------------------------------
+  # 環境変数（接続切れ・MTU対策）
+  # ---------------------------------------------------------
+  extraEnv:
+    # 圧縮を無効化
+    NETWORK_COMPRESSION_THRESHOLD: "-1"
+    # タイムアウト延長
+    PLAYER_IDLE_TIMEOUT: "600"
+    # MTU問題対策 (IPv4優先)
+    JVM_XX_OPTS: "-Djava.net.preferIPv4Stack=true"
+
+  # ---------------------------------------------------------
+  # 追加ポート（Dynmap用）
+  # ---------------------------------------------------------
+  extraPorts:
+    - name: dynmap
+      containerPort: 8123
+      protocol: TCP
+      service:
+        enabled: true
+        type: ClusterIP
+        port: 8123
+      ingress:
+        enabled: true
+        ingressClassName: cloudflare
+        hosts:
+          - name: dynmap.youkan.uk
+            path: /
+
+  # ---------------------------------------------------------
+  # ストレージ設定 (NFS)
+  # ---------------------------------------------------------
+  persistence:
+    dataDir:
       enabled: true
-      type: ClusterIP
-      port: 8123
-    # Ingress設定（必要な場合）
-    ingress:
-      enabled: false 
-      # Cloudflare Tunnel側で Service:8123 を向けるなら false でOK
-      # もし K3s の Ingress を使うなら true にしてホスト設定を書く
+      Size: 20Gi
+      storageClassName: "nfs-client"
+      accessModes:
+        - ReadWriteOnce
+      # existingClaim は削除しました（自動生成させます）
 
-# ---------------------------------------------------------
-# ストレージ設定 (NFS)
-# ---------------------------------------------------------
-persistence:
-  dataDir:
+  # ---------------------------------------------------------
+  # ヘルスチェック（起動待機設定）
+  # ---------------------------------------------------------
+  startupProbe:
     enabled: true
-    Size: 20Gi  # チャートの定義通り大文字Sのまま記述（通常はsizeだが合わせる）
-    storageClass: "nfs-client" # ★Helmチャートの変数名に合わせて修正
-    accessModes:
-      - ReadWriteOnce
+    command:
+      - mc-health
+    failureThreshold: 30
+    periodSeconds: 10
 
-# ---------------------------------------------------------
-# ヘルスチェック（起動時の待機設定）
-# ---------------------------------------------------------
-# スタートアッププローブ（起動完了まで待つ係）
-# これが成功するまで livenessProbe は動き出しません
-startupProbe:
-  enabled: true
-  command:
-    - mc-health
-  failureThreshold: 30  # 30回失敗するまで許容
-  periodSeconds: 10     # 10秒間隔 = 最大300秒(5分)待つ
+  livenessProbe:
+    command:
+      - mc-health
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    failureThreshold: 3
+    successThreshold: 1
+    timeoutSeconds: 5
 
-# ライブネスプローブ（死活監視係）
-# 起動後にサーバーが応答しなくなったら再起動させる
-livenessProbe:
-  command:
-    - mc-health
-  initialDelaySeconds: 5 # startupProbeがあるのでここは短くてOK
-  periodSeconds: 10
-  failureThreshold: 3
-  successThreshold: 1
-  timeoutSeconds: 5
-
-readinessProbe:
-  command:
-    - mc-health
-  initialDelaySeconds: 5
-  periodSeconds: 10
-  failureThreshold: 3
-  successThreshold: 1
-  timeoutSeconds: 5
+  readinessProbe:
+    command:
+      - mc-health
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    failureThreshold: 3
+    successThreshold: 1
+    timeoutSeconds: 5
