@@ -5,7 +5,7 @@
 minecraft:
   image:
     repository: itzg/minecraft-server
-    tag: latest
+    tag: java21
     pullPolicy: Always
 
   replicaCount: 1
@@ -65,7 +65,6 @@ minecraft:
     spigetResources:
       - 52867   # WarpGUI
       - 90741   # PingCheck
-      - 44497   # BossBar Message
       - 96927   # DecentHolograms
       - 101066  # Death Chest
       - 8695    # AdvancedBan
