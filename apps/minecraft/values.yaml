@@ -36,6 +36,7 @@ minecraft:
     version: "1.20.6"
     type: "PAPER"  # 軽量サーバー（VANILLA より推奨）
     difficulty: "normal"
+    levelType: "minecraft:normal"
     motd: "ようかんのサーバーへようこそー"
     memory: 14G    # メモリ割り当て（16GiB制限内で余裕を持たせる）
     maxPlayers: 20
@@ -68,6 +69,7 @@ minecraft:
       - 96927   # DecentHolograms
       - 101066  # Death Chest
       - 8695    # AdvancedBan
+      - 1997
     
     # 直接 URL でダウンロードするプラグイン（GitHub リリース）
     pluginUrls:
