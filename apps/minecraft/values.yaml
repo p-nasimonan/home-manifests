@@ -120,18 +120,17 @@ minecraft:
   
   # ConfigMapのボリューム設定（MiniMOTD用外部設定ファイル）
   extraVolumes:
-    - name: minimotd-config-vol
-      configMap:
-        name: minimotd-external-config
-        items:
-          - key: main.conf
-            path: main.conf
-  
-  # ConfigMapのマウント設定
-  extraVolumeMounts:
-    - name: minimotd-config-vol
-      mountPath: /data/plugins/MiniMOTD/
-      readOnly: true
+    - volumeMounts:
+        - name: minimotd-config
+          mountPath: /data/plugins/MiniMOTD/
+          readOnly: true
+      volumes:
+        - name: minimotd-config
+          configMap:
+            name: minimotd-external-config
+            items:
+              - key: main.conf
+                path: main.conf
   
   # ヘルスチェック設定（Java起動遅延を許す設定）
   livenessProbe:
