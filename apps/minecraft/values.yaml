@@ -122,8 +122,11 @@ minecraft:
   extraVolumes:
     - volumeMounts:
         - name: minimotd-config
-          mountPath: /data/plugins/MiniMOTD/
+          mountPath: /data/plugins/MiniMOTD/main.conf
+          subPath: main.conf
           readOnly: true
+        - name: minimotd-icons
+          mountPath: /data/plugins/MiniMOTD/icons
       volumes:
         - name: minimotd-config
           configMap:
@@ -131,6 +134,8 @@ minecraft:
             items:
               - key: main.conf
                 path: main.conf
+        - name: minimotd-icons
+          emptyDir: {}
   
   # ヘルスチェック設定（Java起動遅延を許す設定）
   livenessProbe:
