@@ -2,12 +2,73 @@
 set -e
 
 # Sealed Secret 作成スクリプト
-# 使用方法: ./create-sealed-secret.sh <secret-name> <namespace> <env-file>
-# 例: ./create-sealed-secret.sh misskey-secrets misskey misskey-secrets.env
+# 使用方法:
+#   ./create-sealed-secret.sh --name <secret-name> --namespace <ns> <env-file>
+#   ./create-sealed-secret.sh -n <secret-name> -ns <ns> <env-file>
+#   ./create-sealed-secret.sh <secret-name> <namespace> <env-file>  # 位置引数（後方互換性）
+# 
+# 例:
+#   ./create-sealed-secret.sh --name misskey-secrets --namespace misskey misskey-secrets.env
+#   ./create-sealed-secret.sh -n minecraft-secrets -ns minecraft minecraft-secrets.env
 
-SECRET_NAME="${1:?Secret name required (e.g., misskey-secrets)}"
-NAMESPACE="${2:?Namespace required (e.g., misskey)}"
-ENV_FILE="${3:?Env file required (e.g., misskey-secrets.env)}"
+# デフォルト値
+SECRET_NAME=""
+NAMESPACE=""
+ENV_FILE=""
+
+# オプション引数解析
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --name|-n)
+      SECRET_NAME="$2"
+      shift 2
+      ;;
+    --namespace|--ns|-ns)
+      NAMESPACE="$2"
+      shift 2
+      ;;
+    --env|-e)
+      ENV_FILE="$2"
+      shift 2
+      ;;
+    -*)
+      echo "❌ Unknown option: $1"
+      exit 1
+      ;;
+    *)
+      # 位置引数（後方互換性）
+      if [ -z "$SECRET_NAME" ]; then
+        SECRET_NAME="$1"
+      elif [ -z "$NAMESPACE" ]; then
+        NAMESPACE="$1"
+      elif [ -z "$ENV_FILE" ]; then
+        ENV_FILE="$1"
+      fi
+      shift
+      ;;
+  esac
+done
+
+# 必須引数チェック
+if [ -z "$SECRET_NAME" ]; then
+  echo "❌ Error: Secret name is required"
+  echo "Usage: ./create-sealed-secret.sh --name <secret-name> --namespace <namespace> <env-file>"
+  echo "       ./create-sealed-secret.sh -n <secret-name> -ns <namespace> <env-file>"
+  echo "       ./create-sealed-secret.sh <secret-name> <namespace> <env-file>"
+  exit 1
+fi
+
+if [ -z "$NAMESPACE" ]; then
+  echo "❌ Error: Namespace is required"
+  echo "Usage: ./create-sealed-secret.sh --name <secret-name> --namespace <namespace> <env-file>"
+  exit 1
+fi
+
+if [ -z "$ENV_FILE" ]; then
+  echo "❌ Error: Env file is required"
+  echo "Usage: ./create-sealed-secret.sh --name <secret-name> --namespace <namespace> <env-file>"
+  exit 1
+fi
 
 CERT_PATH="${HOME}/my-sealed-secrets-public-key.crt"
 
@@ -25,27 +86,23 @@ echo "🔑 Fetching K3s sealed-secrets public key from k3s-1..."
 # 一時ファイル
 TEMP_CERT="/tmp/sealed-secrets-temp.crt"
 
-# 方法1: リモートサーバーから sealed-secrets-* シークレットを取得
-if ssh k3s-1 'SECRET_NAME=$(sudo kubectl get secret -n kube-system -o name | grep sealed-secrets | head -1 | cut -d/ -f2) && [ -n "$SECRET_NAME" ] && sudo kubectl get secret "$SECRET_NAME" -n kube-system -o jsonpath="{.data.tls\.crt}" 2>/dev/null | base64 -d' | cat > "$TEMP_CERT" 2>/dev/null && \
+# 方法1: SSH経由でリモートサーバーから取得
+if ssh k3s-1 'SECRET_NAME=$(sudo kubectl get secret -n kube-system -o name | grep sealed-secrets | head -1 | cut -d/ -f2) && [ -n "$SECRET_NAME" ] && sudo kubectl get secret "$SECRET_NAME" -n kube-system -o jsonpath="{.data.tls\.crt}" 2>/dev/null | base64 -d' > "$TEMP_CERT" 2>/dev/null && \
    [ -s "$TEMP_CERT" ]; then
   cp "$TEMP_CERT" "$CERT_PATH"
   echo "✅ Public key fetched and saved to $CERT_PATH"
 
-# 方法2: ローカルの kubectl（kubeconfig がある場合）
-elif SECRET_NAME=$(kubectl get secret -n kube-system -o name 2>/dev/null | grep sealed-secrets | head -1 | cut -d/ -f2) && \
-   [ -n "$SECRET_NAME" ] && \
-   kubectl get secret "$SECRET_NAME" -n kube-system -o jsonpath='{.data.tls\.crt}' 2>/dev/null | base64 -d > "$TEMP_CERT" 2>/dev/null && \
-   [ -s "$TEMP_CERT" ]; then
-  cp "$TEMP_CERT" "$CERT_PATH"
-  echo "✅ Public key fetched locally and saved to $CERT_PATH"
-
-# 方法3: 既存の公開鍵を使用
+# 方法2: 既存の公開鍵を使用（フォールバック）
 elif [ -f "$CERT_PATH" ] && [ -s "$CERT_PATH" ]; then
   echo "✅ Using existing public key at $CERT_PATH"
 
 # エラー
 else
-  echo "❌ Error: Could not fetch or find sealed-secrets public key"
+  echo "❌ Error: Could not fetch sealed-secrets public key via SSH"
+  echo "Make sure:"
+  echo "  1. SSH access to k3s-1 is working"
+  echo "  2. Sealed Secrets is installed on K3s"
+  echo "  3. You can run: ssh k3s-1 'sudo kubectl get secret -n kube-system | grep sealed'"
   exit 1
 fi
 
