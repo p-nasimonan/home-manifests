@@ -64,7 +64,6 @@ minecraft:
     
     # Spigot プラグイン（Spigot リソース ID で自動ダウンロード）
     spigetResources:
-      - 52867   # WarpGUI
       - 90741   # PingCheck
       - 96927   # DecentHolograms
       - 101066  # Death Chest
@@ -97,6 +96,23 @@ minecraft:
             - name: dynmap.youkan.uk
               path: /
   
+  # Init Container: ConfigMapから設定ファイルをコピー（minecraftServer外）
+  initContainers:
+    - name: copy-minimotd-config
+      image: busybox:1.35
+      command:
+        - sh
+        - -c
+        - |
+          mkdir -p /data/plugins/MiniMOTD
+          cp /config/main.conf /data/plugins/MiniMOTD/main.conf
+          chmod 644 /data/plugins/MiniMOTD/main.conf
+      volumeMounts:
+        - name: minimotd-config-vol
+          mountPath: /config
+        - name: datadir
+          mountPath: /data
+  
   ## Additional minecraft container environment variables
   ## Values can be either variable values or `valueFrom` yaml
   extraEnv:
@@ -127,16 +143,6 @@ minecraft:
         items:
           - key: main.conf
             path: main.conf
-    - name: minimotd-icons-vol
-      emptyDir: {}
-  
-  extraVolumeMounts:
-    - name: minimotd-config-vol
-      mountPath: /data/plugins/MiniMOTD/main.conf
-      subPath: main.conf
-      readOnly: true
-    - name: minimotd-icons-vol
-      mountPath: /data/plugins/MiniMOTD/icons
   
   # ヘルスチェック設定（Java起動遅延を許す設定）
   livenessProbe:
