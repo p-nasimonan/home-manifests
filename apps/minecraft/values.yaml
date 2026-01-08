@@ -96,23 +96,6 @@ minecraft:
             - name: dynmap.youkan.uk
               path: /
   
-  # Init Container: ConfigMapから設定ファイルをコピー（minecraftServer外）
-  initContainers:
-    - name: copy-minimotd-config
-      image: busybox:1.35
-      command:
-        - sh
-        - -c
-        - |
-          mkdir -p /data/plugins/MiniMOTD
-          cp /config/main.conf /data/plugins/MiniMOTD/main.conf
-          chmod 644 /data/plugins/MiniMOTD/main.conf
-      volumeMounts:
-        - name: minimotd-config-vol
-          mountPath: /config
-        - name: datadir
-          mountPath: /data
-  
   ## Additional minecraft container environment variables
   ## Values can be either variable values or `valueFrom` yaml
   extraEnv:
@@ -135,14 +118,69 @@ minecraft:
       memory: 16Gi
       cpu: 4000m
   
-  # ConfigMapのボリューム設定（MiniMOTD用外部設定ファイル）
+  # ConfigMap の直接定義（GitOps で簡単に編集可能）
+  extraDeploy:
+    - |
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: minimotd-external-config
+        namespace: minecraft
+        labels:
+          app: minecraft
+      data:
+        main.conf: |
+          # MiniMOTD 設定ファイル
+          motd-enabled=true
+          icon-enabled=false
+          
+          motds=[
+              {
+                  icon=""
+                  line-1="<gradient:blue:aqua>✨ようかんの鯖✨</gradient>"
+                  line-2="<gradient:aqua:blue>1.8.9 - 1.21 対応</gradient>"
+              }
+          ]
+          
+          player-count-settings {
+              max-players-enabled=true
+              max-players=20
+              disable-player-list-hover=false
+              hide-player-count=false
+              fake-players {
+                  fake-players-enabled=false
+              }
+              just-x-more-settings {
+                  just-x-more-enabled=false
+                  x-value=3
+              }
+              allow-exceeding-maximum=false
+              servers=[]
+          }
+
+  # initContainers: ConfigMap から main.conf をコピー
+  initContainers:
+    - name: copy-minimotd-config
+      image: busybox:1.35
+      command:
+        - sh
+        - -c
+        - |
+          mkdir -p /data/plugins/MiniMOTD
+          cp -v /config/main.conf /data/plugins/MiniMOTD/main.conf
+          echo "✅ MiniMOTD config copied"
+      volumeMounts:
+        - name: minimotd-config-vol
+          mountPath: /config
+        - name: datadir
+          mountPath: /data
+
+  # ボリューム定義（ConfigMap をマウント）
   extraVolumes:
     - name: minimotd-config-vol
       configMap:
         name: minimotd-external-config
-        items:
-          - key: main.conf
-            path: main.conf
+        defaultMode: 0644
   
   # ヘルスチェック設定（Java起動遅延を許す設定）
   livenessProbe:
