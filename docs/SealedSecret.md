@@ -47,7 +47,7 @@ EOF
 # スクリプトが自動的に k3s-1 から公開鍵を取得します
 ./create-sealed-secret.sh misskey-secrets misskey misskey-secrets.env
 
-./create-sealed-secret.sh my-cf-creds cloudflare-tunnel-ingress-controller cloudflare-creds.env
+./create-sealed-secret.sh cloudflare-secrets cloudflare-tunnel-ingress-controller cloudflare-creds.env
 
 
 # 3. Git にコミット

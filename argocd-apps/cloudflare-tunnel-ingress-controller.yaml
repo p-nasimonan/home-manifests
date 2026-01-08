@@ -20,7 +20,7 @@ spec:
         valuesObject:
           cloudflare:
             secretRef:
-              name: "my-cf-creds"
+              name: "cloudflare-secrets"
               apiTokenKey: "api-token"
               accountIDKey: "cloudflare-account-id"
               tunnelNameKey: "cloudflare-tunnel-name"
