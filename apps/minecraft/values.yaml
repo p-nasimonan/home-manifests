@@ -38,6 +38,7 @@ minecraft:
     difficulty: "normal"
     levelType: "minecraft:normal"
     motd: "ようかんのサーバーへようこそー"
+    icon: "https://s3.youkan.uk/misskey/1b56dc5e-710e-4321-9f62-06e6c6d13f48.png"
     memory: 14G    # メモリ割り当て（16GiB制限内で余裕を持たせる）
     maxPlayers: 20
     allowNether: true
@@ -120,22 +121,22 @@ minecraft:
   
   # ConfigMapのボリューム設定（MiniMOTD用外部設定ファイル）
   extraVolumes:
-    - volumeMounts:
-        - name: minimotd-config
-          mountPath: /data/plugins/MiniMOTD/main.conf
-          subPath: main.conf
-          readOnly: true
-        - name: minimotd-icons
-          mountPath: /data/plugins/MiniMOTD/icons
-      volumes:
-        - name: minimotd-config
-          configMap:
-            name: minimotd-external-config
-            items:
-              - key: main.conf
-                path: main.conf
-        - name: minimotd-icons
-          emptyDir: {}
+    - name: minimotd-config-vol
+      configMap:
+        name: minimotd-external-config
+        items:
+          - key: main.conf
+            path: main.conf
+    - name: minimotd-icons-vol
+      emptyDir: {}
+  
+  extraVolumeMounts:
+    - name: minimotd-config-vol
+      mountPath: /data/plugins/MiniMOTD/main.conf
+      subPath: main.conf
+      readOnly: true
+    - name: minimotd-icons-vol
+      mountPath: /data/plugins/MiniMOTD/icons
   
   # ヘルスチェック設定（Java起動遅延を許す設定）
   livenessProbe:
