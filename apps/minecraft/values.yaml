@@ -1,6 +1,5 @@
 # Minecraft サーバー設定
 # itzg/minecraft-server Helm Chart 用の values.yaml
-# ラッパーチャート形式: 依存チャート名で階層化
 
 minecraft:
   image:
@@ -25,21 +24,18 @@ minecraft:
     readOnlyRootFilesystem: true
     allowPrivilegeEscalation: false
 
-  nodeSelector: {}
-
-  tolerations: []
-
-  affinity: {}
-
+  # サーバー設定
   minecraftServer:
     eula: "TRUE"
     version: "1.20.6"
-    type: "PAPER"  # 軽量サーバー（VANILLA より推奨）
+    type: "PAPER"
     difficulty: "normal"
     levelType: "minecraft:normal"
     motd: "ようかんのサーバーへようこそー"
+    # サーバーアイコン (URLから自動取得)
     icon: "https://s3.youkan.uk/misskey/1b56dc5e-710e-4321-9f62-06e6c6d13f48.png"
-    memory: 14G    # メモリ割り当て（16GiB制限内で余裕を持たせる）
+    
+    memory: 14G
     maxPlayers: 20
     allowNether: true
     enableCommandBlock: true
@@ -54,22 +50,19 @@ minecraft:
     # OP権限を付与するユーザー
     ops: Youkan0124
     
-    # Service 設定（itzg チャート v5.0.0 形式）
+    # サービス設定
     serviceType: LoadBalancer
     servicePort: 25565
     loadBalancerIP: 192.168.0.220
     
-    # JVM最適化
     jvmOpts: "-XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+ParallelRefProcEnabled"
     
-    # Spigot プラグイン（Spigot リソース ID で自動ダウンロード）
     spigetResources:
       - 90741   # PingCheck
       - 96927   # DecentHolograms
       - 101066  # Death Chest
       - 8695    # AdvancedBan
     
-    # 直接 URL でダウンロードするプラグイン（GitHub リリース）
     pluginUrls:
       - https://cdn.modrinth.com/data/16vhQOQN/versions/mwkVZ6FJ/minimotd-bukkit-2.2.2.jar #なんかmotdカラフルにできるやつ
       - https://github.com/dmulloy2/ProtocolLib/releases/download/dev-build/ProtocolLib.jar # protcollib
@@ -86,8 +79,7 @@ minecraft:
         protocol: TCP
         service:
           enabled: true
-          embedded: false
-          type: ClusterIP  # Cloudflare Tunnel 経由なので ClusterIP で OK
+          type: ClusterIP
           port: 8123
         ingress:
           enabled: true
@@ -96,13 +88,10 @@ minecraft:
             - name: dynmap.youkan.uk
               path: /
   
-  ## Additional minecraft container environment variables
-  ## Values can be either variable values or `valueFrom` yaml
   extraEnv:
-    # ネットワーク最適化（接続安定性向上）
-    NETWORK_COMPRESSION_THRESHOLD: "-1"  # 圧縮を完全に無効化
-    PLAYER_IDLE_TIMEOUT: "600"  # タイムアウトを10分に延長
-    JVM_XX_OPTS: "-Djava.net.preferIPv4Stack=true"  # IPv4優先化でパケットトラブル低減
+    NETWORK_COMPRESSION_THRESHOLD: "-1"
+    PLAYER_IDLE_TIMEOUT: "600"
+    JVM_XX_OPTS: "-Djava.net.preferIPv4Stack=true"
 
   persistence:
     dataDir:
@@ -117,23 +106,25 @@ minecraft:
     limits:
       memory: 16Gi
       cpu: 4000m
-  
-  # ConfigMap の直接定義（GitOps で簡単に編集可能）
+
+  # ----------------------------------------------------
+  # ConfigMap / Volume 設定エリア
+  # ----------------------------------------------------
+
+  # 1. ConfigMapの作成 (GitOps用)
   extraDeploy:
     - |
       apiVersion: v1
       kind: ConfigMap
       metadata:
         name: minimotd-external-config
-        namespace: minecraft
+        namespace: {{ .Release.Namespace }}
         labels:
-          app: minecraft
+          app: {{ include "minecraft.fullname" . }}
       data:
         main.conf: |
-          # MiniMOTD 設定ファイル
           motd-enabled=true
           icon-enabled=false
-          
           motds=[
               {
                   icon=""
@@ -141,69 +132,56 @@ minecraft:
                   line-2="<gradient:aqua:blue>1.8.9 - 1.21 対応</gradient>"
               }
           ]
-          
           player-count-settings {
               max-players-enabled=true
               max-players=20
               disable-player-list-hover=false
               hide-player-count=false
-              fake-players {
-                  fake-players-enabled=false
-              }
-              just-x-more-settings {
-                  just-x-more-enabled=false
-                  x-value=3
-              }
+              fake-players { fake-players-enabled=false }
+              just-x-more-settings { just-x-more-enabled=false }
               allow-exceeding-maximum=false
-              servers=[]
           }
 
-  # initContainers: ConfigMap から main.conf をコピー
-  initContainers:
-    - name: copy-minimotd-config
-      image: busybox:1.35
-      command:
-        - sh
-        - -c
-        - |
-          mkdir -p /data/plugins/MiniMOTD
-          cp -v /config/main.conf /data/plugins/MiniMOTD/main.conf
-          echo "✅ MiniMOTD config copied"
-      volumeMounts:
-        - name: minimotd-config-vol
-          mountPath: /config
-        - name: datadir
-          mountPath: /data
-
-  # ボリューム定義（ConfigMap をマウント）
+  # 2. ボリュームの定義 (荷札)
+  # ※ initContainersは削除し、標準のマウント機能を使います
   extraVolumes:
+    # 設定ファイル (ConfigMap)
     - name: minimotd-config-vol
       configMap:
         name: minimotd-external-config
         defaultMode: 0644
-  
-  # ヘルスチェック設定（Java起動遅延を許す設定）
-  livenessProbe:
-    command:
-      - mc-health
-    initialDelaySeconds: 60   # 最初の60秒はチェックしない
-    periodSeconds: 10         # 10秒ごとにチェック
-    failureThreshold: 30      # 30回失敗まで許す（＝300秒待機）
-    timeoutSeconds: 5         # 返答待ち時間を5秒に延長
-    successThreshold: 1
     
-  readinessProbe:
-    command:
-      - mc-health
+    # ★重要: アイコンフォルダ用の一時領域 (書き込み可能にするため)
+    - name: minimotd-icons-vol
+      emptyDir: {}
+
+  # 3. マウントの定義 (貼り付け場所)
+  extraVolumeMounts:
+    # 設定ファイルをピンポイントで配置 (subPath使用)
+    # これにより、親フォルダ(/data/plugins/MiniMOTD)自体は書き込み可能なままになります
+    - name: minimotd-config-vol
+      mountPath: /data/plugins/MiniMOTD/main.conf
+      subPath: main.conf
+      readOnly: true
+    
+    # アイコンフォルダを書き込み可能領域としてマウント
+    - name: minimotd-icons-vol
+      mountPath: /data/plugins/MiniMOTD/icons
+
+  # ヘルスチェック
+  livenessProbe:
+    command: ["mc-health"]
     initialDelaySeconds: 60
     periodSeconds: 10
     failureThreshold: 30
     timeoutSeconds: 5
-    successThreshold: 1
+    
+  readinessProbe:
+    command: ["mc-health"]
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    failureThreshold: 30
+    timeoutSeconds: 5
 
   startupProbe:
-    command:
-      - mc-health
     enabled: false
-    failureThreshold: 30
-    periodSeconds: 10
