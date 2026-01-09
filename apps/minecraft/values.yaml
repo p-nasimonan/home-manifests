@@ -88,7 +88,7 @@ minecraft:
               path: /
   
   extraEnv:
-    NETWORK_COMPRESSION_THRESHOLD: "-1"
+    NETWORK_COMPRESSION_THRESHOLD: "256" 
     PLAYER_IDLE_TIMEOUT: "600"
     JVM_XX_OPTS: "-Djava.net.preferIPv4Stack=true"
 
