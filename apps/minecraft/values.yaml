@@ -107,68 +107,34 @@ minecraft:
       memory: 16Gi
       cpu: 4000m
 
-  # ----------------------------------------------------
-  # ConfigMap / Volume 設定エリア
-  # ----------------------------------------------------
+  # ===== initContainers =====
+  # ConfigMap から設定ファイルをコピーする init コンテナ
+  initContainers:
+    - name: copy-minimotd-config
+      image: busybox:1.35
+      command:
+        - sh
+        - -c
+        - |
+          mkdir -p /data/plugins/MiniMOTD
+          cp -v /config/main.conf /data/plugins/MiniMOTD/main.conf
+          chown -R 1000:1000 /data/plugins/MiniMOTD
+          chmod 644 /data/plugins/MiniMOTD/main.conf
+          echo "✅ MiniMOTD config copied successfully"
+      volumeMounts:
+        - name: minimotd-config-vol
+          mountPath: /config
+        - name: datadir
+          mountPath: /data
 
-  # 1. ConfigMapの作成 (GitOps用)
-  extraDeploy:
-    - |
-      apiVersion: v1
-      kind: ConfigMap
-      metadata:
-        name: minimotd-external-config
-        namespace: {{ .Release.Namespace }}
-        labels:
-          app: {{ include "minecraft.fullname" . }}
-      data:
-        main.conf: |
-          motd-enabled=true
-          icon-enabled=false
-          motds=[
-              {
-                  icon=""
-                  line-1="<gradient:blue:aqua>✨ようかんの鯖✨</gradient>"
-                  line-2="<gradient:aqua:blue>1.8.9 - 1.21 対応</gradient>"
-              }
-          ]
-          player-count-settings {
-              max-players-enabled=true
-              max-players=20
-              disable-player-list-hover=false
-              hide-player-count=false
-              fake-players { fake-players-enabled=false }
-              just-x-more-settings { just-x-more-enabled=false }
-              allow-exceeding-maximum=false
-          }
-
-  # 2. ボリュームの定義 (荷札)
-  # ※ initContainersは削除し、標準のマウント機能を使います
+  # ===== ボリューム設定 =====
   extraVolumes:
-    # 設定ファイル (ConfigMap)
     - name: minimotd-config-vol
       configMap:
         name: minimotd-external-config
         defaultMode: 0644
-    
-    # ★重要: アイコンフォルダ用の一時領域 (書き込み可能にするため)
-    - name: minimotd-icons-vol
-      emptyDir: {}
 
-  # 3. マウントの定義 (貼り付け場所)
-  extraVolumeMounts:
-    # 設定ファイルをピンポイントで配置 (subPath使用)
-    # これにより、親フォルダ(/data/plugins/MiniMOTD)自体は書き込み可能なままになります
-    - name: minimotd-config-vol
-      mountPath: /data/plugins/MiniMOTD/main.conf
-      subPath: main.conf
-      readOnly: true
-    
-    # アイコンフォルダを書き込み可能領域としてマウント
-    - name: minimotd-icons-vol
-      mountPath: /data/plugins/MiniMOTD/icons
-
-  # ヘルスチェック
+  # ===== ヘルスチェック =====
   livenessProbe:
     command: ["mc-health"]
     initialDelaySeconds: 60
@@ -185,3 +151,42 @@ minecraft:
 
   startupProbe:
     enabled: false
+
+  # ===== ConfigMap 定義 =====
+  extraDeploy:
+    - |
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: minimotd-external-config
+        namespace: {{ .Release.Namespace }}
+        labels:
+          app: {{ include "minecraft.fullname" . }}
+      data:
+        main.conf: |
+          motd-enabled=true
+          icon-enabled=false
+          
+          motds=[
+              {
+                  icon=""
+                  line-1="<gradient:blue:aqua>✨ようかんの鯖✨</gradient>"
+                  line-2="<gradient:aqua:blue>1.8.9 - 1.21 対応</gradient>"
+              }
+          ]
+          
+          player-count-settings {
+              max-players-enabled=true
+              max-players=20
+              disable-player-list-hover=false
+              hide-player-count=false
+              fake-players {
+                  fake-players-enabled=false
+              }
+              just-x-more-settings {
+                  just-x-more-enabled=false
+                  x-value=3
+              }
+              allow-exceeding-maximum=false
+              servers=[]
+          }
