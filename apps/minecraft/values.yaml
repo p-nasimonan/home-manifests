@@ -1,9 +1,5 @@
 # Minecraft サーバー設定
 # itzg/minecraft-server Helm Chart 用の values.yaml
-
-# ConfigMap 名
-minimotdConfigMapName: minimotd-external-config
-
 minecraft:
   fullnameOverride: "my-minecraft"
   image:
