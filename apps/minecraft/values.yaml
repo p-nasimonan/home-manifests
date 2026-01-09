@@ -170,8 +170,8 @@ minecraft:
           motds=[
               {
                   icon=""
-                  line-1="<gradient:blue:aqua>✨ようかんの鯖✨</gradient>"
-                  line-2="<gradient:aqua:blue>1.8.9 - 1.21 対応</gradient>"
+                  line1="<gradient:blue:aqua>✨ようかんの鯖✨</gradient>"
+                  line2="<gradient:aqua:blue>1.8.9 - 1.21 対応</gradient>"
               }
           ]
           
