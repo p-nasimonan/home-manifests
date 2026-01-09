@@ -115,7 +115,7 @@ minecraft:
 
   # ===== initContainers =====
   # ConfigMap から設定ファイルをコピーする init コンテナ
-  podInitContainers:
+  InitContainers:
     - name: copy-minimotd-config
       image: busybox:1.35
       command:
