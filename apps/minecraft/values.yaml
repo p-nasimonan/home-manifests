@@ -132,3 +132,20 @@ minecraft:
           mountPath: /config
         - name: datadir
           mountPath: /data
+
+  # ===== ヘルスチェック =====
+  livenessProbe:
+    # --host 127.0.0.1 を追加して IPv4 を強制
+    command: ["mc-health", "--host", "127.0.0.1"]
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    failureThreshold: 30
+    timeoutSeconds: 5
+    
+  readinessProbe:
+    # こっちも同様に
+    command: ["mc-health", "--host", "127.0.0.1"]
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    failureThreshold: 30
+    timeoutSeconds: 5
