@@ -12,7 +12,6 @@ minecraft:
   podSecurityContext:
     runAsUser: 1000
     runAsGroup: 3000
-    runAsNonRoot: true
     fsGroup: 2000
     seccompProfile:
       type: RuntimeDefault
@@ -133,60 +132,3 @@ minecraft:
       configMap:
         name: minimotd-external-config
         defaultMode: 0644
-
-  # ===== ヘルスチェック =====
-  livenessProbe:
-    command: ["mc-health"]
-    initialDelaySeconds: 60
-    periodSeconds: 10
-    failureThreshold: 30
-    timeoutSeconds: 5
-    
-  readinessProbe:
-    command: ["mc-health"]
-    initialDelaySeconds: 60
-    periodSeconds: 10
-    failureThreshold: 30
-    timeoutSeconds: 5
-
-  startupProbe:
-    enabled: false
-
-  # ===== ConfigMap 定義 =====
-  extraDeploy:
-    - |
-      apiVersion: v1
-      kind: ConfigMap
-      metadata:
-        name: minimotd-external-config
-        namespace: {{ .Release.Namespace }}
-        labels:
-          app: {{ include "minecraft.fullname" . }}
-      data:
-        main.conf: |
-          motd-enabled=true
-          icon-enabled=false
-          
-          motds=[
-              {
-                  icon=""
-                  line1="<gradient:blue:aqua>✨ようかんの鯖✨</gradient>"
-                  line2="<gradient:aqua:blue>1.8.9 - 1.21 対応</gradient>"
-              }
-          ]
-          
-          player-count-settings {
-              max-players-enabled=true
-              max-players=20
-              disable-player-list-hover=false
-              hide-player-count=false
-              fake-players {
-                  fake-players-enabled=false
-              }
-              just-x-more-settings {
-                  just-x-more-enabled=false
-                  x-value=3
-              }
-              allow-exceeding-maximum=false
-              servers=[]
-          }
