@@ -106,9 +106,16 @@ minecraft:
       memory: 16Gi
       cpu: 4000m
 
+  # ===== ボリューム設定 =====
+  extraVolumes:
+    - name: minimotd-config-vol
+      configMap:
+        name: minimotd-external-config
+        defaultMode: 0644
+
   # ===== initContainers =====
   # ConfigMap から設定ファイルをコピーする init コンテナ
-  initContainers:
+  podInitContainers:
     - name: copy-minimotd-config
       image: busybox:1.35
       command:
@@ -125,10 +132,3 @@ minecraft:
           mountPath: /config
         - name: datadir
           mountPath: /data
-
-  # ===== ボリューム設定 =====
-  extraVolumes:
-    - name: minimotd-config-vol
-      configMap:
-        name: minimotd-external-config
-        defaultMode: 0644
