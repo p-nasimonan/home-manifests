@@ -132,34 +132,26 @@ minecraft:
         - name: datadir
           mountPath: /data
 
-# ===== ヘルスチェック (TCP版・完全修正) =====
-  
-  # 1. 起動監視
+# ===== ヘルスチェック (TCP版) =====
+  livenessProbe:
+    command:
+      - mc-health
+    initialDelaySeconds: 30
+    periodSeconds: 5
+    failureThreshold: 20
+    successThreshold: 1
+    timeoutSeconds: 10
+  readinessProbe:
+    command:
+      - mc-health
+    initialDelaySeconds: 30
+    periodSeconds: 5
+    failureThreshold: 20
+    successThreshold: 1
+    timeoutSeconds: 10
   startupProbe:
-    enabled: true
-    command: null   # 【重要】デフォルトの mc-health コマンドを消す
-    tcpSocket:      # 代わりにTCP接続を使う
-      port: 25565
+    command:
+      - mc-health
+    enabled: false
     failureThreshold: 30
     periodSeconds: 10
-    timeoutSeconds: 5
-
-  # 2. 生存監視
-  livenessProbe:
-    command: null   # 【重要】デフォルトを消す
-    tcpSocket:
-      port: 25565
-    initialDelaySeconds: 60
-    periodSeconds: 20
-    failureThreshold: 3
-    timeoutSeconds: 5
-
-  # 3. 準備完了監視
-  readinessProbe:
-    command: null   # 【重要】デフォルトを消す
-    tcpSocket:
-      port: 25565
-    initialDelaySeconds: 60
-    periodSeconds: 20
-    failureThreshold: 3
-    timeoutSeconds: 5
