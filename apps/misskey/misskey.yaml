@@ -41,6 +41,7 @@ spec:
                 apiKey: $MEILISEARCH_API_KEY
                 ssl: false
                 index: mi_youkan_uk
+                scope: global
               fulltextSearch:
                 provider: meilisearch
               id: $MISSKEY_ID
