@@ -132,32 +132,34 @@ minecraft:
         - name: datadir
           mountPath: /data
 
-# ===== ヘルスチェック =====
+# ===== ヘルスチェック (TCP版・完全修正) =====
   
-  # 1. 起動監視 (サーバーが完全に立ち上がるまで、他の監視を待たせる設定)
-  # これを有効にすると、起動が重くても勝手に再起動されなくなります
+  # 1. 起動監視
   startupProbe:
     enabled: true
-    command: 
-      - mc-health
+    command: null   # 【重要】デフォルトの mc-health コマンドを消す
+    tcpSocket:      # 代わりにTCP接続を使う
+      port: 25565
     failureThreshold: 30
     periodSeconds: 10
-    timeoutSeconds: 60
+    timeoutSeconds: 5
 
-  # 2. 生存監視 (起動後のチェック)
+  # 2. 生存監視
   livenessProbe:
-    command: 
-      - mc-health
+    command: null   # 【重要】デフォルトを消す
+    tcpSocket:
+      port: 25565
     initialDelaySeconds: 60
-    periodSeconds: 10
-    failureThreshold: 10
-    timeoutSeconds: 10
+    periodSeconds: 20
+    failureThreshold: 3
+    timeoutSeconds: 5
 
-  # 3. 準備完了監視 (ログイン可能かチェック)
+  # 3. 準備完了監視
   readinessProbe:
-    command: 
-      - mc-health
+    command: null   # 【重要】デフォルトを消す
+    tcpSocket:
+      port: 25565
     initialDelaySeconds: 60
-    periodSeconds: 10
-    failureThreshold: 10
-    timeoutSeconds: 10
+    periodSeconds: 20
+    failureThreshold: 3
+    timeoutSeconds: 5
