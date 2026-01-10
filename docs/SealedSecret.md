@@ -31,6 +31,7 @@ POSTGRES_USER=misskey
 POSTGRES_DB=misskey
 DATABASE_URL=postgres://misskey:your-secure-postgres-password@misskey-postgresql-primary:5432/misskey
 REDIS_PASSWORD=your-secure-redis-password
+SETUP_PASSWORD=$(openssl rand -hex 16)
 MISSKEY_SECRET_KEY=$(openssl rand -hex 32)
 MISSKEY_SIGNING_KEY=$(openssl rand -hex 32)
 MEILISEARCH_MASTER_KEY=$(openssl rand -hex 32)

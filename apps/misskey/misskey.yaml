@@ -25,6 +25,7 @@ spec:
               cat > /misskey/.config/default.yml <<EOF
               url: https://mi.youkan.uk
               port: 3000
+              setupPassword: $SETUP_PASSWORD
               db:
                 host: $DB_HOST
                 port: $DB_PORT
@@ -43,8 +44,6 @@ spec:
                 index: mi_youkan_uk
               fulltextSearch:
                 provider: meilisearch
-              drive:
-                storage: s3
               id: $MISSKEY_ID
               allowedPrivateNetworks:
                 - 192.168.0.0/24
@@ -83,40 +82,11 @@ spec:
                   key: MEILISEARCH_MASTER_KEY
             - name: MISSKEY_ID
               value: aidx
-            - name: MINIO_ACCESS_KEY
+            - name: SETUP_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: misskey-secrets
-                  key: MINIO_ACCESS_KEY
-            - name: MINIO_SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: misskey-secrets
-                  key: MINIO_SECRET_KEY
-            - name: MISSKEY_OBJECT_STORAGE_BUCKET
-              value: misskey
-            - name: MISSKEY_OBJECT_STORAGE_PREFIX
-              value: ""
-            - name: MISSKEY_OBJECT_STORAGE_ENDPOINT
-              value: http://192.168.0.9:9000
-            - name: MISSKEY_OBJECT_STORAGE_REGION
-              value: us-east-1
-            - name: MISSKEY_OBJECT_STORAGE_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: misskey-secrets
-                  key: MINIO_ACCESS_KEY
-            - name: MISSKEY_OBJECT_STORAGE_SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: misskey-secrets
-                  key: MINIO_SECRET_KEY
-            - name: MISSKEY_OBJECT_STORAGE_USE_SSL
-              value: "false"
-            - name: MISSKEY_OBJECT_STORAGE_S3_FORCE_PATH_STYLE
-              value: "true"
-            - name: MISSKEY_OBJECT_STORAGE_BASE_URL
-              value: https://s3.youkan.uk/misskey
+                  key: SETUP_PASSWORD
           volumeMounts:
             - name: config-volume
               mountPath: /misskey/.config
