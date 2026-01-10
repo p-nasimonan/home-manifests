@@ -45,16 +45,6 @@ spec:
                 provider: meilisearch
               drive:
                 storage: s3
-              objectStorage:
-                bucket: misskey
-                prefix: ""
-                endpoint: http://192.168.0.9:9000
-                region: us-east-1
-                accessKey: $MINIO_ACCESS_KEY
-                secretKey: $MINIO_SECRET_KEY
-                useSSL: false
-                s3ForcePathStyle: true
-                baseUrl: https://s3.youkan.uk/misskey
               id: $MISSKEY_ID
               allowedPrivateNetworks:
                 - 192.168.0.0/24
@@ -103,6 +93,30 @@ spec:
                 secretKeyRef:
                   name: misskey-secrets
                   key: MINIO_SECRET_KEY
+            - name: MISSKEY_OBJECT_STORAGE_BUCKET
+              value: misskey
+            - name: MISSKEY_OBJECT_STORAGE_PREFIX
+              value: ""
+            - name: MISSKEY_OBJECT_STORAGE_ENDPOINT
+              value: http://192.168.0.9:9000
+            - name: MISSKEY_OBJECT_STORAGE_REGION
+              value: us-east-1
+            - name: MISSKEY_OBJECT_STORAGE_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: misskey-secrets
+                  key: MINIO_ACCESS_KEY
+            - name: MISSKEY_OBJECT_STORAGE_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: misskey-secrets
+                  key: MINIO_SECRET_KEY
+            - name: MISSKEY_OBJECT_STORAGE_USE_SSL
+              value: "false"
+            - name: MISSKEY_OBJECT_STORAGE_S3_FORCE_PATH_STYLE
+              value: "true"
+            - name: MISSKEY_OBJECT_STORAGE_BASE_URL
+              value: https://s3.youkan.uk/misskey
           volumeMounts:
             - name: config-volume
               mountPath: /misskey/.config
