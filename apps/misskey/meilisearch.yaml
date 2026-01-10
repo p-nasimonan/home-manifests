@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
         - name: meilisearch
-          image: getmeili/meilisearch:v1.12.1
+          image: getmeili/meilisearch:prototype-japanese-13
           env:
             - name: MEILI_ENV
               value: "production"
