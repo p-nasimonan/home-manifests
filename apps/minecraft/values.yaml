@@ -138,23 +138,26 @@ minecraft:
   # これを有効にすると、起動が重くても勝手に再起動されなくなります
   startupProbe:
     enabled: true
-    command: ["mc-health", "--host", "127.0.0.1"]
+    command: 
+      - mc-health
     failureThreshold: 30
     periodSeconds: 10
-    timeoutSeconds: 60 # 60秒待つ
+    timeoutSeconds: 60
 
   # 2. 生存監視 (起動後のチェック)
   livenessProbe:
-    command: ["mc-health", "--host", "127.0.0.1"]
+    command: 
+      - mc-health
     initialDelaySeconds: 60
     periodSeconds: 10
     failureThreshold: 10
-    timeoutSeconds: 30 # 【修正】5秒は短すぎるので30秒に延長
+    timeoutSeconds: 10
 
   # 3. 準備完了監視 (ログイン可能かチェック)
   readinessProbe:
-    command: ["mc-health", "--host", "127.0.0.1"]
+    command: 
+      - mc-health
     initialDelaySeconds: 60
     periodSeconds: 10
     failureThreshold: 10
-    timeoutSeconds: 30 # 【修正】5秒は短すぎるので30秒に延長
+    timeoutSeconds: 10
