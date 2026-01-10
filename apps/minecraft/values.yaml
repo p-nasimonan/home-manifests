@@ -132,19 +132,29 @@ minecraft:
         - name: datadir
           mountPath: /data
 
-  # ===== ヘルスチェック =====
+# ===== ヘルスチェック =====
+  
+  # 1. 起動監視 (サーバーが完全に立ち上がるまで、他の監視を待たせる設定)
+  # これを有効にすると、起動が重くても勝手に再起動されなくなります
+  startupProbe:
+    enabled: true
+    command: ["mc-health", "--host", "127.0.0.1"]
+    failureThreshold: 30
+    periodSeconds: 10
+    timeoutSeconds: 60 # 60秒待つ
+
+  # 2. 生存監視 (起動後のチェック)
   livenessProbe:
-    # --host 127.0.0.1 を追加して IPv4 を強制
     command: ["mc-health", "--host", "127.0.0.1"]
     initialDelaySeconds: 60
     periodSeconds: 10
-    failureThreshold: 30
-    timeoutSeconds: 5
-    
+    failureThreshold: 10
+    timeoutSeconds: 30 # 【修正】5秒は短すぎるので30秒に延長
+
+  # 3. 準備完了監視 (ログイン可能かチェック)
   readinessProbe:
-    # こっちも同様に
     command: ["mc-health", "--host", "127.0.0.1"]
     initialDelaySeconds: 60
     periodSeconds: 10
-    failureThreshold: 30
-    timeoutSeconds: 5
+    failureThreshold: 10
+    timeoutSeconds: 30 # 【修正】5秒は短すぎるので30秒に延長
