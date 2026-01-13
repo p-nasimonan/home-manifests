@@ -30,7 +30,7 @@ spec:
           # イメージ設定
           image:
             repository: lissy93/dashy
-            tag: "3.1.1"
+            tag: "release-3.1.1"
             pullPolicy: IfNotPresent
           
           # サービス設定
