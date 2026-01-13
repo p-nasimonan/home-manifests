@@ -47,18 +47,7 @@ spec:
               cpu: "500m"
             limits:
               memory: "1Gi"
-              cpu: "1000m"
-          
-          # ボリューム定義
-          volumes:
-            - name: user-data
-              persistentVolumeClaim:
-                claimName: dashy-data
-          
-          # ボリュームマウント
-          volumeMounts:
-            - name: user-data
-              mountPath: /app/user-data
+              cpu: "1"
           
           # 環境変数
           env:
