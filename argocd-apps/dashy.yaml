@@ -19,6 +19,14 @@ spec:
         valuesObject:
           replicaCount: 1
           
+          # Probe 設定（ビルド待機時間を延長）
+          probs:
+            failureThreshold: 6
+            timeoutSeconds: 10
+            periodSeconds: 60
+            initialDelaySeconds: 180
+            path: "/"
+          
           # イメージ設定
           image:
             repository: lissy93/dashy
@@ -46,13 +54,14 @@ spec:
               memory: "512Mi"
               cpu: "500m"
             limits:
-              memory: "1Gi"
+              memory: "2Gi"
               cpu: "1"
           
           # 環境変数
           env:
             NODE_ENV: "production"
             PORT: 8080
+            NODE_OPTIONS: "--openssl-legacy-provider --max-old-space-size=512"
           
           # ConfigMap で config.yaml を管理
           static:
