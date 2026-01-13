@@ -159,6 +159,17 @@ spec:
                         description: サーバーコンソール
                         url: https://ilo.youkan.uk
                         icon: fas fa-terminal
+          
+          # ボリューム定義（NFS ストレージ）
+          volumes:
+            - name: user-data
+              persistentVolumeClaim:
+                claimName: dashy-data
+          
+          # ボリュームマウント
+          volumeMounts:
+            - name: user-data
+              mountPath: /app/user-data
   
   destination:
     server: https://kubernetes.default.svc
