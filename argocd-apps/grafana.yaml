@@ -13,10 +13,14 @@ spec:
       helm:
         releaseName: grafana
         valuesObject: {}
+        # Values ファイルを参照
+        valuesFiles:
+          - $values/values.yaml
     # Values の管理
     - repoURL: https://github.com/p-nasimonan/home-manifests.git
       targetRevision: main
       path: apps/grafana
+      ref: values
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
