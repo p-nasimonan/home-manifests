@@ -5,22 +5,12 @@ metadata:
   namespace: argocd
 spec:
   project: default
-  sources:
-    # Helm chart の管理
-    - repoURL: https://grafana.github.io/helm-charts
-      chart: grafana
-      targetRevision: 10.5.5
-      helm:
-        releaseName: grafana
-        valuesObject: {}
-        # Values ファイルを参照
-        valueFiles:
-          - $values/values.yaml
-    # Values の管理
-    - repoURL: https://github.com/p-nasimonan/home-manifests.git
-      targetRevision: main
-      path: apps/grafana
-      ref: values
+  source:
+    repoURL: https://github.com/p-nasimonan/home-manifests.git
+    targetRevision: main
+    path: apps/grafana
+    helm:
+      releaseName: grafana
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
