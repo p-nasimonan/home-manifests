@@ -28,8 +28,7 @@ spec:
           # サービス設定
           service:
             type: ClusterIP
-            port: 80
-            targetPort: 8080
+            port: 8080
           
           # Ingress 設定
           ingress:
@@ -52,96 +51,105 @@ spec:
           
           # 環境変数
           env:
-            - name: LOG_LEVEL
-              value: info
+            NODE_ENV: "production"
+            PORT: 8080
           
-          # ConfigMap で config.yml を管理
-          config:
-            # アプリケーション設定
-            appConfig:
-              title: Home Dashboard
-              language: ja
-              theme: nord
-              cssOverrides: ""
-              allowConfigEdit: true
-              showFooter: true
-            
-            # セクション定義
-            sections:
-              - name: 家庭サーバー
-                items:
-                  - title: Grafana
-                    description: メトリクス・ダッシュボード
-                    url: https://grafana.youkan.uk
-                    icon: shi-analytics
-                  - title: Misskey
-                    description: フェデレーション型SNS
-                    url: https://mi.youkan.uk
-                    icon: sh-share-nodes
-                  - title: Minecraft
-                    description: マルチプレイサーバー
-                    url: https://mc.youkan.uk
-                    icon: sh-cube
-              
-              - name: 管理ツール
-                items:
-                  - title: ArgoCD
-                    description: GitOps デプロイメント
-                    url: https://argocd.youkan.uk
-                    icon: si-argocd
-                  - title: Rancher
-                    description: Kubernetes マネージャー
-                    url: https://rancher.youkan.uk
-                    icon: si-kubernetes
-              
-              - name: インフラストラクチャ
-                items:
-                  - title: TrueNAS
-                    description: ストレージ管理
-                    url: https://truenas.youkan.uk
-                    icon: sh-database
-                  - title: MinIO
-                    description: オブジェクトストレージ
-                    url: http://minio.youkan.uk
-                    icon: sh-database
-                  - title: S3
-                    description: S3 API
-                    url: http://s3.youkan.uk
-                    icon: sh-database
-                  - title: File Browser
-                    description: ファイルマネージャー
-                    url: http://file-browser.youkan.uk
-                    icon: sh-folder-open
-              
-              - name: ホームオートメーション
-                items:
-                  - title: Home Assistant
-                    description: ホームオートメーション
-                    url: http://ha.youkan.uk
-                    icon: sh-home
-              
-              - name: 物理サーバー
-                items:
-                  - title: Mochi (Proxmox)
-                    description: ハイパーバイザー
-                    url: https://mochi.youkan.uk
-                    icon: sh-server
-                  - title: Aduki (Proxmox)
-                    description: ハイパーバイザー
-                    url: https://aduki.youkan.uk
-                    icon: sh-server
-                  - title: Anko (Proxmox)
-                    description: ハイパーバイザー
-                    url: https://anko.youkan.uk
-                    icon: sh-server
-                  - title: Monaka (Proxmox)
-                    description: ハイパーバイザー
-                    url: https://monaka.youkan.uk
-                    icon: sh-server
-                  - title: iLO (Anko)
-                    description: サーバーコンソール
-                    url: https://ilo.youkan.uk
-                    icon: sh-terminal
+          # ConfigMap で config.yaml を管理
+          static:
+            enabled: true
+            configMapContent:
+              conf: |-
+                # ページのメタ情報
+                pageInfo:
+                  title: Home Dashboard
+                  description: ホームラボダッシュボード
+                
+                # アプリケーション設定
+                appConfig:
+                  theme: nord
+                  language: ja
+                
+                # セクション定義
+                sections:
+                  - name: 家庭サーバー
+                    icon: fas fa-home
+                    items:
+                      - title: Grafana
+                        description: メトリクス・ダッシュボード
+                        url: https://grafana.youkan.uk
+                        icon: fas fa-chart-line
+                      - title: Misskey
+                        description: フェデレーション型SNS
+                        url: https://mi.youkan.uk
+                        icon: fas fa-share-nodes
+                      - title: Minecraft
+                        description: マルチプレイサーバー
+                        url: https://mc.youkan.uk
+                        icon: fas fa-cube
+                  
+                  - name: 管理ツール
+                    icon: fas fa-tools
+                    items:
+                      - title: ArgoCD
+                        description: GitOps デプロイメント
+                        url: https://argocd.youkan.uk
+                        icon: fas fa-code-branch
+                      - title: Rancher
+                        description: Kubernetes マネージャー
+                        url: https://rancher.youkan.uk
+                        icon: fas fa-ship
+                  
+                  - name: インフラストラクチャ
+                    icon: fas fa-server
+                    items:
+                      - title: TrueNAS
+                        description: ストレージ管理
+                        url: https://truenas.youkan.uk
+                        icon: fas fa-database
+                      - title: MinIO
+                        description: オブジェクトストレージ
+                        url: http://minio.youkan.uk
+                        icon: fas fa-boxes
+                      - title: S3
+                        description: S3 API
+                        url: http://s3.youkan.uk
+                        icon: fas fa-cloud
+                      - title: File Browser
+                        description: ファイルマネージャー
+                        url: http://file-browser.youkan.uk
+                        icon: fas fa-folder-open
+                  
+                  - name: ホームオートメーション
+                    icon: fas fa-robot
+                    items:
+                      - title: Home Assistant
+                        description: ホームオートメーション
+                        url: http://ha.youkan.uk
+                        icon: fas fa-lightbulb
+                  
+                  - name: 物理サーバー
+                    icon: fas fa-network-wired
+                    items:
+                      - title: Mochi (Proxmox)
+                        description: ハイパーバイザー
+                        url: https://mochi.youkan.uk
+                        icon: fas fa-server
+                      - title: Aduki (Proxmox)
+                        description: ハイパーバイザー
+                        url: https://aduki.youkan.uk
+                        icon: fas fa-server
+                      - title: Anko (Proxmox)
+                        description: ハイパーバイザー
+                        url: https://anko.youkan.uk
+                        icon: fas fa-server
+                      - title: Monaka (Proxmox)
+                        description: ハイパーバイザー
+                        url: https://monaka.youkan.uk
+                        icon: fas fa-server
+                      - title: iLO (Anko)
+                        description: サーバーコンソール
+                        url: https://ilo.youkan.uk
+                        icon: fas fa-terminal
   
   destination:
     server: https://kubernetes.default.svc
