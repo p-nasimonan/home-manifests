@@ -14,7 +14,7 @@ spec:
         releaseName: grafana
         valuesObject: {}
         # Values ファイルを参照
-        valuesFiles:
+        valueFiles:
           - $values/values.yaml
     # Values の管理
     - repoURL: https://github.com/p-nasimonan/home-manifests.git
