@@ -8,11 +8,10 @@ metadata:
 spec:
   project: default
   sources:
-    # Secret ファイルの管理
+    # Sealed Secret と Helm chart の管理
     - repoURL: https://github.com/p-nasimonan/home-manifests.git
       targetRevision: main
-      path: argocd-apps/secrets
-    # Helm chart の管理
+      path: apps/cloudflare
     - repoURL: https://helm.strrl.dev
       chart: cloudflare-tunnel-ingress-controller
       targetRevision: 0.0.12

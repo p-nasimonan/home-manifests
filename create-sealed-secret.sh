@@ -72,14 +72,6 @@ fi
 
 CERT_PATH="${HOME}/my-sealed-secrets-public-key.crt"
 
-# === プロジェクトルートの確認 ===
-if [ ! -d "argocd-apps" ]; then
-  echo "❌ Error: argocd-apps directory not found"
-  echo "Please run this script from the project root directory"
-  echo "Current directory: $(pwd)"
-  exit 1
-fi
-
 # === ステップ 1: 公開鍵を取得（初回または更新） ===
 echo "🔑 Fetching K3s sealed-secrets public key from k3s-1..."
 
@@ -115,10 +107,7 @@ if [ ! -f "$ENV_FILE" ]; then
 fi
 
 # === ステップ 3: Sealed Secret を作成 ===
-SEALED_FILE="argocd-apps/secrets/${SECRET_NAME}.enc.yaml"
-
-# ディレクトリがなければ作成
-mkdir -p argocd-apps/secrets
+SEALED_FILE="${SECRET_NAME}.enc.yaml"
 
 echo "📦 Creating sealed secret from $ENV_FILE..."
 echo "   Secret Name: $SECRET_NAME"
