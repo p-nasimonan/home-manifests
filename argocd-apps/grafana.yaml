@@ -17,6 +17,10 @@ spec:
       helm:
         releaseName: grafana
         valuesObject:
+          admin:
+            existingSecret: grafana-secrets
+            userKey: ADMIN_USER
+            passwordKey: ADMIN_PASSWORD
           persistence:
             enabled: true
             size: 10Gi
