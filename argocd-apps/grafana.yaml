@@ -6,10 +6,6 @@ metadata:
 spec:
   project: default
   sources:
-    # Sealed Secret の管理
-    - repoURL: https://github.com/p-nasimonan/home-manifests.git
-      targetRevision: main
-      path: argocd-apps/secrets
     # Helm chart の管理
     - repoURL: https://grafana.github.io/helm-charts
       chart: grafana
