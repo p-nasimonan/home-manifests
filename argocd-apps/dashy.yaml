@@ -1,0 +1,155 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dashy
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    # Sealed Secret の管理
+    - repoURL: https://github.com/p-nasimonan/home-manifests.git
+      targetRevision: main
+      path: apps/dashy
+    # Helm chart の管理
+    - repoURL: https://lissy93.github.io/helm-charts
+      chart: dashy
+      targetRevision: 2.1.1
+      helm:
+        releaseName: dashy
+        valuesObject:
+          replicaCount: 1
+          
+          # イメージ設定
+          image:
+            repository: lissy93/dashy
+            tag: latest
+            pullPolicy: IfNotPresent
+          
+          # サービス設定
+          service:
+            type: ClusterIP
+            port: 80
+            targetPort: 8080
+          
+          # Ingress 設定
+          ingress:
+            enabled: true
+            className: cloudflare
+            hosts:
+              - host: dashy.youkan.uk
+                paths:
+                  - path: /
+                    pathType: Prefix
+          
+          # リソース制限
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          
+          # 環境変数
+          env:
+            - name: LOG_LEVEL
+              value: info
+          
+          # ConfigMap で config.yml を管理
+          config:
+            # アプリケーション設定
+            appConfig:
+              title: Home Dashboard
+              language: ja
+              theme: nord
+              cssOverrides: ""
+              allowConfigEdit: true
+              showFooter: true
+            
+            # セクション定義
+            sections:
+              - name: 家庭サーバー
+                items:
+                  - title: Grafana
+                    description: メトリクス・ダッシュボード
+                    url: https://grafana.youkan.uk
+                    icon: shi-analytics
+                  - title: Misskey
+                    description: フェデレーション型SNS
+                    url: https://mi.youkan.uk
+                    icon: sh-share-nodes
+                  - title: Minecraft
+                    description: マルチプレイサーバー
+                    url: https://mc.youkan.uk
+                    icon: sh-cube
+              
+              - name: 管理ツール
+                items:
+                  - title: ArgoCD
+                    description: GitOps デプロイメント
+                    url: https://argocd.youkan.uk
+                    icon: si-argocd
+                  - title: Rancher
+                    description: Kubernetes マネージャー
+                    url: https://rancher.youkan.uk
+                    icon: si-kubernetes
+              
+              - name: インフラストラクチャ
+                items:
+                  - title: TrueNAS
+                    description: ストレージ管理
+                    url: https://truenas.youkan.uk
+                    icon: sh-database
+                  - title: MinIO
+                    description: オブジェクトストレージ
+                    url: http://minio.youkan.uk
+                    icon: sh-database
+                  - title: S3
+                    description: S3 API
+                    url: http://s3.youkan.uk
+                    icon: sh-database
+                  - title: File Browser
+                    description: ファイルマネージャー
+                    url: http://file-browser.youkan.uk
+                    icon: sh-folder-open
+              
+              - name: ホームオートメーション
+                items:
+                  - title: Home Assistant
+                    description: ホームオートメーション
+                    url: http://ha.youkan.uk
+                    icon: sh-home
+              
+              - name: 物理サーバー
+                items:
+                  - title: Mochi (Proxmox)
+                    description: ハイパーバイザー
+                    url: https://mochi.youkan.uk
+                    icon: sh-server
+                  - title: Aduki (Proxmox)
+                    description: ハイパーバイザー
+                    url: https://aduki.youkan.uk
+                    icon: sh-server
+                  - title: Anko (Proxmox)
+                    description: ハイパーバイザー
+                    url: https://anko.youkan.uk
+                    icon: sh-server
+                  - title: Monaka (Proxmox)
+                    description: ハイパーバイザー
+                    url: https://monaka.youkan.uk
+                    icon: sh-server
+                  - title: iLO (Anko)
+                    description: サーバーコンソール
+                    url: https://ilo.youkan.uk
+                    icon: sh-terminal
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: dashy
+  
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
