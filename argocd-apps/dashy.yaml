@@ -49,14 +49,16 @@ spec:
               memory: "1Gi"
               cpu: "1000m"
           
-          # ストレージ
-          persistence:
-            enabled: true
-            storageClassName: nfs-client
-            accessModes:
-              - ReadWriteOnce
-            size: 5Gi
-            mountPath: /app/user-data
+          # ボリューム定義
+          volumes:
+            - name: user-data
+              persistentVolumeClaim:
+                claimName: dashy-data
+          
+          # ボリュームマウント
+          volumeMounts:
+            - name: user-data
+              mountPath: /app/user-data
           
           # 環境変数
           env:
