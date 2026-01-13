@@ -6,11 +6,34 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/p-nasimonan/home-manifests.git
-    targetRevision: main
-    path: apps/grafana
+    repoURL: https://grafana.github.io/helm-charts
+    chart: grafana
+    targetRevision: 10.5.5
     helm:
       releaseName: grafana
+      valuesObject:
+        persistence:
+          enabled: true
+          size: 10Gi
+          storageClassName: nfs-client
+        envFromSecret: grafana-secrets
+        datasources:
+          datasources.yaml:
+            apiVersion: 1
+            datasources:
+            - name: InfluxDB
+              type: influxdb
+              url: http://192.168.0.31:8086
+              database: homeassistant
+              user: homeassistant
+              secureJsonData:
+                password: $__env{INFLUXDB_PASSWORD}
+              isDefault: true
+        ingress:
+          enabled: true
+          ingressClassName: cloudflare
+          hosts:
+            - grafana.youkan.uk
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
