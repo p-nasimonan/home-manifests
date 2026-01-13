@@ -11,9 +11,9 @@ spec:
       targetRevision: main
       path: apps/dashy
     # Helm chart の管理
-    - repoURL: https://lissy93.github.io/helm-charts
+    - repoURL: https://vyrtualsynthese.github.io/selfhosted-helmcharts/
       chart: dashy
-      targetRevision: 2.1.1
+      targetRevision: "1.0.0"
       helm:
         releaseName: dashy
         valuesObject:
