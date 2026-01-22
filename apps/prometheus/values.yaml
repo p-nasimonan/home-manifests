@@ -61,6 +61,12 @@ kube-prometheus-stack:
         memory: 128Mi
       limits:
         memory: 512Mi
+    admissionWebhooks:
+      enabled: false 
+      patch:
+        enabled: false
+    tls:
+      enabled: false
 
   ## Node Exporter configuration
   nodeExporter:
