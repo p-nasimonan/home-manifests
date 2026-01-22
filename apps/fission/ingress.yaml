@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: fission-router
+  namespace: fission
+  annotations:
+    # Cloudflare Tunnel annotations
+    external-dns.alpha.kubernetes.io/hostname: fission.youkan.uk
+spec:
+  ingressClassName: cloudflare
+  rules:
+    - host: fission.youkan.uk
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: router
+                port:
+                  number: 80
