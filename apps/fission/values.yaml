@@ -198,18 +198,17 @@ fission-all:
     enabled: true
     namespace: "monitoring"
     additionalServiceMonitorLabels:
-      release: grafana
+      release: prometheus
 
   podMonitor:
     enabled: true
     namespace: "monitoring"
     additionalPodMonitorLabels:
-      release: grafana
+      release: prometheus
 
   ## Persist data to a persistent volume.
   persistence:
     enabled: true
-    # storageType: local
     storageClass: "nfs-client"
     accessMode: ReadWriteOnce
     size: 8Gi

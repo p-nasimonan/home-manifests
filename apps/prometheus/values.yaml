@@ -1,0 +1,100 @@
+kube-prometheus-stack:
+  ## Disable the built-in Grafana since we already have one deployed
+  grafana:
+    enabled: false
+
+  ## Prometheus configuration
+  prometheus:
+    prometheusSpec:
+      ## Retention period for Prometheus data
+      retention: 30d
+      
+      ## Storage configuration using NFS
+      storageSpec:
+        volumeClaimTemplate:
+          spec:
+            storageClassName: nfs-client
+            accessModes: ["ReadWriteOnce"]
+            resources:
+              requests:
+                storage: 50Gi
+      
+      ## Enable ServiceMonitor discovery across all namespaces
+      serviceMonitorSelectorNilUsesHelmValues: false
+      podMonitorSelectorNilUsesHelmValues: false
+      ruleSelectorNilUsesHelmValues: false
+      
+      ## Resource limits
+      resources:
+        requests:
+          cpu: 200m
+          memory: 512Mi
+        limits:
+          memory: 2Gi
+
+  ## Alertmanager configuration
+  alertmanager:
+    alertmanagerSpec:
+      ## Storage configuration using NFS
+      storage:
+        volumeClaimTemplate:
+          spec:
+            storageClassName: nfs-client
+            accessModes: ["ReadWriteOnce"]
+            resources:
+              requests:
+                storage: 10Gi
+      
+      ## Resource limits
+      resources:
+        requests:
+          cpu: 100m
+          memory: 128Mi
+        limits:
+          memory: 512Mi
+
+  ## Prometheus Operator configuration
+  prometheusOperator:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        memory: 512Mi
+
+  ## Node Exporter configuration
+  nodeExporter:
+    enabled: true
+
+  ## Kube State Metrics configuration
+  kubeStateMetrics:
+    enabled: true
+
+  ## Default rules for monitoring Kubernetes components
+  defaultRules:
+    create: true
+    rules:
+      alertmanager: true
+      etcd: true
+      configReloaders: true
+      general: true
+      k8s: true
+      kubeApiserverAvailability: true
+      kubeApiserverSlos: true
+      kubelet: true
+      kubeProxy: true
+      kubePrometheusGeneral: true
+      kubePrometheusNodeRecording: true
+      kubernetesApps: true
+      kubernetesResources: true
+      kubernetesStorage: true
+      kubernetesSystem: true
+      kubeSchedulerAlerting: true
+      kubeSchedulerRecording: true
+      kubeStateMetrics: true
+      network: true
+      node: true
+      nodeExporterAlerting: true
+      nodeExporterRecording: true
+      prometheus: true
+      prometheusOperator: true

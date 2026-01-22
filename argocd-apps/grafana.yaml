@@ -30,6 +30,13 @@ spec:
             datasources.yaml:
               apiVersion: 1
               datasources:
+              - name: Prometheus
+                type: prometheus
+                url: http://prometheus-kube-prometheus-prometheus.monitoring.svc:9090
+                access: proxy
+                isDefault: true
+                jsonData:
+                  timeInterval: 30s
               - name: InfluxDB
                 type: influxdb
                 url: http://192.168.0.31:8086
@@ -37,7 +44,7 @@ spec:
                 user: homeassistant
                 secureJsonData:
                   password: $__env{INFLUXDB_PASSWORD}
-                isDefault: true
+                isDefault: false
           ingress:
             enabled: true
             ingressClassName: cloudflare
