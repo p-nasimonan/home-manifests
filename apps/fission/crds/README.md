@@ -1,1 +1,1 @@
-crdたちは手動でfisionを入れる前にapplyしておく
+Server-Side Applyを有効にし、crdsはArgoCDでsyncしましょう
