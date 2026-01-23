@@ -1,0 +1,1 @@
+crdたちは手動でfisionを入れる前にapplyしておく
