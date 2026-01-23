@@ -3,14 +3,12 @@ kind: Kustomization
 
 namespace: fission
 
+resources:
+  - ingress.yaml
+
 helmCharts:
   - name: fission-all
     repo: https://fission.github.io/fission-charts/
     version: v1.22.0
     releaseName: fission
-    namespace: fission
     valuesFile: values.yaml
-    includeCRDs: false
-
-resources:
-  - ingress.yaml
