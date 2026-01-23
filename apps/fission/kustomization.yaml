@@ -12,3 +12,4 @@ helmCharts:
     version: v1.22.0
     releaseName: fission
     valuesFile: values.yaml
+    includeCRDs: false
