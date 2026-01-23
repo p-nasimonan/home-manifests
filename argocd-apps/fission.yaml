@@ -13,8 +13,6 @@ spec:
     repoURL: https://github.com/p-nasimonan/home-manifests.git
     targetRevision: main
     path: apps/fission
-    helm:
-      skipCrds: true
   destination:
     server: https://kubernetes.default.svc
     namespace: fission
