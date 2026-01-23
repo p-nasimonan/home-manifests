@@ -74,7 +74,13 @@ fission-all:
     terminationMessagePolicy: ""
     adoptExistingResources: false
     podReadyTimeout: 300s
-    resources: {}
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
     securityContext:
       enabled: true
       runAsNonRoot: true
@@ -107,7 +113,13 @@ fission-all:
       timeout: 50ms
       timeoutExponent: 2
       maxRetries: 10
-    resources: {}
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
     securityContext:
       enabled: true
       runAsNonRoot: true
@@ -117,7 +129,13 @@ fission-all:
 
   ## The builder manager watches the package & environments CRD changes and manages the builds of function source code.
   buildermgr:
-    resources: {}
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
     securityContext:
       enabled: true
       runAsNonRoot: true
@@ -127,7 +145,13 @@ fission-all:
 
   ## webhook is the component that validates API calls.
   webhook:
-    resources: {}
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
     certManager:
       enabled: false
     caBundlePEM: |
@@ -145,7 +169,13 @@ fission-all:
 
   ## kubewatcher watches the Kubernetes API and invokes functions associated with watches, sending the watch event to the function.
   kubewatcher:
-    resources: {}
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
     securityContext:
       enabled: true
       runAsNonRoot: true
@@ -155,7 +185,13 @@ fission-all:
 
   ## The storage service is the home for all archives of packages with sizes larger than 256KB.
   storagesvc:
-    resources: {}
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
     deploymentStrategy:
       type: RollingUpdate
       rollingUpdate:
@@ -174,7 +210,13 @@ fission-all:
   ## The timer works like kubernetes CronJob but instead of creating a pod to do the task
   ## It sends a request to router to invoke the function.
   timer:
-    resources: {}
+    resources:
+      requests:
+        cpu: 25m
+        memory: 32Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
     securityContext:
       enabled: true
       runAsNonRoot: true
