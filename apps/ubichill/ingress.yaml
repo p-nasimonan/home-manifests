@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ubichill
+  namespace: ubichill
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: ubichill.nasimonan.com
+spec:
+  ingressClassName: cloudflare
+  rules:
+    - host: ubichill.nasimonan.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ubichill-backend
+                port:
+                  number: 3001
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ubichill-frontend
+                port:
+                  number: 3000
