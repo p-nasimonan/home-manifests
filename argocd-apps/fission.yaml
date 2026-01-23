@@ -13,8 +13,6 @@ spec:
     repoURL: https://github.com/p-nasimonan/home-manifests.git
     targetRevision: main
     path: apps/fission
-    kustomize:
-      buildOptions: --enable-helm
   destination:
     server: https://kubernetes.default.svc
     namespace: fission
@@ -24,4 +22,3 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-      - ServerSideApply=true
