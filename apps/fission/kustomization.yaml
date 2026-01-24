@@ -5,6 +5,7 @@ namespace: fission
 
 resources:
   - ingress.yaml
+  - rbac-preupgrade.yaml
 
 helmCharts:
   - name: fission-all

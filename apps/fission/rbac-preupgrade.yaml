@@ -1,0 +1,26 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: fission-preupgrade-checker
+rules:
+  # Pre-upgrade checks need to list and get CRDs
+  - apiGroups: ["apiextensions.k8s.io"]
+    resources: ["customresourcedefinitions"]
+    verbs: ["get", "list"]
+  # Pre-upgrade checks need to verify function spec references
+  - apiGroups: ["fission.io"]
+    resources: ["functions", "environments", "packages", "httptriggers", "timetriggers", "messagequeuetriggers", "kuberneteswatchtriggers", "canaryconfigs"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: fission-preupgrade-checker
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: fission-preupgrade-checker
+subjects:
+  - kind: ServiceAccount
+    name: fission-preupgrade
+    namespace: fission
