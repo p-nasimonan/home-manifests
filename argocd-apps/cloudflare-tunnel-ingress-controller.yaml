@@ -14,7 +14,7 @@ spec:
       path: apps/cloudflare
     - repoURL: https://helm.strrl.dev
       chart: cloudflare-tunnel-ingress-controller
-      targetRevision: 0.0.12
+      targetRevision: "*"  # 常に最新版を使用
       helm:
         valuesObject:
           cloudflare:
