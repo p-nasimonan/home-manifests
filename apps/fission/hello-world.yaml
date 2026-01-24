@@ -1,0 +1,68 @@
+# Fission Hello World Example
+# Apply this file to deploy a NodeJS environment, a simple function, and an HTTP trigger.
+
+apiVersion: fission.io/v1
+kind: Environment
+metadata:
+  name: nodejs
+  namespace: fission
+spec:
+  version: 2
+  runtime:
+    image: ghcr.io/fission/node-env
+    poolsize: 3
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+---
+apiVersion: fission.io/v1
+kind: Package
+metadata:
+  name: hello-pkg
+  namespace: fission
+spec:
+  environment:
+    name: nodejs
+    namespace: fission
+  source:
+    type: literal
+    literal: |
+      module.exports = async function(context) {
+          return {
+              status: 200,
+              body: "Hello, Fission! This is running on Kubernetes.\n"
+          };
+      }
+---
+apiVersion: fission.io/v1
+kind: Function
+metadata:
+  name: hello
+  namespace: fission
+spec:
+  environment:
+    name: nodejs
+    namespace: fission
+  package:
+    packageref:
+      name: hello-pkg
+      namespace: fission
+---
+apiVersion: fission.io/v1
+kind: HTTPTrigger
+metadata:
+  name: hello
+  namespace: fission
+spec:
+  host: fission.youkan.uk
+  relativeurl: /hello
+  function:
+    name: hello
+    namespace: fission
+  methods:
+    - GET
+  createingress: false
