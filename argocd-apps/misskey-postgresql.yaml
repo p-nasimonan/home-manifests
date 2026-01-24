@@ -29,6 +29,12 @@ spec:
           persistence:
             enabled: true
             size: 20Gi
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              memory: 2Gi
         fullnameOverride: misskey-postgresql
   destination:
     server: https://kubernetes.default.svc

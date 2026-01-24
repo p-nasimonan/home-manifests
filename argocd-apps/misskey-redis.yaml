@@ -12,7 +12,6 @@ spec:
     helm:
       valuesObject:
         architecture: standalone
-        fullnameOverride: misskey-redis
         global:
           storageClass: nfs-client
           security:
@@ -29,6 +28,13 @@ spec:
             enabled: true
             size: 5Gi
             storageClass: nfs-client
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              memory: 512Mi
+          fullnameOverride: misskey-redis
   destination:
     server: https://kubernetes.default.svc
     namespace: misskey
