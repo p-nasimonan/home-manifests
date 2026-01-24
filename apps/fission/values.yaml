@@ -1,384 +1,383 @@
-fission-all:
-  # Fission chart configuration
-  
-  ## serviceType to consider while creating Fission webhook service.
-  ## For minikube/kind, set this to NodePort, elsewhere use LoadBalancer or ClusterIP.
-  serviceType: ClusterIP
+# Fission chart configuration
 
-  ## routerServiceType to consider while creating Fission Router service.
-  ## For minikube, set this to NodePort, elsewhere use LoadBalancer or ClusterIP.
-  routerServiceType: ClusterIP
+## serviceType to consider while creating Fission webhook service.
+## For minikube/kind, set this to NodePort, elsewhere use LoadBalancer or ClusterIP.
+serviceType: ClusterIP
 
-  ## repository represents base repository for images used in the chart.
-  repository: ghcr.io
+## routerServiceType to consider while creating Fission Router service.
+## For minikube, set this to NodePort, elsewhere use LoadBalancer or ClusterIP.
+routerServiceType: ClusterIP
 
-  ## image represents the base image fission-bundle used by multiple Fission components.
-  image: fission/fission-bundle
+## repository represents base repository for images used in the chart.
+repository: ghcr.io
 
-  ## imageTag represents the tag of the base image fission-bundle used by multiple Fission components.
+## image represents the base image fission-bundle used by multiple Fission components.
+image: fission/fission-bundle
+
+## imageTag represents the tag of the base image fission-bundle used by multiple Fission components.
+imageTag: v1.22.0
+
+## pullPolicy represents the pull policy to use for images in the chart.
+pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+
+priorityClassName: ""
+
+terminationMessagePath: /dev/termination-log
+
+terminationMessagePolicy: File
+
+## routerPort represents the port at which the Fission Router service should be exposed.
+routerPort: 31314
+
+## defaultNamespace represents the namespace in which Fission custom resources will be created by the Fission user.
+defaultNamespace: default
+
+builderNamespace: ""
+
+functionNamespace: ""
+
+additionalFissionNamespaces: []
+
+## createNamespace decides to create namespaces by the chart.
+createNamespace: true
+
+## disableOwnerReference decides to set OwnerReference to K8s resources like deployment, services, hpa etc. created by Fission.
+disableOwnerReference: false
+
+## enableIstio indicates whether to enable istio integration.
+enableIstio: false
+
+## Kubernetes client QPS and Burst settings
+kubernetesClientQPS: 200
+kubernetesClientBurst: 500
+
+## fetcher is a light weight component that helps in running functions.
+fetcher:
+  repository: ""
+  image: fission/fetcher
+  imageTag: v1.22.0
+  resource:
+    cpu:
+      requests: "10m"
+      limits: ""
+    mem:
+      requests: "16Mi"
+      limits: ""
+
+## executor is responsible for providing resources to your functions.
+executor:
+  priorityClassName: ""
+  terminationMessagePath: ""
+  terminationMessagePolicy: ""
+  adoptExistingResources: false
+  podReadyTimeout: 300s
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  securityContext:
+    enabled: true
+    runAsNonRoot: true
+    fsGroup: 10001
+    runAsUser: 10001
+    runAsGroup: 10001
+  objectReaperInterval: 5
+  poolmgr: {}
+  newdeploy: {}
+  container: {}
+  serviceAccountCheck:
+    enabled: true
+    interval: 0
+
+## router is responsible for routing function calls to the appropriate function.
+router:
+  priorityClassName: ""
+  terminationMessagePath: ""
+  terminationMessagePolicy: ""
+  deployAsDaemonSet: false
+  replicas: 1
+  svcAddressMaxRetries: 5
+  svcAddressUpdateTimeout: 30s
+  unTapServiceTimeout: 3600s
+  displayAccessLog: false
+  useEncodedPath: false
+  roundTrip:
+    disableKeepAlive: false
+    keepAliveTime: 30s
+    timeout: 50ms
+    timeoutExponent: 2
+    maxRetries: 10
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+  securityContext:
+    enabled: true
+    runAsNonRoot: true
+    fsGroup: 10001
+    runAsUser: 10001
+    runAsGroup: 10001
+
+## The builder manager watches the package & environments CRD changes and manages the builds of function source code.
+buildermgr:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+  securityContext:
+    enabled: true
+    runAsNonRoot: true
+    fsGroup: 10001
+    runAsUser: 10001
+    runAsGroup: 10001
+
+## webhook is the component that validates API calls.
+webhook:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+  certManager:
+    enabled: false
+  caBundlePEM: |
+
+  crtPEM: |
+
+  keyPEM: |
+
+  securityContext:
+    enabled: true
+    runAsNonRoot: true
+    fsGroup: 10001
+    runAsUser: 10001
+    runAsGroup: 10001
+
+## kubewatcher watches the Kubernetes API and invokes functions associated with watches, sending the watch event to the function.
+kubewatcher:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+  securityContext:
+    enabled: true
+    runAsNonRoot: true
+    fsGroup: 10001
+    runAsUser: 10001
+    runAsGroup: 10001
+
+## The storage service is the home for all archives of packages with sizes larger than 256KB.
+storagesvc:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+  deploymentStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  archivePruner:
+    enabled: true
+    interval: 60
+  securityContext:
+    enabled: true
+    runAsNonRoot: true
+    fsGroup: 10001
+    runAsUser: 10001
+    runAsGroup: 10001
+
+## The timer works like kubernetes CronJob but instead of creating a pod to do the task
+## It sends a request to router to invoke the function.
+timer:
+  resources:
+    requests:
+      cpu: 25m
+      memory: 32Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
+  securityContext:
+    enabled: true
+    runAsNonRoot: true
+    fsGroup: 10001
+    runAsUser: 10001
+    runAsGroup: 10001
+
+## Kafka: enable and configure the details
+kafka:
+  enabled: false
+  brokers: "broker.kafka:9092"
+  authentication:
+    tls:
+      enabled: false
+      insecureSkipVerify: false
+      caCert: ""
+      userCert: ""
+      userKey: ""
+
+serviceMonitor:
+  enabled: true
+  namespace: "monitoring"
+  additionalServiceMonitorLabels:
+    release: prometheus
+
+podMonitor:
+  enabled: true
+  namespace: "monitoring"
+  additionalPodMonitorLabels:
+    release: prometheus
+
+## Persist data to a persistent volume.
+persistence:
+  enabled: true
+  storageClass: "nfs-client"
+  accessMode: ReadWriteOnce
+  size: 8Gi
+
+## Analytics let us count how many people installed fission. Set to
+## false to disable analytics.
+analytics: true
+
+analyticsNonHelmInstall: false
+
+gaTrackingID: UA-196546703-1
+
+## Logger config
+logger:
+  influxdbAdmin: "admin"
+  fluentdImageRepository: index.docker.io
+  fluentdImage: fluent/fluent-bit
+  fluentdImageTag: 1.8.8
+  securityContext: {}
+  podSecurityPolicy:
+    enabled: false
+    additionalCapabilities: []
+
+## Enable InfluxDB
+influxdb:
+  enabled: false
+  image: influxdb:1.8
+
+busyboxImage: busybox
+
+preUpgradeChecks:
+  enabled: true
+  repository: ""
+  image: fission/pre-upgrade-checks
   imageTag: v1.22.0
 
-  ## pullPolicy represents the pull policy to use for images in the chart.
-  pullPolicy: IfNotPresent
+postInstallReportImage: fission/reporter
 
-  imagePullSecrets: []
+debugEnv: false
 
-  priorityClassName: ""
+## Prometheus related configuration to query metrics
+prometheus:
+  serviceEndpoint: ""
 
-  terminationMessagePath: /dev/termination-log
-
-  terminationMessagePolicy: File
-
-  ## routerPort represents the port at which the Fission Router service should be exposed.
-  routerPort: 31314
-
-  ## defaultNamespace represents the namespace in which Fission custom resources will be created by the Fission user.
-  defaultNamespace: default
-
-  builderNamespace: ""
-
-  functionNamespace: ""
-
-  additionalFissionNamespaces: []
-
-  ## createNamespace decides to create namespaces by the chart.
-  createNamespace: true
-
-  ## disableOwnerReference decides to set OwnerReference to K8s resources like deployment, services, hpa etc. created by Fission.
-  disableOwnerReference: false
-
-  ## enableIstio indicates whether to enable istio integration.
-  enableIstio: false
-
-  ## Kubernetes client QPS and Burst settings
-  kubernetesClientQPS: 200
-  kubernetesClientBurst: 500
-
-  ## fetcher is a light weight component that helps in running functions.
-  fetcher:
-    repository: ""
-    image: fission/fetcher
-    imageTag: v1.22.0
-    resource:
-      cpu:
-        requests: "10m"
-        limits: ""
-      mem:
-        requests: "16Mi"
-        limits: ""
-
-  ## executor is responsible for providing resources to your functions.
-  executor:
-    priorityClassName: ""
-    terminationMessagePath: ""
-    terminationMessagePolicy: ""
-    adoptExistingResources: false
-    podReadyTimeout: 300s
-    resources:
-      requests:
-        cpu: 100m
-        memory: 128Mi
-      limits:
-        cpu: 500m
-        memory: 512Mi
-    securityContext:
-      enabled: true
-      runAsNonRoot: true
-      fsGroup: 10001
-      runAsUser: 10001
-      runAsGroup: 10001
-    objectReaperInterval: 5
-    poolmgr: {}
-    newdeploy: {}
-    container: {}
-    serviceAccountCheck:
-      enabled: true
-      interval: 0
-
-  ## router is responsible for routing function calls to the appropriate function.
-  router:
-    priorityClassName: ""
-    terminationMessagePath: ""
-    terminationMessagePolicy: ""
-    deployAsDaemonSet: false
-    replicas: 1
-    svcAddressMaxRetries: 5
-    svcAddressUpdateTimeout: 30s
-    unTapServiceTimeout: 3600s
-    displayAccessLog: false
-    useEncodedPath: false
-    roundTrip:
-      disableKeepAlive: false
-      keepAliveTime: 30s
-      timeout: 50ms
-      timeoutExponent: 2
-      maxRetries: 10
-    resources:
-      requests:
-        cpu: 50m
-        memory: 64Mi
-      limits:
-        cpu: 200m
-        memory: 256Mi
-    securityContext:
-      enabled: true
-      runAsNonRoot: true
-      fsGroup: 10001
-      runAsUser: 10001
-      runAsGroup: 10001
-
-  ## The builder manager watches the package & environments CRD changes and manages the builds of function source code.
-  buildermgr:
-    resources:
-      requests:
-        cpu: 50m
-        memory: 64Mi
-      limits:
-        cpu: 200m
-        memory: 256Mi
-    securityContext:
-      enabled: true
-      runAsNonRoot: true
-      fsGroup: 10001
-      runAsUser: 10001
-      runAsGroup: 10001
-
-  ## webhook is the component that validates API calls.
-  webhook:
-    resources:
-      requests:
-        cpu: 50m
-        memory: 64Mi
-      limits:
-        cpu: 200m
-        memory: 256Mi
-    certManager:
-      enabled: false
-    caBundlePEM: |
-
-    crtPEM: |
-
-    keyPEM: |
-
-    securityContext:
-      enabled: true
-      runAsNonRoot: true
-      fsGroup: 10001
-      runAsUser: 10001
-      runAsGroup: 10001
-
-  ## kubewatcher watches the Kubernetes API and invokes functions associated with watches, sending the watch event to the function.
-  kubewatcher:
-    resources:
-      requests:
-        cpu: 50m
-        memory: 64Mi
-      limits:
-        cpu: 200m
-        memory: 256Mi
-    securityContext:
-      enabled: true
-      runAsNonRoot: true
-      fsGroup: 10001
-      runAsUser: 10001
-      runAsGroup: 10001
-
-  ## The storage service is the home for all archives of packages with sizes larger than 256KB.
-  storagesvc:
-    resources:
-      requests:
-        cpu: 50m
-        memory: 64Mi
-      limits:
-        cpu: 200m
-        memory: 256Mi
-    deploymentStrategy:
-      type: RollingUpdate
-      rollingUpdate:
-        maxSurge: 25%
-        maxUnavailable: 25%
-    archivePruner:
-      enabled: true
-      interval: 60
-    securityContext:
-      enabled: true
-      runAsNonRoot: true
-      fsGroup: 10001
-      runAsUser: 10001
-      runAsGroup: 10001
-
-  ## The timer works like kubernetes CronJob but instead of creating a pod to do the task
-  ## It sends a request to router to invoke the function.
-  timer:
-    resources:
-      requests:
-        cpu: 25m
-        memory: 32Mi
-      limits:
-        cpu: 100m
-        memory: 128Mi
-    securityContext:
-      enabled: true
-      runAsNonRoot: true
-      fsGroup: 10001
-      runAsUser: 10001
-      runAsGroup: 10001
-
-  ## Kafka: enable and configure the details
-  kafka:
-    enabled: false
-    brokers: "broker.kafka:9092"
-    authentication:
-      tls:
-        enabled: false
-        insecureSkipVerify: false
-        caCert: ""
-        userCert: ""
-        userKey: ""
-
-  serviceMonitor:
+canaryDeployment:
+  enabled: false
+  resources: {}
+  securityContext:
     enabled: true
-    namespace: "monitoring"
-    additionalServiceMonitorLabels:
-      release: prometheus
+    runAsNonRoot: true
+    fsGroup: 10001
+    runAsUser: 10001
+    runAsGroup: 10001
 
-  podMonitor:
-    enabled: true
-    namespace: "monitoring"
-    additionalPodMonitorLabels:
-      release: prometheus
+## Enable authentication for fission function invocation via Fission router
+authentication:
+  enabled: false
+  authUriPath: ""
+  authUsername: admin
+  jwtSigningKey: ""
+  jwtExpiryTime: ""
+  jwtIssuer: fission
 
-  ## Persist data to a persistent volume.
-  persistence:
-    enabled: true
-    storageClass: "nfs-client"
-    accessMode: ReadWriteOnce
-    size: 8Gi
+## OpenTelemetry configuration
+openTelemetry:
+  otlpCollectorEndpoint: ""
+  otlpInsecure: true
+  otlpHeaders: ""
+  tracesSampler: "parentbased_traceidratio"
+  tracesSamplingRate: "0.1"
+  propagators: "tracecontext,baggage"
 
-  ## Analytics let us count how many people installed fission. Set to
-  ## false to disable analytics.
-  analytics: true
+## Message Queue Trigger Kind, KEDA: enable and configuration
+mqt_keda:
+  enabled: true
+  connector_images:
+    kafka:
+      image: ghcr.io/fission/keda-kafka-http-connector
+      tag: v0.17
+    rabbitmq:
+      image: ghcr.io/fission/keda-rabbitmq-http-connector
+      tag: v0.15
+    awskinesis:
+      image: ghcr.io/fission/keda-aws-kinesis-http-connector
+      tag: v0.15
+    aws_sqs:
+      image: ghcr.io/fission/keda-aws-sqs-http-connector
+      tag: v0.16
+    nats_steaming:
+      image: ghcr.io/fission/keda-nats-streaming-http-connector
+      tag: v0.18
+    nats_jetstream:
+      image: ghcr.io/fission/keda-nats-jetstream-http-connector
+      tag: v0.9
+    gcp_pubsub:
+      image: ghcr.io/fission/keda-gcp-pubsub-http-connector
+      tag: v0.11
+    redis:
+      image: ghcr.io/fission/keda-redis-http-connector
+      tag: v0.8
+  resources: {}
 
-  analyticsNonHelmInstall: false
+## Enable Pprof based profiling used mostly by Fission developers
+pprof:
+  enabled: false
 
-  gaTrackingID: UA-196546703-1
-
-  ## Logger config
-  logger:
-    influxdbAdmin: "admin"
-    fluentdImageRepository: index.docker.io
-    fluentdImage: fluent/fluent-bit
-    fluentdImageTag: 1.8.8
-    securityContext: {}
-    podSecurityPolicy:
-      enabled: false
-      additionalCapabilities: []
-
-  ## Enable InfluxDB
-  influxdb:
-    enabled: false
-    image: influxdb:1.8
-
-  busyboxImage: busybox
-
-  preUpgradeChecks:
-    enabled: true
-    repository: ""
-    image: fission/pre-upgrade-checks
-    imageTag: v1.22.0
-
-  postInstallReportImage: fission/reporter
-
-  debugEnv: false
-
-  ## Prometheus related configuration to query metrics
-  prometheus:
-    serviceEndpoint: ""
-
-  canaryDeployment:
-    enabled: false
-    resources: {}
+## Enable runtimePodSpec and add spec to your poolmgr or newdeploy pods
+runtimePodSpec:
+  enabled: false
+  podSpec:
     securityContext:
-      enabled: true
-      runAsNonRoot: true
       fsGroup: 10001
-      runAsUser: 10001
       runAsGroup: 10001
+      runAsNonRoot: true
+      runAsUser: 10001
 
-  ## Enable authentication for fission function invocation via Fission router
-  authentication:
-    enabled: false
-    authUriPath: ""
-    authUsername: admin
-    jwtSigningKey: ""
-    jwtExpiryTime: ""
-    jwtIssuer: fission
+## Enable builderPodSpec and add spec to your env builder pods
+builderPodSpec:
+  enabled: false
+  podSpec:
+    securityContext:
+      fsGroup: 10001
+      runAsGroup: 10001
+      runAsNonRoot: true
+      runAsUser: 10001
 
-  ## OpenTelemetry configuration
-  openTelemetry:
-    otlpCollectorEndpoint: ""
-    otlpInsecure: true
-    otlpHeaders: ""
-    tracesSampler: "parentbased_traceidratio"
-    tracesSamplingRate: "0.1"
-    propagators: "tracecontext,baggage"
-
-  ## Message Queue Trigger Kind, KEDA: enable and configuration
-  mqt_keda:
-    enabled: true
-    connector_images:
-      kafka:
-        image: ghcr.io/fission/keda-kafka-http-connector
-        tag: v0.17
-      rabbitmq:
-        image: ghcr.io/fission/keda-rabbitmq-http-connector
-        tag: v0.15
-      awskinesis:
-        image: ghcr.io/fission/keda-aws-kinesis-http-connector
-        tag: v0.15
-      aws_sqs:
-        image: ghcr.io/fission/keda-aws-sqs-http-connector
-        tag: v0.16
-      nats_steaming:
-        image: ghcr.io/fission/keda-nats-streaming-http-connector
-        tag: v0.18
-      nats_jetstream:
-        image: ghcr.io/fission/keda-nats-jetstream-http-connector
-        tag: v0.9
-      gcp_pubsub:
-        image: ghcr.io/fission/keda-gcp-pubsub-http-connector
-        tag: v0.11
-      redis:
-        image: ghcr.io/fission/keda-redis-http-connector
-        tag: v0.8
-    resources: {}
-
-  ## Enable Pprof based profiling used mostly by Fission developers
-  pprof:
-    enabled: false
-
-  ## Enable runtimePodSpec and add spec to your poolmgr or newdeploy pods
-  runtimePodSpec:
-    enabled: false
-    podSpec:
-      securityContext:
-        fsGroup: 10001
-        runAsGroup: 10001
-        runAsNonRoot: true
-        runAsUser: 10001
-
-  ## Enable builderPodSpec and add spec to your env builder pods
-  builderPodSpec:
-    enabled: false
-    podSpec:
-      securityContext:
-        fsGroup: 10001
-        runAsGroup: 10001
-        runAsNonRoot: true
-        runAsUser: 10001
-
-  ## Enable Grafana Dashboard configmaps for auto dashboard provisioning
-  grafana:
-    namespace: monitoring
-    dashboards:
-      enable: true
+## Enable Grafana Dashboard configmaps for auto dashboard provisioning
+grafana:
+  namespace: monitoring
+  dashboards:
+    enable: true
