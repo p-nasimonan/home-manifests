@@ -3,6 +3,10 @@ kind: Application
 metadata:
   name: ubichill
   namespace: argocd
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: backend=ghcr.io/ubichill/ubichill-backend,frontend=ghcr.io/ubichill/ubichill-frontend
+    argocd-image-updater.argoproj.io/backend.update-strategy: latest
+    argocd-image-updater.argoproj.io/frontend.update-strategy: latest
 spec:
   project: default
   source:
