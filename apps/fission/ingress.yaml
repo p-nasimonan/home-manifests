@@ -12,7 +12,7 @@ spec:
     - host: fission.youkan.uk
       http:
         paths:
-          - path: /
+          - path: /api
             pathType: Prefix
             backend:
               service:
