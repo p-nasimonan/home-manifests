@@ -4,6 +4,7 @@ metadata:
   name: ubichill
   namespace: argocd
   annotations:
+    argocd.argoproj.io/sync-wave: "0"
     argocd-image-updater.argoproj.io/image-list: backend=ghcr.io/ubichill/ubichill-backend,frontend=ghcr.io/ubichill/ubichill-frontend
     argocd-image-updater.argoproj.io/backend.update-strategy: semver
     argocd-image-updater.argoproj.io/frontend.update-strategy: semver
