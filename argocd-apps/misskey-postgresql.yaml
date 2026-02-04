@@ -13,6 +13,8 @@ spec:
     targetRevision: 16.4.x 
     helm:
       valuesObject:
+        volumePermissions: # 起動前に権限修正
+          enabled: true
         global:
           storageClass: nfs-client
           security:
