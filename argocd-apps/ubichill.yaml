@@ -5,8 +5,10 @@ metadata:
   namespace: argocd
   annotations:
     argocd-image-updater.argoproj.io/image-list: backend=ghcr.io/ubichill/ubichill-backend,frontend=ghcr.io/ubichill/ubichill-frontend
-    argocd-image-updater.argoproj.io/backend.update-strategy: latest
-    argocd-image-updater.argoproj.io/frontend.update-strategy: latest
+    argocd-image-updater.argoproj.io/backend.update-strategy: semver
+    argocd-image-updater.argoproj.io/frontend.update-strategy: semver
+    argocd-image-updater.argoproj.io/backend.allow-tags: regexp:^v0\.0\.\d+$
+    argocd-image-updater.argoproj.io/frontend.allow-tags: regexp:^v0\.0\.\d+$
 spec:
   project: default
   source:
