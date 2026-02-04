@@ -15,6 +15,10 @@ spec:
       valuesObject:
         volumePermissions: # 起動前に権限修正
           enabled: true
+          image:
+            registry: docker.io
+            repository: bitnami/os-shell
+            tag: latest
         global:
           storageClass: nfs-client
           security:
