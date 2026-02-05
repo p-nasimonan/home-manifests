@@ -1,0 +1,3 @@
+resources:
+  - runnerdeployment.yaml
+  - github-actions-runner-secrets.enc.yaml

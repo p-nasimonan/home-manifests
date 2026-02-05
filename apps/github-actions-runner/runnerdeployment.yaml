@@ -1,0 +1,14 @@
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: RunnerDeployment
+metadata:
+  name: github-actions-runner
+  namespace: github-actions
+spec:
+  replicas: 1
+  template:
+    spec:
+      organization: ieneko-saba
+      githubAPITokenSecret:
+        name: github-actions-runner-secrets
+      image: ghcr.io/actions/runner:latest
+      imagePullPolicy: Always

@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: github-actions-runner
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: default
+  sources:
+    - repoURL: https://actions-runner-controller.github.io/actions-runner-controller
+      chart: actions-runner-controller
+      targetRevision: 0.23.7
+      helm:
+        releaseName: actions-runner-controller
+        valuesObject:
+          installCRDs: true
+    - repoURL: https://github.com/p-nasimonan/home-manifests.git
+      targetRevision: main
+      path: apps/github-actions-runner
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: github-actions
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

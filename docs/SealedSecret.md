@@ -44,11 +44,18 @@ cloudflare-account-id=your-account-id
 cloudflare-tunnel-name=home-kube
 EOF
 
+# GitHub Actions Runner
+cat > github-actions-runner.env << 'EOF'
+github_token=your-github-pat
+EOF
+
 # 2. スクリプトで Sealed Secret を作成
 # スクリプトが自動的に k3s-1 から公開鍵を取得します
 ./create-sealed-secret.sh misskey-secrets misskey misskey-secrets.env
 
 ./create-sealed-secret.sh cloudflare-secrets cloudflare-tunnel-ingress-controller cloudflare-creds.env
+
+./create-sealed-secret.sh github-actions-runner-secrets github-actions github-actions-runner.env
 
 
 # 3. Git にコミット
@@ -83,6 +90,9 @@ EOF
 
 # Minecraft 用
 ./create-sealed-secret.sh minecraft-secrets minecraft minecraft-secrets.env
+
+# GitHub Actions Runner 用
+./create-sealed-secret.sh github-actions-runner-secrets github-actions github-actions-runner.env
 ```
 
 ### スクリプトの動作
