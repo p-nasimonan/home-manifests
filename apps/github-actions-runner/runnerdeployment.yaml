@@ -11,5 +11,5 @@ spec:
       githubAPICredentialsFrom:
         secretRef:
           name: github-actions-runner-secrets
-      image: ghcr.io/actions/runner:latest
+      image: summerwind/actions-runner:latest
       imagePullPolicy: Always
