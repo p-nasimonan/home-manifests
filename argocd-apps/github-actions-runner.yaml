@@ -15,6 +15,9 @@ spec:
         releaseName: actions-runner-controller
         valuesObject:
           installCRDs: true
+          authSecret:
+            create: true
+            github_token: "dummy" # Runner側でSecretを指定しているのでコントローラー側はダミーでも起動可能
     - repoURL: https://github.com/p-nasimonan/home-manifests.git
       targetRevision: main
       path: apps/github-actions-runner
