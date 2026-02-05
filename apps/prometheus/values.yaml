@@ -89,6 +89,8 @@ kube-prometheus-stack:
   ## Node Exporter configuration
   nodeExporter:
     enabled: true
+    tolerations:
+      - operator: Exists
 
   ## Kube State Metrics configuration
   kubeStateMetrics:
