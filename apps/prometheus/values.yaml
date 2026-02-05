@@ -31,6 +31,15 @@ kube-prometheus-stack:
           memory: 512Mi
         limits:
           memory: 2Gi
+      
+      ## Allow scheduling on control-plane nodes
+      tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+        - key: node-role.kubernetes.io/master
+          operator: Exists
+          effect: NoSchedule
 
   ## Alertmanager configuration
   alertmanager:
@@ -52,6 +61,15 @@ kube-prometheus-stack:
           memory: 128Mi
         limits:
           memory: 512Mi
+      
+      ## Allow scheduling on control-plane nodes
+      tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+        - key: node-role.kubernetes.io/master
+          operator: Exists
+          effect: NoSchedule
 
   ## Prometheus Operator configuration
   prometheusOperator:
