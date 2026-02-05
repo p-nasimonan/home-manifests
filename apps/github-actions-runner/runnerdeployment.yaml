@@ -8,7 +8,8 @@ spec:
   template:
     spec:
       organization: ieneko-saba
-      githubAPITokenSecret:
-        name: github-actions-runner-secrets
+      githubAPICredentialsFrom:
+        secretRef:
+          name: github-actions-runner-secrets
       image: ghcr.io/actions/runner:latest
       imagePullPolicy: Always
