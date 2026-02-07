@@ -36,7 +36,7 @@ spec:
         redis:
           enabled: true
           global:
-            imageRegistry: ""
+            imageRegistry: "docker.io"
           image:
             registry: docker.io
             repository: bitnami/redis
