@@ -28,7 +28,7 @@ spec:
         global:
           imageRegistry: ""
         backend:
-          replicaCount: 2
+          replicaCount: 1
           env:
             RATE_LIMIT_MAX_REQUESTS: "10000"
             RATE_LIMIT_WINDOW_MS: "60000"
@@ -41,7 +41,7 @@ spec:
             tag: dev
           resources:
             requests:
-              cpu: 200m
+              cpu: 100m
               memory: 256Mi
             limits:
               cpu: 1000m
@@ -123,7 +123,7 @@ spec:
         video-player:
           enabled: true
           backend:
-            replicaCount: 2
+            replicaCount: 1
             autoscaling:
               enabled: false
             image:
