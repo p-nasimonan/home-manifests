@@ -5,6 +5,9 @@ metadata:
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "10"
+    argocd-image-updater.argoproj.io/image-list: backend=ghcr.io/ubichill/video-player-backend:dev
+    argocd-image-updater.argoproj.io/backend.update-strategy: digest
+    argocd-image-updater.argoproj.io/backend.force-update: "true"
   labels:
     environment: development
     component: video-player
@@ -18,6 +21,10 @@ spec:
       valueFiles:
         - values-dev.yaml
       parameters:
+        - name: global.imageRegistry
+          value: "ghcr.io/ubichill"
+        - name: backend.image.repository
+          value: "video-player-backend"
         - name: backend.image.tag
           value: "dev"
         - name: backend.env.LOG_LEVEL

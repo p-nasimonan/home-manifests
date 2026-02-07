@@ -5,6 +5,11 @@ metadata:
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "10"
+    argocd-image-updater.argoproj.io/image-list: backend=ghcr.io/ubichill/ubichill-backend:dev,frontend=ghcr.io/ubichill/ubichill-frontend:dev
+    argocd-image-updater.argoproj.io/backend.update-strategy: digest
+    argocd-image-updater.argoproj.io/frontend.update-strategy: digest
+    argocd-image-updater.argoproj.io/backend.force-update: "true"
+    argocd-image-updater.argoproj.io/frontend.force-update: "true"
   labels:
     environment: development
     component: ubichill
@@ -18,10 +23,16 @@ spec:
       valueFiles:
         - values-dev.yaml
       parameters:
+        - name: global.imageRegistry
+          value: "ghcr.io/ubichill"
+        - name: backend.image.repository
+          value: "ubichill-backend"
         - name: backend.image.tag
-          value: "latest"
+          value: "dev"
+        - name: frontend.image.repository
+          value: "ubichill-frontend"
         - name: frontend.image.tag
-          value: "latest"
+          value: "dev"
         - name: redis.enabled
           value: "true"
         - name: postgresql.enabled
