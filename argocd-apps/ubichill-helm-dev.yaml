@@ -23,20 +23,19 @@ spec:
       valueFiles:
         - values-dev.yaml
       valuesObject:
+      valuesObject:
         global:
-          imageRegistry: ghcr.io/ubichill
+          imageRegistry: ""
         backend:
           image:
-            repository: ubichill-backend
+            repository: ghcr.io/ubichill/ubichill-backend
             tag: dev
         frontend:
           image:
-            repository: ubichill-frontend
+            repository: ghcr.io/ubichill/ubichill-frontend
             tag: dev
         redis:
           enabled: true
-          global:
-            imageRegistry: "docker.io"
           image:
             registry: docker.io
             repository: bitnami/redis
@@ -49,8 +48,27 @@ spec:
           hosts:
             - host: ubichill-dev.youkan.uk
               paths:
+                - path: /api
+                  pathType: Prefix
+                  backend:
+                    service:
+                      name: ubichill-helm-dev-backend
+                      port:
+                        number: 3001
+                - path: /socket.io
+                  pathType: Prefix
+                  backend:
+                    service:
+                      name: ubichill-helm-dev-backend
+                      port:
+                        number: 3001
                 - path: /
                   pathType: Prefix
+                  backend:
+                    service:
+                      name: ubichill-helm-dev-frontend
+                      port:
+                        number: 3000
         video-player:
           enabled: true
           backend:
@@ -58,14 +76,14 @@ spec:
             autoscaling:
               enabled: false
             image:
-              repository: video-player-backend
+              repository: ghcr.io/ubichill/video-player-backend
               tag: dev
             env:
               LOG_LEVEL: DEBUG
             resources:
               requests:
                 cpu: 100m
-                memory: 512Mi
+                memory: 128Mi
               limits:
                 cpu: 1000m
                 memory: 1Gi
