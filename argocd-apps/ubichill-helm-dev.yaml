@@ -125,6 +125,7 @@ spec:
           enabled: true
           backend:
             replicaCount: 1
+            rootPath: "/plugin/video-player"
             autoscaling:
               enabled: false
             image:
