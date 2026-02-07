@@ -27,7 +27,6 @@ spec:
           imageRegistry: ""
         backend:
           env:
-            ROOMS_DIR: "/app/rooms"
             RATE_LIMIT_MAX: "1000"
           image:
             repository: ghcr.io/ubichill/ubichill-backend
