@@ -20,17 +20,17 @@ spec:
     helm:
       valueFiles:
         - values-dev.yaml
-      parameters:
-        - name: global.imageRegistry
-          value: "ghcr.io/ubichill"
-        - name: backend.image.repository
-          value: "video-player-backend"
-        - name: backend.image.tag
-          value: "dev"
-        - name: backend.env.LOG_LEVEL
-          value: "DEBUG"
-        - name: redis.enabled
-          value: "false"  # Use shared ubichill Redis instead
+      valuesObject:
+        global:
+          imageRegistry: ghcr.io/ubichill
+        backend:
+          image:
+            repository: video-player-backend
+            tag: dev
+          env:
+            LOG_LEVEL: DEBUG
+        redis:
+          enabled: false  # Use shared ubichill Redis instead
   destination:
     server: https://kubernetes.default.svc
     namespace: ubichill-helm

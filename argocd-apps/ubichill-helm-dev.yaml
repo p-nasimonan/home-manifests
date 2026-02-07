@@ -22,21 +22,35 @@ spec:
     helm:
       valueFiles:
         - values-dev.yaml
-      parameters:
-        - name: global.imageRegistry
-          value: "ghcr.io/ubichill"
-        - name: backend.image.repository
-          value: "ubichill-backend"
-        - name: backend.image.tag
-          value: "dev"
-        - name: frontend.image.repository
-          value: "ubichill-frontend"
-        - name: frontend.image.tag
-          value: "dev"
-        - name: redis.enabled
-          value: "true"
-        - name: postgresql.enabled
-          value: "false"
+      valuesObject:
+        global:
+          imageRegistry: ghcr.io/ubichill
+        backend:
+          image:
+            repository: ubichill-backend
+            tag: dev
+        frontend:
+          image:
+            repository: ubichill-frontend
+            tag: dev
+        redis:
+          enabled: true
+          global:
+            imageRegistry: ""
+          image:
+            registry: docker.io
+            repository: bitnami/redis
+            tag: latest
+        postgresql:
+          enabled: false
+        ingress:
+          enabled: true
+          className: cloudflare
+          hosts:
+            - host: ubichill-dev.youkan.uk
+              paths:
+                - path: /
+                  pathType: Prefix
   destination:
     server: https://kubernetes.default.svc
     namespace: ubichill-helm
