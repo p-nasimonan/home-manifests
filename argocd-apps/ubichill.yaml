@@ -15,9 +15,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/ubichill/ubichill
-    targetRevision: feat/helm-deployment
-    path: charts/ubichill
+    repoURL: https://ubichill.github.io/ubichill
+    targetRevision: 0.1.4
+    chart: ubichill
     helm:
       valuesObject:
         global:
@@ -28,7 +28,7 @@ spec:
             RATE_LIMIT_MAX_REQUESTS: "100"
             RATE_LIMIT_WINDOW_MS: "900000"
             REDIS_URL: "redis://ubichill-redis-master:6379"
-            SESSION_SECRET: "production-session-secret-key" # Should be a secret in real prod
+            SESSION_SECRET: "production-session-secret-key"
             NODE_ENV: "production"
             CORS_ORIGIN: "https://ubichill.youkan.uk"
           image:
