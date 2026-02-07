@@ -112,6 +112,9 @@ spec:
       kind: Deployment
       jsonPointers:
         - /spec/template/metadata/annotations/rollme
+        - /spec/template/spec/containers/0/securityContext/allowPrivilegeEscalation
+        - /spec/template/spec/containers/0/securityContext/capabilities
+        - /spec/template/spec/containers/0/securityContext/readOnlyRootFilesystem
     # Ignore HPA changes (managed by auto-scaling)
     - group: autoscaling
       kind: HorizontalPodAutoscaler
