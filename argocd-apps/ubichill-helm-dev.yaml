@@ -32,6 +32,8 @@ spec:
             repository: ghcr.io/ubichill/ubichill-backend
             tag: dev
         frontend:
+          env:
+            NEXT_PUBLIC_VIDEO_PLAYER_BACKEND_URL: "https://ubichill-dev.youkan.uk/video-player-api"
           image:
             repository: ghcr.io/ubichill/ubichill-frontend
             tag: dev
@@ -77,6 +79,13 @@ spec:
                       name: backend
                       port:
                         number: 3001
+                - path: /video-player-api
+                  pathType: Prefix
+                  backend:
+                    service:
+                      name: video-player-backend
+                      port:
+                        number: 8000
                 - path: /
                   pathType: Prefix
                   backend:
