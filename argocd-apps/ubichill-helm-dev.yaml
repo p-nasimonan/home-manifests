@@ -107,7 +107,7 @@ spec:
                       name: backend
                       port:
                         number: 3001
-                - path: /video-player-api
+                - path: /plugin/video-player-api
                   pathType: Prefix
                   backend:
                     service:
