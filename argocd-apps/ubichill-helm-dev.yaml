@@ -28,11 +28,31 @@ spec:
         global:
           imageRegistry: ""
         backend:
+          replicaCount: 2
           env:
             RATE_LIMIT_MAX: "1000"
           image:
             repository: ghcr.io/ubichill/ubichill-backend
             tag: dev
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+          healthcheck:
+            enabled: true
+            livenessProbe:
+              initialDelaySeconds: 60
+              periodSeconds: 30
+              timeoutSeconds: 10
+              failureThreshold: 5
+            readinessProbe:
+              initialDelaySeconds: 30
+              periodSeconds: 10
+              timeoutSeconds: 5
+              failureThreshold: 3
         frontend:
           env:
             NEXT_PUBLIC_VIDEO_PLAYER_BACKEND_URL: "https://ubichill-dev.youkan.uk/video-player-api"
@@ -98,7 +118,7 @@ spec:
         video-player:
           enabled: true
           backend:
-            replicaCount: 1
+            replicaCount: 2
             autoscaling:
               enabled: false
             image:
@@ -108,11 +128,23 @@ spec:
               LOG_LEVEL: DEBUG
             resources:
               requests:
-                cpu: 100m
-                memory: 128Mi
+                cpu: 200m
+                memory: 256Mi
               limits:
-                cpu: 1000m
-                memory: 1Gi
+                cpu: 1500m
+                memory: 2Gi
+            healthcheck:
+              enabled: true
+              livenessProbe:
+                initialDelaySeconds: 45
+                periodSeconds: 20
+                timeoutSeconds: 10
+                failureThreshold: 5
+              readinessProbe:
+                initialDelaySeconds: 20
+                periodSeconds: 10
+                timeoutSeconds: 5
+                failureThreshold: 3
           redis:
             enabled: false
   destination:
