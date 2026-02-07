@@ -133,6 +133,8 @@ spec:
               tag: dev
             env:
               LOG_LEVEL: DEBUG
+              ROOT_PATH: "/plugin/video-player"
+              CORS_ORIGIN: "https://ubichill-dev.youkan.uk"
             resources:
               requests:
                 cpu: 200m
