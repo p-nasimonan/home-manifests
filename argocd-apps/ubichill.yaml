@@ -5,17 +5,151 @@ metadata:
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "0"
-    argocd-image-updater.argoproj.io/image-list: backend=ghcr.io/ubichill/ubichill-backend,frontend=ghcr.io/ubichill/ubichill-frontend
-    argocd-image-updater.argoproj.io/backend.update-strategy: semver
-    argocd-image-updater.argoproj.io/frontend.update-strategy: semver
-    argocd-image-updater.argoproj.io/backend.allow-tags: regexp:^v0\.0\.\d+$
-    argocd-image-updater.argoproj.io/frontend.allow-tags: regexp:^v0\.0\.\d+$
+    argocd-image-updater.argoproj.io/image-list: backend=ghcr.io/ubichill/ubichill-backend:latest,frontend=ghcr.io/ubichill/ubichill-frontend:latest,video-player=ghcr.io/ubichill/video-player-backend:latest
+    argocd-image-updater.argoproj.io/backend.update-strategy: latest
+    argocd-image-updater.argoproj.io/frontend.update-strategy: latest
+    argocd-image-updater.argoproj.io/video-player.update-strategy: latest
+    argocd-image-updater.argoproj.io/backend.force-update: "true"
+    argocd-image-updater.argoproj.io/frontend.force-update: "true"
+    argocd-image-updater.argoproj.io/video-player.force-update: "true"
 spec:
   project: default
   source:
-    repoURL: https://github.com/p-nasimonan/home-manifests.git
-    targetRevision: main
-    path: apps/ubichill
+    repoURL: https://github.com/ubichill/ubichill
+    targetRevision: feat/helm-deployment
+    path: charts/ubichill
+    helm:
+      valuesObject:
+        global:
+          imageRegistry: ""
+        backend:
+          replicaCount: 1
+          env:
+            RATE_LIMIT_MAX_REQUESTS: "100"
+            RATE_LIMIT_WINDOW_MS: "900000"
+            REDIS_URL: "redis://ubichill-redis-master:6379"
+            SESSION_SECRET: "production-session-secret-key" # Should be a secret in real prod
+            NODE_ENV: "production"
+            CORS_ORIGIN: "https://ubichill.youkan.uk"
+          image:
+            repository: ghcr.io/ubichill/ubichill-backend
+            tag: latest
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+          healthcheck:
+            enabled: true
+            livenessProbe:
+              initialDelaySeconds: 90
+              periodSeconds: 45
+              timeoutSeconds: 15
+              failureThreshold: 6
+            readinessProbe:
+              initialDelaySeconds: 45
+              periodSeconds: 15
+              timeoutSeconds: 10
+              failureThreshold: 5
+        frontend:
+          env:
+            NODE_ENV: "production"
+          image:
+            repository: ghcr.io/ubichill/ubichill-frontend
+            tag: latest
+        rooms:
+          enabled: true
+          custom:
+            meeting-room:
+              apiVersion: ubichill.com/v1alpha1
+              kind: Room
+              metadata:
+                name: meeting-room
+                version: "1.0.0"
+              spec:
+                displayName: "会議室"
+                description: "プレゼンテーション用の部屋"
+                environment:
+                  backgroundColor: "#2C3E50"
+        redis:
+          enabled: true
+          image:
+            registry: docker.io
+            repository: bitnami/redis
+            tag: latest
+        postgresql:
+          enabled: false
+        ingress:
+          enabled: true
+          className: cloudflare
+          hosts:
+            - host: ubichill.youkan.uk
+              paths:
+                - path: /api
+                  pathType: Prefix
+                  backend:
+                    service:
+                      name: backend
+                      port:
+                        number: 3001
+                - path: /socket.io
+                  pathType: Prefix
+                  backend:
+                    service:
+                      name: backend
+                      port:
+                        number: 3001
+                - path: /plugin/video-player
+                  pathType: Prefix
+                  backend:
+                    service:
+                      name: video-player-backend
+                      port:
+                        number: 8000
+                - path: /
+                  pathType: Prefix
+                  backend:
+                    service:
+                      name: frontend
+                      port:
+                        number: 3000
+        video-player:
+          enabled: true
+          backend:
+            replicaCount: 1
+            rootPath: "/plugin/video-player"
+            autoscaling:
+              enabled: false
+            image:
+              repository: ghcr.io/ubichill/video-player-backend
+              tag: latest
+            env:
+              LOG_LEVEL: INFO
+              ROOT_PATH: "/plugin/video-player"
+              CORS_ORIGIN: "https://ubichill.youkan.uk"
+            resources:
+              requests:
+                cpu: 200m
+                memory: 256Mi
+              limits:
+                cpu: 1500m
+                memory: 2Gi
+            healthcheck:
+              enabled: true
+              livenessProbe:
+                initialDelaySeconds: 45
+                periodSeconds: 20
+                timeoutSeconds: 10
+                failureThreshold: 5
+              readinessProbe:
+                initialDelaySeconds: 20
+                periodSeconds: 10
+                timeoutSeconds: 5
+                failureThreshold: 3
+          redis:
+            enabled: false
   destination:
     server: https://kubernetes.default.svc
     namespace: ubichill
@@ -25,3 +159,24 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - PrunePropagationPolicy=background
+      - ApplyOutOfSyncOnly=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+  revisionHistoryLimit: 5
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      jsonPointers:
+        - /spec/template/metadata/annotations/rollme
+        - /spec/template/spec/containers/0/securityContext/allowPrivilegeEscalation
+        - /spec/template/spec/containers/0/securityContext/capabilities
+        - /spec/template/spec/containers/0/securityContext/readOnlyRootFilesystem
+    - group: autoscaling
+      kind: HorizontalPodAutoscaler
+      jsonPointers:
+        - /status
