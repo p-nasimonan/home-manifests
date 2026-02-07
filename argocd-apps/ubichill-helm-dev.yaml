@@ -51,6 +51,16 @@ spec:
               paths:
                 - path: /
                   pathType: Prefix
+        video-player:
+          enabled: true
+          backend:
+            image:
+              repository: video-player-backend
+              tag: dev
+            env:
+              LOG_LEVEL: DEBUG
+          redis:
+            enabled: false
   destination:
     server: https://kubernetes.default.svc
     namespace: ubichill-helm
