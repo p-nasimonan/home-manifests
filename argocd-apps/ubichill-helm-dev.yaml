@@ -53,22 +53,19 @@ spec:
                   backend:
                     service:
                       name: backend
-                      port:
-                        number: 3001
+                      port: 3001
                 - path: /socket.io
                   pathType: Prefix
                   backend:
                     service:
                       name: backend
-                      port:
-                        number: 3001
+                      port: 3001
                 - path: /
                   pathType: Prefix
                   backend:
                     service:
                       name: frontend
-                      port:
-                        number: 3000
+                      port: 3000
         video-player:
           enabled: true
           backend:
@@ -100,6 +97,7 @@ spec:
       - CreateNamespace=true
       - PrunePropagationPolicy=background
       - ApplyOutOfSyncOnly=true
+      - ServerSideApply=true
     retry:
       limit: 5
       backoff:
