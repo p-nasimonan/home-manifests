@@ -24,6 +24,8 @@ spec:
           imageRegistry: ""
         backend:
           replicaCount: 1
+          autoscaling:
+            enabled: false
           env:
             RATE_LIMIT_MAX_REQUESTS: "100"
             RATE_LIMIT_WINDOW_MS: "900000"
@@ -54,6 +56,9 @@ spec:
               timeoutSeconds: 10
               failureThreshold: 5
         frontend:
+          replicaCount: 1
+          autoscaling:
+            enabled: false
           env:
             NODE_ENV: "production"
           image:
