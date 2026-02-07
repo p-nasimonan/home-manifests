@@ -27,7 +27,7 @@ spec:
           autoscaling:
             enabled: false
           env:
-            RATE_LIMIT_MAX_REQUESTS: "100"
+            RATE_LIMIT_MAX_REQUESTS: "10000"
             RATE_LIMIT_WINDOW_MS: "900000"
             REDIS_URL: "redis://ubichill-redis-master:6379"
             SESSION_SECRET: "production-session-secret-key"
@@ -38,11 +38,11 @@ spec:
             tag: latest
           resources:
             requests:
-              cpu: 100m
-              memory: 256Mi
+              cpu: 200m
+              memory: 512Mi
             limits:
-              cpu: 1000m
-              memory: 1Gi
+              cpu: 2000m
+              memory: 2Gi
           healthcheck:
             enabled: true
             livenessProbe:
@@ -59,6 +59,13 @@ spec:
           replicaCount: 1
           autoscaling:
             enabled: false
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 2Gi
           env:
             NODE_ENV: "production"
           image:
@@ -136,11 +143,11 @@ spec:
               CORS_ORIGIN: "https://ubichill.youkan.uk"
             resources:
               requests:
-                cpu: 200m
-                memory: 256Mi
+                cpu: 500m
+                memory: 512Mi
               limits:
-                cpu: 1500m
-                memory: 2Gi
+                cpu: 2000m
+                memory: 3Gi
             healthcheck:
               enabled: true
               livenessProbe:
