@@ -61,7 +61,6 @@ spec:
               failureThreshold: 5
         frontend:
           env:
-              NEXT_PUBLIC_VIDEO_PLAYER_BACKEND_URL: "https://ubichill-dev.youkan.uk/video-player-api"
           image:
             repository: ghcr.io/ubichill/ubichill-frontend
             tag: dev
