@@ -23,7 +23,6 @@ spec:
       valueFiles:
         - values-dev.yaml
       valuesObject:
-      valuesObject:
         global:
           imageRegistry: ""
         backend:
@@ -34,6 +33,20 @@ spec:
           image:
             repository: ghcr.io/ubichill/ubichill-frontend
             tag: dev
+        rooms:
+          enabled: true
+          custom:
+            meeting-room:
+              apiVersion: ubichill.com/v1alpha1
+              kind: Room
+              metadata:
+                name: meeting-room
+                version: "1.0.0"
+              spec:
+                displayName: "会議室"
+                description: "プレゼンテーション用の部屋"
+                environment:
+                  backgroundColor: "#2C3E50"
         redis:
           enabled: true
           image:
