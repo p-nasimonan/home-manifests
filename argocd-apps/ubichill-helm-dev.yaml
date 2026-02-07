@@ -54,6 +54,9 @@ spec:
         video-player:
           enabled: true
           backend:
+            replicaCount: 1
+            autoscaling:
+              enabled: false
             image:
               repository: video-player-backend
               tag: dev
@@ -61,11 +64,11 @@ spec:
               LOG_LEVEL: DEBUG
             resources:
               requests:
-                cpu: 50m
-                memory: 128Mi
-              limits:
-                cpu: 500m
+                cpu: 100m
                 memory: 512Mi
+              limits:
+                cpu: 1000m
+                memory: 1Gi
           redis:
             enabled: false
   destination:
