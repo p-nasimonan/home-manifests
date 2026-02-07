@@ -36,6 +36,7 @@ spec:
             SESSION_SECRET: "dev-session-secret-key"
             NODE_ENV: "production"
             DEBUG: "true"
+            CORS_ORIGIN: "https://ubichill-dev.youkan.uk"
           image:
             repository: ghcr.io/ubichill/ubichill-backend
             tag: dev
@@ -60,7 +61,7 @@ spec:
               failureThreshold: 5
         frontend:
           env:
-            NEXT_PUBLIC_VIDEO_PLAYER_BACKEND_URL: "https://ubichill-dev.youkan.uk/video-player-api"
+              NEXT_PUBLIC_VIDEO_PLAYER_BACKEND_URL: "https://ubichill-dev.youkan.uk/video-player-api"
           image:
             repository: ghcr.io/ubichill/ubichill-frontend
             tag: dev
