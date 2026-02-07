@@ -61,6 +61,7 @@ spec:
               failureThreshold: 5
         frontend:
           env:
+            NODE_ENV: "development"
           image:
             repository: ghcr.io/ubichill/ubichill-frontend
             tag: dev
