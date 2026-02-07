@@ -52,21 +52,21 @@ spec:
                   pathType: Prefix
                   backend:
                     service:
-                      name: ubichill-helm-dev-backend
+                      name: backend
                       port:
                         number: 3001
                 - path: /socket.io
                   pathType: Prefix
                   backend:
                     service:
-                      name: ubichill-helm-dev-backend
+                      name: backend
                       port:
                         number: 3001
                 - path: /
                   pathType: Prefix
                   backend:
                     service:
-                      name: ubichill-helm-dev-frontend
+                      name: frontend
                       port:
                         number: 3000
         video-player:
