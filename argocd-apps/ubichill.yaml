@@ -118,7 +118,8 @@ spec:
                       x: 800
                       y: 100
                       z: 2
-                      scale: 1
+                      w: 800
+                      h: 450
                       rotation: 0
                     data:
                       playlist: []
