@@ -41,6 +41,17 @@ kube-prometheus-stack:
           operator: Exists
           effect: NoSchedule
 
+      ## Exclude specific nodes (e.g. for power saving)
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: NotIn
+                    values:
+                      - k3s-worker-2
+
   ## Alertmanager configuration
   alertmanager:
     alertmanagerSpec:
@@ -71,6 +82,17 @@ kube-prometheus-stack:
           operator: Exists
           effect: NoSchedule
 
+      ## Exclude specific nodes (e.g. for power saving)
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: NotIn
+                    values:
+                      - k3s-worker-2
+
   ## Prometheus Operator configuration
   prometheusOperator:
     resources:
@@ -85,6 +107,17 @@ kube-prometheus-stack:
         enabled: false
     tls:
       enabled: false
+
+    ## Exclude specific nodes (e.g. for power saving)
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: kubernetes.io/hostname
+                  operator: NotIn
+                  values:
+                    - k3s-worker-2
 
   ## Node Exporter configuration
   nodeExporter:
