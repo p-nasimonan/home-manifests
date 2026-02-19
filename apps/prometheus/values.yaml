@@ -125,6 +125,17 @@ kube-prometheus-stack:
     tolerations:
       - operator: Exists
 
+    ## Exclude specific nodes (e.g. for power saving)
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: kubernetes.io/hostname
+                  operator: NotIn
+                  values:
+                    - k3s-worker-2
+
   ## Kube State Metrics configuration
   kubeStateMetrics:
     enabled: true
