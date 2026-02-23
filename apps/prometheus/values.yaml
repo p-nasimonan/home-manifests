@@ -68,10 +68,10 @@ kube-prometheus-stack:
       ## Resource limits
       resources:
         requests:
-          cpu: 100m
-          memory: 128Mi
-        limits:
+          cpu: 200m
           memory: 512Mi
+        limits:
+          memory: 3Gi
       
       ## Allow scheduling on control-plane nodes
       tolerations:
@@ -125,7 +125,7 @@ kube-prometheus-stack:
     tolerations:
       - operator: Exists
 
-    ## Exclude specific nodes (e.g. for power saving)
+  prometheus-node-exporter:
     affinity:
       nodeAffinity:
         requiredDuringSchedulingIgnoredDuringExecution:
