@@ -19,7 +19,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/ubichill/ubichill
-    targetRevision: feat/helm-deployment  # Use feature branch for testing
+    targetRevision: dev  # Use feature branch for testing
     path: charts/ubichill
     helm:
       valueFiles:
@@ -28,15 +28,16 @@ spec:
         global:
           imageRegistry: ""
         backend:
+          existingSecret: "ubichill-helm-dev-secrets"
           replicaCount: 1
           env:
             RATE_LIMIT_MAX_REQUESTS: "10000"
             RATE_LIMIT_WINDOW_MS: "60000"
             REDIS_URL: "redis://ubichill-helm-dev-redis-master:6379"
-            SESSION_SECRET: "dev-session-secret-key"
-            NODE_ENV: "production"
+            NODE_ENV: "development"
             DEBUG: "true"
-            CORS_ORIGIN: "https://ubichill-dev.youkan.uk"
+            CORS_ORIGIN: "*"
+            BETTER_AUTH_URL: "http://localhost:3001"
           image:
             repository: ghcr.io/ubichill/ubichill-backend
             tag: dev
@@ -86,7 +87,9 @@ spec:
             repository: bitnami/redis
             tag: latest
         postgresql:
-          enabled: false
+          enabled: true
+          auth:
+            existingSecret: "ubichill-helm-dev-secrets"
         ingress:
           enabled: true
           className: cloudflare
