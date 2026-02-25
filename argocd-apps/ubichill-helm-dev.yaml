@@ -97,8 +97,6 @@ spec:
               enabled: true
               storageClass: "local-path"
               size: 5Gi
-          auth:
-            existingSecret: "ubichill-helm-dev-secrets"
           image:
             registry: docker.io
             repository: bitnami/postgresql
