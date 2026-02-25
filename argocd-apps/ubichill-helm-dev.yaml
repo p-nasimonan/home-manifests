@@ -37,7 +37,6 @@ spec:
             NODE_ENV: "development"
             DEBUG: "true"
             CORS_ORIGIN: "*"
-            BETTER_AUTH_URL: "http://localhost:3001"
           image:
             repository: ghcr.io/ubichill/ubichill-backend
             tag: dev
