@@ -100,6 +100,10 @@ spec:
               size: 5Gi
           auth:
             existingSecret: "ubichill-helm-dev-secrets"
+          image:
+            registry: docker.io
+            repository: bitnami/postgresql
+            tag: latest
         ingress:
           enabled: true
           className: cloudflare
