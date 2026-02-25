@@ -20,7 +20,7 @@ spec:
             repository: bitnami/os-shell
             tag: latest
         global:
-          storageClass: nfs-client
+          storageClass: local-path
           security:
             allowInsecureImages: true
         image:
@@ -37,6 +37,7 @@ spec:
           persistence:
             enabled: true
             size: 20Gi
+            storageClass: local-path
           resources:
             requests:
               cpu: 100m

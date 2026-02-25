@@ -82,12 +82,22 @@ spec:
                   backgroundColor: "#2C3E50"
         redis:
           enabled: true
+          master:
+            persistence:
+              enabled: true
+              storageClass: "local-path"
+              size: 1Gi
           image:
             registry: docker.io
             repository: bitnami/redis
             tag: latest
         postgresql:
           enabled: true
+          primary:
+            persistence:
+              enabled: true
+              storageClass: "local-path"
+              size: 5Gi
           auth:
             existingSecret: "ubichill-helm-dev-secrets"
         ingress:
