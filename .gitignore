@@ -2,3 +2,5 @@
 node_modules/
 raw*
 *.env
+# Proxmox CSI 設定ファイル (機密情報)
+proxmox-csi-config.yaml

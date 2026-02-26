@@ -1,0 +1,59 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: proxmox-csi
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-4"
+spec:
+  project: default
+  sources:
+    # SealedSecret (Proxmox API credentials)
+    - repoURL: https://github.com/p-nasimonan/home-manifests.git
+      targetRevision: main
+      path: apps/proxmox-csi
+    # Helm chart
+    - repoURL: https://sergelogvinov.github.io/helm-charts
+      chart: proxmox-csi-plugin
+      targetRevision: 0.2.x
+      helm:
+        releaseName: proxmox-csi-plugin
+        valuesObject:
+          # 既存の Secret を使用 (SealedSecret で管理)
+          config:
+            create: false
+            secretName: proxmox-csi-config
+
+          # StorageClass の定義
+          storageClass:
+            - name: proxmox-data
+              storage: local-lvm
+              reclaimPolicy: Delete
+              fstype: ext4
+              volumeBindingMode: WaitForFirstConsumer
+              allowVolumeExpansion: true
+
+          # node plugin は各ノードで実行されストレージ操作を担当
+          node:
+            tolerations:
+              - key: node-role.kubernetes.io/control-plane
+                operator: Exists
+                effect: NoSchedule
+              - key: node-role.kubernetes.io/master
+                operator: Exists
+                effect: NoSchedule
+
+          # controller plugin
+          controller:
+            replicas: 1
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

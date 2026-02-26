@@ -4,4 +4,4 @@ nfs:
   
 storageClass:
   name: nfs-client            # これを後で指定する
-  defaultClass: true          # 何も指定しなかったらこれをデフォルトにする
+  defaultClass: false         # Proxmox CSI を使用するため無効化
