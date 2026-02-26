@@ -3,3 +3,4 @@ kind: Kustomization
 
 resources:
   - proxmox-csi-secrets.enc.yaml
+  - storageclass-monaka.yaml
