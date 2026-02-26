@@ -12,10 +12,10 @@ spec:
     - repoURL: https://github.com/p-nasimonan/home-manifests.git
       targetRevision: main
       path: apps/proxmox-csi
-    # Helm chart
-    - repoURL: https://sergelogvinov.github.io/helm-charts
+    # Helm chart (OCI registry)
+    - repoURL: ghcr.io/sergelogvinov/charts
       chart: proxmox-csi-plugin
-      targetRevision: 0.2.x
+      targetRevision: 0.5.5
       helm:
         releaseName: proxmox-csi-plugin
         valuesObject:
