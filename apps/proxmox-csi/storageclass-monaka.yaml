@@ -6,15 +6,6 @@ provisioner: csi.proxmox.sinextra.dev
 parameters:
   csi.storage.k8s.io/fstype: ext4
   storage: local-lvm
-  region: homelab
 reclaimPolicy: Delete
 volumeBindingMode: WaitForFirstConsumer
 allowVolumeExpansion: true
-allowedTopologies:
-  - matchLabelExpressions:
-      - key: topology.kubernetes.io/region
-        values:
-          - homelab
-      - key: topology.kubernetes.io/zone
-        values:
-          - monaka
