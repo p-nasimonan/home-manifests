@@ -18,7 +18,7 @@ spec:
           path: /mnt/public/k3s
         storageClass:
           name: nfs-client
-          defaultClass: true
+          defaultClass: false  # Proxmox CSI を使用するため無効化
           archiveOnDelete: true
   destination:
     server: https://kubernetes.default.svc

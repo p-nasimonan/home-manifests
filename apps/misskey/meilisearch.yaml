@@ -5,7 +5,7 @@ metadata:
   namespace: misskey
 spec:
   accessModes: ["ReadWriteOnce"]
-  storageClassName: local-path
+  storageClassName: proxmox-data
   resources:
     requests:
       storage: 10Gi

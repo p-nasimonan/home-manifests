@@ -96,7 +96,7 @@ minecraft:
     dataDir:
       enabled: true
       Size: 20Gi
-      storageClassName: nfs-client
+      storageClassName: proxmox-data
   
   resources:
     requests:

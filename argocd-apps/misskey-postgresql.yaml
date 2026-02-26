@@ -20,7 +20,7 @@ spec:
             repository: bitnami/os-shell
             tag: latest
         global:
-          storageClass: local-path
+          storageClass: proxmox-data
           security:
             allowInsecureImages: true
         image:
@@ -37,7 +37,7 @@ spec:
           persistence:
             enabled: true
             size: 20Gi
-            storageClass: local-path
+            storageClass: proxmox-data
           resources:
             requests:
               cpu: 100m

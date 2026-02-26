@@ -1,0 +1,48 @@
+# Proxmox CSI Plugin - 設定テンプレート
+# このファイルは Git にコミットしないこと（機密情報）
+#
+# 使い方:
+#   1. このファイルを proxmox-csi-config.yaml にコピー
+#   2. token_secret に実際のトークン値を入力
+#   3. SealedSecret を作成:
+#
+#   cp apps/proxmox-csi/proxmox-csi-config.yaml.example proxmox-csi-config.yaml
+#   # token_secret を編集してから:
+#   ./create-sealed-secret.sh \
+#     --name proxmox-csi-config \
+#     --namespace kube-system \
+#     --from-file config.yaml=proxmox-csi-config.yaml
+#   mv proxmox-csi-config.enc.yaml apps/proxmox-csi/proxmox-csi-secrets.enc.yaml
+#   rm proxmox-csi-config.yaml
+#
+#   4. apps/proxmox-csi/kustomization.yaml のコメントを外す
+#   5. proxmox-csi-secrets.enc.yaml を Git にコミット
+#
+# Proxmox ノード構成:
+#   anko   - 192.168.0.13
+#   monaka - 192.168.0.15
+#   aduki  - (IP確認して追記)
+#
+# K8s ノードの topology ラベル設定:
+#   kubectl label node <node> topology.kubernetes.io/region=homelab topology.kubernetes.io/zone=<pve-node-name>
+#   例: kubectl label node k3s-master topology.kubernetes.io/region=homelab topology.kubernetes.io/zone=anko
+
+# 以下のファイル内容が config.yaml キーとして Secret に格納されます:
+clusters:
+  # Proxmox クラスタ内のいずれか1ノードを指定すればよい (HA のため複数可)
+  - url: https://192.168.0.13:8006/api2/json   # anko
+    insecure: true                              # PVE 自己署名証明書のため true
+    token_id: "kubernetes-csi@pve!mytoken"
+    token_secret: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"  # 実際のトークン値に置き換える
+    region: homelab
+  - url: https://192.168.0.15:8006/api2/json   # monaka
+    insecure: true
+    token_id: "kubernetes-csi@pve!mytoken"
+    token_secret: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"  # 同じトークン値
+    region: homelab
+  # aduki の IP を確認して追記
+  # - url: https://192.168.0.XX:8006/api2/json   # aduki
+  #   insecure: true
+  #   token_id: "kubernetes-csi@pve!mytoken"
+  #   token_secret: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+  #   region: homelab

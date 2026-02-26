@@ -13,7 +13,7 @@ kube-prometheus-stack:
       storageSpec:
         volumeClaimTemplate:
           spec:
-            storageClassName: nfs-client
+            storageClassName: proxmox-data
             accessModes: ["ReadWriteOnce"]
             resources:
               requests:
@@ -59,7 +59,7 @@ kube-prometheus-stack:
       storage:
         volumeClaimTemplate:
           spec:
-            storageClassName: nfs-client
+            storageClassName: proxmox-data
             accessModes: ["ReadWriteOnce"]
             resources:
               requests:
