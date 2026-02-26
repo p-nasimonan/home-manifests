@@ -20,9 +20,8 @@ spec:
         releaseName: proxmox-csi-plugin
         valuesObject:
           # 既存の Secret を使用 (SealedSecret で管理)
-          config:
-            create: false
-            secretName: proxmox-csi-config
+          existingConfigSecret: proxmox-csi-config
+          existingConfigSecretKey: config.yaml
 
           # StorageClass の定義
           storageClass:
