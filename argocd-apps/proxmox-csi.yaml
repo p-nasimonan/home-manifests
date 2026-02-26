@@ -31,6 +31,17 @@ spec:
               fstype: ext4
               volumeBindingMode: WaitForFirstConsumer
               allowVolumeExpansion: true
+            - name: proxmox-monaka
+              storage: local-lvm
+              reclaimPolicy: Delete
+              fstype: ext4
+              volumeBindingMode: WaitForFirstConsumer
+              allowVolumeExpansion: true
+              allowedTopologies:
+                - matchLabelExpressions:
+                    - key: topology.kubernetes.io/zone
+                      values:
+                        - monaka
 
           # node plugin は各ノードで実行されストレージ操作を担当
           node:

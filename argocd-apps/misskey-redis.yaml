@@ -15,7 +15,7 @@ spec:
       valuesObject:
         architecture: standalone
         global:
-          storageClass: proxmox-data
+          storageClass: proxmox-monaka
           security:
             allowInsecureImages: true
         image:
@@ -29,7 +29,7 @@ spec:
           persistence:
             enabled: true
             size: 5Gi
-            storageClass: proxmox-data
+            storageClass: proxmox-monaka
           resources:
             requests:
               cpu: 50m
