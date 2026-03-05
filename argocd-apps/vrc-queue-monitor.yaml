@@ -29,7 +29,7 @@ spec:
             registry: ghcr.io
             repository: p-nasimonan/vrc-queue-monitor
             pullPolicy: Always
-            tag: ""  # argocd-image-updater が管理
+            tag: "latest"  # argocd-image-updater が管理
 
           ## ── フロントエンド ──
           frontend:
