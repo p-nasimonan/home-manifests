@@ -70,6 +70,7 @@ spec:
           ## ── バックエンド コレクター ──
           backendCollector:
             config:
+              LOG_LEVEL: "DEBUG"
               POLL_INTERVAL_MINUTES: "2"
               SCHEDULE_TYPE: "day_of_month"
               SCHEDULE_DAYS: "5,15,25"
