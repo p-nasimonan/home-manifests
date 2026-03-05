@@ -40,7 +40,6 @@ spec:
               NEXT_PUBLIC_DISPLAY_DAYS: "30"
               NEXT_PUBLIC_DEFAULT_THEME: "light"
               NEXT_PUBLIC_USE_MOCK_API: "false"
-              BACKEND_API_URL: "https://vrc-monitor.youkan.uk"
             resources:
               requests:
                 cpu: 100m
