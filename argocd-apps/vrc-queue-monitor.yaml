@@ -1,0 +1,140 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: vrc-queue-monitor
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+    argocd-image-updater.argoproj.io/image-list: backend=ghcr.io/p-nasimonan/vrc-queue-monitor/backend:latest,frontend=ghcr.io/p-nasimonan/vrc-queue-monitor/frontend:latest
+    argocd-image-updater.argoproj.io/backend.update-strategy: latest
+    argocd-image-updater.argoproj.io/frontend.update-strategy: latest
+    argocd-image-updater.argoproj.io/backend.force-update: "true"
+    argocd-image-updater.argoproj.io/frontend.force-update: "true"
+spec:
+  project: default
+  sources:
+    # SealedSecret の管理
+    - repoURL: https://github.com/p-nasimonan/home-manifests.git
+      targetRevision: main
+      path: apps/vrc-queue-monitor
+    # Helm Chart の管理
+    - repoURL: https://github.com/p-nasimonan/vrc-queue-monitor.git
+      targetRevision: main
+      path: charts/vrc-queue-monitor
+      helm:
+        releaseName: vrc-queue-monitor
+        valuesObject:
+          ## ── イメージ設定 ──
+          image:
+            registry: ghcr.io
+            repository: p-nasimonan/vrc-queue-monitor
+            pullPolicy: Always
+            tag: "latest"  # argocd-image-updater が管理
+
+          ## ── フロントエンド ──
+          frontend:
+            replicaCount: 1
+            config:
+              NEXT_PUBLIC_SITE_NAME: "ぷぷりえ待機列モニター"
+              NEXT_PUBLIC_REFRESH_INTERVAL: "120000"  # 2分
+              NEXT_PUBLIC_DISPLAY_DAYS: "30"
+              NEXT_PUBLIC_DEFAULT_THEME: "light"
+              NEXT_PUBLIC_USE_MOCK_API: "false"
+            resources:
+              requests:
+                cpu: 100m
+                memory: 128Mi
+              limits:
+                cpu: 500m
+                memory: 512Mi
+
+          ## ── バックエンド API ──
+          backendApi:
+            replicaCount: 1
+            config:
+              API_PORT: "8000"
+              ENV: "production"
+              SCHEDULE_TYPE: "day_of_month"
+              SCHEDULE_DAYS: "5,15,25"
+              SCHEDULE_START_TIME: "22:00"
+              SCHEDULE_END_TIME: "00:00"
+              POLL_INTERVAL_MINUTES: "2"
+              DISCOVERY_INTERVAL_MINUTES: "5"
+            resources:
+              requests:
+                cpu: 100m
+                memory: 128Mi
+              limits:
+                cpu: 500m
+                memory: 256Mi
+
+          ## ── バックエンド コレクター ──
+          backendCollector:
+            config:
+              LOG_LEVEL: "DEBUG"
+              POLL_INTERVAL_MINUTES: "2"
+              SCHEDULE_TYPE: "day_of_month"
+              SCHEDULE_DAYS: "5,15,25"
+              SCHEDULE_START_TIME: "22:00"
+              SCHEDULE_DURATION_MINUTES: "180"
+            resources:
+              requests:
+                cpu: 100m
+                memory: 128Mi
+              limits:
+                cpu: 200m
+                memory: 256Mi
+
+          ## ── PostgreSQL ──
+          postgres:
+            resources:
+              requests:
+                cpu: 100m
+                memory: 256Mi
+              limits:
+                cpu: 500m
+                memory: 512Mi
+            persistence:
+              enabled: true
+              storageClass: "proxmox-data"
+              size: 5Gi
+            config:
+              DB_NAME: vrc_monitor
+              DB_USER: postgres
+
+          ## ── シークレット（SealedSecret 経由） ──
+          secrets:
+            existingSecret: "vrc-queue-monitor-secrets"
+
+          ## ── Ingress ──
+          ingress:
+            enabled: true
+            className: cloudflare
+            hosts:
+              - host: vrc-monitor.youkan.uk
+                paths:
+                  - path: /
+                    pathType: Prefix
+                    service: frontend
+            tls: []
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: vrc-queue-monitor
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropagationPolicy=background
+      - ApplyOutOfSyncOnly=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+
+  revisionHistoryLimit: 5
