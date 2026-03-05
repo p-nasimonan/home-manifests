@@ -116,9 +116,6 @@ spec:
                   - path: /
                     pathType: Prefix
                     service: frontend
-                  - path: /api
-                    pathType: Prefix
-                    service: backend-api
             tls: []
 
   destination:
