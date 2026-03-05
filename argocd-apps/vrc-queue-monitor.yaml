@@ -57,7 +57,7 @@ spec:
               SCHEDULE_TYPE: "day_of_month"
               SCHEDULE_DAYS: "5,15,25"
               SCHEDULE_START_TIME: "22:00"
-              SCHEDULE_END_TIME: "23:30"
+              SCHEDULE_END_TIME: "23:00"
               POLL_INTERVAL_MINUTES: "2"
             resources:
               requests:
@@ -74,7 +74,7 @@ spec:
               SCHEDULE_TYPE: "day_of_month"
               SCHEDULE_DAYS: "5,15,25"
               SCHEDULE_START_TIME: "22:00"
-              SCHEDULE_END_TIME: "23:30"
+              SCHEDULE_END_TIME: "23:00"
             resources:
               requests:
                 cpu: 100m
