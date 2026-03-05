@@ -35,7 +35,7 @@ spec:
           frontend:
             replicaCount: 1
             config:
-              NEXT_PUBLIC_SITE_NAME: "VRC Queue Monitor"
+              NEXT_PUBLIC_SITE_NAME: "ぷぷりえ待機列モニター"
               NEXT_PUBLIC_REFRESH_INTERVAL: "120000"  # 2分
               NEXT_PUBLIC_DISPLAY_DAYS: "30"
               NEXT_PUBLIC_DEFAULT_THEME: "light"
@@ -59,6 +59,7 @@ spec:
               SCHEDULE_START_TIME: "22:00"
               SCHEDULE_END_TIME: "00:00"
               POLL_INTERVAL_MINUTES: "2"
+              DISCOVERY_INTERVAL_MINUTES: "5"
             resources:
               requests:
                 cpu: 100m
@@ -75,7 +76,7 @@ spec:
               SCHEDULE_TYPE: "day_of_month"
               SCHEDULE_DAYS: "5,15,25"
               SCHEDULE_START_TIME: "22:00"
-              SCHEDULE_END_TIME: "00:00"
+              SCHEDULE_DURATION_MINUTES: "180"
             resources:
               requests:
                 cpu: 100m
