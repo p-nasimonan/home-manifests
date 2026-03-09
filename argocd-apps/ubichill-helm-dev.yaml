@@ -12,6 +12,18 @@ metadata:
     argocd-image-updater.argoproj.io/backend.force-update: "true"
     argocd-image-updater.argoproj.io/frontend.force-update: "true"
     argocd-image-updater.argoproj.io/video-player.force-update: "true"
+    # 1. 書き戻し方法の指定（ArgoCDのパラメータとして上書きする）
+    argocd-image-updater.argoproj.io/write-back-method: argocd
+
+    # 2. Helmの「どの値」を新しいイメージ・タグに書き換えるかを指示する
+    argocd-image-updater.argoproj.io/backend.helm.image-name: backend.image.repository
+    argocd-image-updater.argoproj.io/backend.helm.image-tag: backend.image.tag
+
+    argocd-image-updater.argoproj.io/frontend.helm.image-name: frontend.image.repository
+    argocd-image-updater.argoproj.io/frontend.helm.image-tag: frontend.image.tag
+
+    argocd-image-updater.argoproj.io/video-player.helm.image-name: video-player.backend.image.repository
+    argocd-image-updater.argoproj.io/video-player.helm.image-tag: video-player.backend.image.tag
   labels:
     environment: development
     component: ubichill
