@@ -4,11 +4,10 @@ metadata:
   name: ubichill-helm-dev
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "10"
-    argocd-image-updater.argoproj.io/image-list: |
-          backend=ghcr.io/ubichill/ubichill-backend:dev,
-          frontend=ghcr.io/ubichill/ubichill-frontend:dev,
-          video-player=ghcr.io/ubichill/video-player-backend:dev
+    argocd-image-updater.argoproj.io/image-list: >-
+      backend=ghcr.io/ubichill/ubichill-backend:dev,
+      frontend=ghcr.io/ubichill/ubichill-frontend:dev,
+      video-player=ghcr.io/ubichill/video-player-backend:dev
     argocd-image-updater.argoproj.io/backend.update-strategy: digest
     argocd-image-updater.argoproj.io/frontend.update-strategy: digest
     argocd-image-updater.argoproj.io/video-player.update-strategy: digest
