@@ -5,9 +5,9 @@ metadata:
   namespace: argocd
   annotations:
     argocd-image-updater.argoproj.io/image-list: >-
-      backend=ghcr.io/ubichill/ubichill-backend:dev,
-      frontend=ghcr.io/ubichill/ubichill-frontend:dev,
-      video-player=ghcr.io/ubichill/video-player-backend:dev
+      backend=ghcr.io/ubichill/ubichill-backend,
+      frontend=ghcr.io/ubichill/ubichill-frontend,
+      video-player=ghcr.io/ubichill/video-player-backend
 
     # 2. update-strategy を「digest」から「latest」に変更
     # （レジストリにプッシュされた日時が一番新しいものを正とします）
