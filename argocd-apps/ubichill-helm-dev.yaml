@@ -8,16 +8,18 @@ metadata:
       backend=ghcr.io/ubichill/ubichill-backend:dev,
       frontend=ghcr.io/ubichill/ubichill-frontend:dev,
       video-player=ghcr.io/ubichill/video-player-backend:dev
-    argocd-image-updater.argoproj.io/backend.update-strategy: digest
-    argocd-image-updater.argoproj.io/frontend.update-strategy: digest
-    argocd-image-updater.argoproj.io/video-player.update-strategy: digest
-    argocd-image-updater.argoproj.io/write-back-method: argocd
-    argocd-image-updater.argoproj.io/backend.helm.image-name: backend.image.repository
-    argocd-image-updater.argoproj.io/backend.helm.image-tag: backend.image.tag
-    argocd-image-updater.argoproj.io/frontend.helm.image-name: frontend.image.repository
-    argocd-image-updater.argoproj.io/frontend.helm.image-tag: frontend.image.tag
-    argocd-image-updater.argoproj.io/video-player.helm.image-name: video-player.backend.image.repository
-    argocd-image-updater.argoproj.io/video-player.helm.image-tag: video-player.backend.image.tag
+
+    # 2. update-strategy を「digest」から「latest」に変更
+    # （レジストリにプッシュされた日時が一番新しいものを正とします）
+    argocd-image-updater.argoproj.io/backend.update-strategy: latest
+    argocd-image-updater.argoproj.io/frontend.update-strategy: latest
+    argocd-image-updater.argoproj.io/video-player.update-strategy: latest
+
+    # 3. 【重要】監視するタグの条件（正規表現）を指定
+    # これを指定しないと、無関係なタグまで拾ってしまう事故が起きます
+    argocd-image-updater.argoproj.io/backend.allow-tags: regexp:^dev-[0-9a-f]+$
+    argocd-image-updater.argoproj.io/frontend.allow-tags: regexp:^dev-[0-9a-f]+$
+    argocd-image-updater.argoproj.io/video-player.allow-tags: regexp:^dev-[0-9a-f]+$
   labels:
     environment: development
     component: ubichill
