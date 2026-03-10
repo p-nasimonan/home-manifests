@@ -101,7 +101,7 @@ spec:
           image:
             registry: docker.io
             repository: bitnami/redis
-            tag: latest
+            tag: "7.2.4-debian-11-r2"
         postgresql:
           enabled: true
           primary:
@@ -112,7 +112,7 @@ spec:
           image:
             registry: docker.io
             repository: bitnami/postgresql
-            tag: latest
+            tag: "17.2.0-debian-12-r6"
         ingress:
           enabled: true
           className: cloudflare
@@ -213,6 +213,11 @@ spec:
       kind: HorizontalPodAutoscaler
       jsonPointers:
         - /status
+    # PVC の storage は拡張後に縮小不可 → ArgoCD が diff を検出しても変更できないため無視
+    - group: ""
+      kind: PersistentVolumeClaim
+      jsonPointers:
+        - /spec/resources/requests/storage
   info:
     - name: 'Environment'
       value: 'Development'
