@@ -101,7 +101,7 @@ spec:
           image:
             registry: docker.io
             repository: bitnami/redis
-            tag: "7.2.4-debian-11-r2"
+            tag: "latest"
         postgresql:
           enabled: true
           primary:
@@ -112,7 +112,7 @@ spec:
           image:
             registry: docker.io
             repository: bitnami/postgresql
-            tag: "17.2.0-debian-12-r6"
+            tag: "latest"
         ingress:
           enabled: true
           className: cloudflare
