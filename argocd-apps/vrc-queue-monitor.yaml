@@ -57,9 +57,11 @@ spec:
               SCHEDULE_TYPE: "day_of_month"
               SCHEDULE_DAYS: "5,15,25"
               SCHEDULE_START_TIME: "22:00"
-              SCHEDULE_END_TIME: "00:00"
+              SCHEDULE_DURATION_MINUTES: "150"
               POLL_INTERVAL_MINUTES: "2"
               DISCOVERY_INTERVAL_MINUTES: "5"
+              BURST_DURATION_MINUTES: "5"
+              BURST_INTERVAL_SECONDS: "30"
             resources:
               requests:
                 cpu: 100m
@@ -72,11 +74,14 @@ spec:
           backendCollector:
             config:
               LOG_LEVEL: "DEBUG"
-              POLL_INTERVAL_MINUTES: "2"
               SCHEDULE_TYPE: "day_of_month"
               SCHEDULE_DAYS: "5,15,25"
               SCHEDULE_START_TIME: "22:00"
-              SCHEDULE_DURATION_MINUTES: "180"
+              SCHEDULE_DURATION_MINUTES: "150"
+              POLL_INTERVAL_MINUTES: "2"
+              DISCOVERY_INTERVAL_MINUTES: "5"
+              BURST_DURATION_MINUTES: "5"
+              BURST_INTERVAL_SECONDS: "30"
             resources:
               requests:
                 cpu: 100m
