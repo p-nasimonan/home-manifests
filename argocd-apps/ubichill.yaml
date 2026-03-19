@@ -5,13 +5,22 @@ metadata:
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "0"
-    argocd-image-updater.argoproj.io/image-list: backend=ghcr.io/ubichill/ubichill-backend:latest,frontend=ghcr.io/ubichill/ubichill-frontend:latest,video-player=ghcr.io/ubichill/video-player-backend:latest
+    argocd-image-updater.argoproj.io/image-list: >-
+      backend=ghcr.io/ubichill/ubichill-backend,
+      frontend=ghcr.io/ubichill/ubichill-frontend,
+      video-player=ghcr.io/ubichill/video-player-backend
+
     argocd-image-updater.argoproj.io/backend.update-strategy: latest
     argocd-image-updater.argoproj.io/frontend.update-strategy: latest
     argocd-image-updater.argoproj.io/video-player.update-strategy: latest
-    argocd-image-updater.argoproj.io/backend.force-update: "true"
-    argocd-image-updater.argoproj.io/frontend.force-update: "true"
-    argocd-image-updater.argoproj.io/video-player.force-update: "true"
+
+    argocd-image-updater.argoproj.io/write-back-method: argocd
+    argocd-image-updater.argoproj.io/backend.helm.image-name: backend.image.repository
+    argocd-image-updater.argoproj.io/backend.helm.image-tag: backend.image.tag
+    argocd-image-updater.argoproj.io/frontend.helm.image-name: frontend.image.repository
+    argocd-image-updater.argoproj.io/frontend.helm.image-tag: frontend.image.tag
+    argocd-image-updater.argoproj.io/video-player.helm.image-name: video-player.backend.image.repository
+    argocd-image-updater.argoproj.io/video-player.helm.image-tag: video-player.backend.image.tag
 spec:
   project: default
   sources:
