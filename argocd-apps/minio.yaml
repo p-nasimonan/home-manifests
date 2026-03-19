@@ -46,10 +46,20 @@ spec:
               memory: 512Mi
               cpu: 500m
 
-          # misskey用バケットを自動作成
+          # S3 APIを外部公開 (https://s3.youkan.uk)
+          ingress:
+            enabled: true
+            ingressClassName: cloudflare
+            annotations:
+              external-dns.alpha.kubernetes.io/hostname: s3.youkan.uk
+            hosts:
+              - s3.youkan.uk
+            path: /
+
+          # misskey用バケットを自動作成 (download = 公開読み取り)
           buckets:
             - name: misskey
-              policy: none
+              policy: download
               purge: false
 
   destination:
