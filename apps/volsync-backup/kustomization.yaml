@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  # rclone config (NFS - 認証不要なので SealedSecret 不要)
+  - rclone-configs.yaml
+
+  # ReplicationSources
+  - misskey-postgresql.yaml
+  - misskey-meilisearch.yaml
+  - grafana.yaml
+  - dashy.yaml
+  - vrc-queue-monitor-postgresql.yaml

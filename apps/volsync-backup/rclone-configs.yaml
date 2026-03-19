@@ -1,0 +1,50 @@
+---
+# NFS rclone 設定 - 認証不要なので SealedSecret 不要
+# バックアップ先: 192.168.0.9:/mnt/public/k3s/volsync/<app-name>/
+apiVersion: v1
+kind: Secret
+metadata:
+  name: volsync-rclone-config
+  namespace: misskey
+stringData:
+  rclone.conf: |
+    [nfs-backup]
+    type = nfs
+    host = 192.168.0.9
+    path = /mnt/public/k3s
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: volsync-rclone-config
+  namespace: monitoring
+stringData:
+  rclone.conf: |
+    [nfs-backup]
+    type = nfs
+    host = 192.168.0.9
+    path = /mnt/public/k3s
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: volsync-rclone-config
+  namespace: dashy
+stringData:
+  rclone.conf: |
+    [nfs-backup]
+    type = nfs
+    host = 192.168.0.9
+    path = /mnt/public/k3s
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: volsync-rclone-config
+  namespace: vrc-queue-monitor
+stringData:
+  rclone.conf: |
+    [nfs-backup]
+    type = nfs
+    host = 192.168.0.9
+    path = /mnt/public/k3s

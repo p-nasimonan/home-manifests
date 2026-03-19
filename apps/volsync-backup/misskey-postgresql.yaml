@@ -1,0 +1,18 @@
+---
+# misskey: PostgreSQL バックアップ
+# 復旧: NFS の /mnt/public/k3s/volsync/misskey-postgresql/ からファイルをコピーするだけ
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: misskey-postgresql-backup
+  namespace: misskey
+spec:
+  sourcePVC: data-misskey-postgresql-0
+  trigger:
+    schedule: "0 3 * * *"  # 毎日午前3時
+  rclone:
+    rcloneConfigSection: nfs-backup
+    rcloneDestPath: volsync/misskey-postgresql
+    copyMethod: Clone
+    storageClassName: proxmox-monaka
+    rcloneConfig: volsync-rclone-config

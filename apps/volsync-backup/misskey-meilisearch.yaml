@@ -1,0 +1,17 @@
+---
+# misskey: Meilisearch バックアップ
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: misskey-meilisearch-backup
+  namespace: misskey
+spec:
+  sourcePVC: meilisearch-data
+  trigger:
+    schedule: "30 3 * * *"  # 毎日午前3時30分
+  rclone:
+    rcloneConfigSection: nfs-backup
+    rcloneDestPath: volsync/misskey-meilisearch
+    copyMethod: Clone
+    storageClassName: proxmox-data
+    rcloneConfig: volsync-rclone-config

@@ -1,0 +1,17 @@
+---
+# dashy バックアップ
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: dashy-backup
+  namespace: dashy
+spec:
+  sourcePVC: dashy-data
+  trigger:
+    schedule: "0 4 * * 0"  # 毎週日曜午前4時
+  rclone:
+    rcloneConfigSection: nfs-backup
+    rcloneDestPath: volsync/dashy
+    copyMethod: Clone
+    storageClassName: proxmox-data
+    rcloneConfig: volsync-rclone-config

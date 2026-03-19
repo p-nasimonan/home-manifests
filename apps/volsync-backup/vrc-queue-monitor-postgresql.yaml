@@ -1,0 +1,17 @@
+---
+# vrc-queue-monitor: PostgreSQL バックアップ
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: vrc-queue-monitor-postgresql-backup
+  namespace: vrc-queue-monitor
+spec:
+  sourcePVC: vrc-queue-monitor-postgres-pvc
+  trigger:
+    schedule: "0 4 * * *"  # 毎日午前4時
+  rclone:
+    rcloneConfigSection: nfs-backup
+    rcloneDestPath: volsync/vrc-queue-monitor-postgresql
+    copyMethod: Clone
+    storageClassName: proxmox-data
+    rcloneConfig: volsync-rclone-config

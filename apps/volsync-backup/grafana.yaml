@@ -1,0 +1,17 @@
+---
+# monitoring: Grafana バックアップ
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: grafana-backup
+  namespace: monitoring
+spec:
+  sourcePVC: grafana
+  trigger:
+    schedule: "0 4 * * 0"  # 毎週日曜午前4時
+  rclone:
+    rcloneConfigSection: nfs-backup
+    rcloneDestPath: volsync/grafana
+    copyMethod: Clone
+    storageClassName: proxmox-data
+    rcloneConfig: volsync-rclone-config
