@@ -8,7 +8,5 @@ resources:
   # ReplicationSources
   - misskey-postgresql.yaml
   - misskey-meilisearch.yaml
-  - grafana.yaml
-  - dashy.yaml
   - vrc-queue-monitor-postgresql.yaml
   - n8n.yaml

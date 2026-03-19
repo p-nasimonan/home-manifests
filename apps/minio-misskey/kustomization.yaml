@@ -1,0 +1,7 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  # Run the following to create the SealedSecret, then uncomment:
+  #   ./create-sealed-secret.sh --name minio-misskey-credentials --namespace misskey minio-misskey-secrets.env
+  # - minio-misskey-credentials.enc.yaml
