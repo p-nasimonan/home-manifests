@@ -48,3 +48,15 @@ stringData:
     type = nfs
     host = 192.168.0.9
     path = /mnt/public/k3s
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: volsync-rclone-config
+  namespace: n8n
+stringData:
+  rclone.conf: |
+    [nfs-backup]
+    type = nfs
+    host = 192.168.0.9
+    path = /mnt/public/k3s

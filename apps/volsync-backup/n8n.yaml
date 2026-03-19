@@ -1,0 +1,17 @@
+---
+# n8n バックアップ
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: n8n-backup
+  namespace: n8n
+spec:
+  sourcePVC: n8n-data
+  trigger:
+    schedule: "0 4 * * *"  # 毎日午前4時
+  rclone:
+    rcloneConfigSection: nfs-backup
+    rcloneDestPath: volsync/n8n
+    copyMethod: Clone
+    storageClassName: proxmox-data
+    rcloneConfig: volsync-rclone-config

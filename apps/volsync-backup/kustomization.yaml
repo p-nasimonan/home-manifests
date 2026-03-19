@@ -11,3 +11,4 @@ resources:
   - grafana.yaml
   - dashy.yaml
   - vrc-queue-monitor-postgresql.yaml
+  - n8n.yaml

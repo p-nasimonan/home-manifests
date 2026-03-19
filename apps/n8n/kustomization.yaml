@@ -1,0 +1,5 @@
+resources:
+  - pvc.yaml
+  - deployment.yaml
+  - ingress.yaml
+  - n8n-secrets.enc.yaml
