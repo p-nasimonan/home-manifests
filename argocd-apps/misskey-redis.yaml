@@ -21,6 +21,9 @@ spec:
         image:
           repository: bitnami/redis
           tag: latest
+        commonConfiguration: |-
+          appendonly no
+          save ""
         auth:
           enabled: true
           existingSecret: misskey-secrets

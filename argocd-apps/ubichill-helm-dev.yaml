@@ -93,6 +93,9 @@ spec:
                   backgroundColor: "#2C3E50"
         redis:
           enabled: true
+          commonConfiguration: |-
+            appendonly no
+            save ""
           master:
             persistence:
               enabled: true
