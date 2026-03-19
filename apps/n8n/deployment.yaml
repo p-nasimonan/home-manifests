@@ -32,7 +32,20 @@ spec:
             - name: GENERIC_TIMEZONE
               value: "Asia/Tokyo"
             - name: DB_TYPE
-              value: "sqlite"
+              value: "postgresdb"
+            - name: DB_POSTGRESDB_HOST
+              value: "n8n-postgres"
+            - name: DB_POSTGRESDB_PORT
+              value: "5432"
+            - name: DB_POSTGRESDB_DATABASE
+              value: "n8n"
+            - name: DB_POSTGRESDB_USER
+              value: "n8n"
+            - name: DB_POSTGRESDB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: n8n-postgres-secrets
+                  key: POSTGRES_PASSWORD
           envFrom:
             - secretRef:
                 name: n8n-secrets

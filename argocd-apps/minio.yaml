@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: minio-misskey
+  name: minio
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "-1"
@@ -11,22 +11,22 @@ spec:
     # SealedSecret (MinIO credentials)
     - repoURL: https://github.com/p-nasimonan/home-manifests.git
       targetRevision: main
-      path: apps/minio-misskey
+      path: apps/minio
     # Helm chart
     - repoURL: https://charts.min.io/
       chart: minio
       targetRevision: 5.4.0
       helm:
-        releaseName: minio-misskey
+        releaseName: minio
         valuesObject:
           # Secret には rootUser と rootPassword キーが必要
-          existingSecret: minio-misskey-credentials
+          existingSecret: minio-credentials
 
           mode: standalone
 
           persistence:
             enabled: true
-            storageClass: nfs-client
+            storageClass: proxmox-data
             size: 50Gi
 
           service:
@@ -54,7 +54,7 @@ spec:
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: misskey
+    namespace: minio
   syncPolicy:
     automated:
       prune: true
