@@ -29,14 +29,17 @@ metadata:
     component: ubichill
 spec:
   project: default
-  source:
-    repoURL: https://github.com/ubichill/ubichill
-    targetRevision: dev  # Use feature branch for testing
-    path: charts/ubichill
-    helm:
-      valueFiles:
-        - values-dev.yaml
-      valuesObject:
+  sources:
+    - repoURL: https://github.com/p-nasimonan/home-manifests.git
+      targetRevision: main
+      path: apps/ubichill-dev
+    - repoURL: https://github.com/ubichill/ubichill
+      targetRevision: dev
+      path: charts/ubichill
+      helm:
+        valueFiles:
+          - values-dev.yaml
+        valuesObject:
         global:
           imageRegistry: ""
         backend:
