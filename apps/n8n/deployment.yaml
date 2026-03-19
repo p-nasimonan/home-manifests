@@ -31,6 +31,8 @@ spec:
               value: "https://n8n.youkan.uk/"
             - name: GENERIC_TIMEZONE
               value: "Asia/Tokyo"
+            - name: DB_SQLITE_DATABASE_FILE
+              value: ""
             - name: DB_TYPE
               value: "postgresdb"
             - name: DB_POSTGRESDB_HOST

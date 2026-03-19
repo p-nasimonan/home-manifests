@@ -11,6 +11,9 @@ spec:
     repoURL: https://github.com/p-nasimonan/home-manifests.git
     targetRevision: main
     path: apps/misskey
+    directory:
+      recurse: false
+      include: "misskey*"
   destination:
     server: https://kubernetes.default.svc
     namespace: misskey

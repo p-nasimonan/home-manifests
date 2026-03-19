@@ -44,18 +44,6 @@ spec:
                 scope: global
               fulltextSearch:
                 provider: meilisearch
-              objectStorage:
-                useObjectStorage: true
-                baseUrl: null
-                bucket: misskey
-                prefix: null
-                endpoint: http://minio.minio.svc.cluster.local:9000
-                region: us-east-1
-                accessKey: $MINIO_ACCESS_KEY
-                secretKey: $MINIO_SECRET_KEY
-                useSSL: false
-                s3ForcePathStyle: true
-                setPublicRead: false
               id: $MISSKEY_ID
               allowedPrivateNetworks:
                 - 192.168.0.0/24
@@ -99,16 +87,6 @@ spec:
                 secretKeyRef:
                   name: misskey-secrets
                   key: SETUP_PASSWORD
-            - name: MINIO_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: minio-misskey-credentials
-                  key: MINIO_ACCESS_KEY
-            - name: MINIO_SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: minio-misskey-credentials
-                  key: MINIO_SECRET_KEY
           volumeMounts:
             - name: config-volume
               mountPath: /misskey/.config
