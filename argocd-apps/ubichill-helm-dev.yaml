@@ -73,6 +73,7 @@ spec:
                 timeoutSeconds: 10
                 failureThreshold: 5
           frontend:
+            replicaCount: 1
             env:
               NODE_ENV: "development"
             image:
