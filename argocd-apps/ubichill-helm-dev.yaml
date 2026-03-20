@@ -74,6 +74,8 @@ spec:
                 failureThreshold: 5
           frontend:
             replicaCount: 1
+            autoscaling:
+              enabled: false
             env:
               NODE_ENV: "development"
             image:
