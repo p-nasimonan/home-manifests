@@ -37,8 +37,6 @@ spec:
       targetRevision: dev
       path: charts/ubichill
       helm:
-        valueFiles:
-          - values-dev.yaml
         valuesObject:
           global:
             imageRegistry: ""
