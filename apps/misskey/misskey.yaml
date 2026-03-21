@@ -92,7 +92,7 @@ spec:
               mountPath: /misskey/.config
       containers:
         - name: misskey
-          image: misskey/misskey:2026.1.0-alpha.0
+          image: ghcr.io/anatawa12/vrtl-misskey:latest
           env:
             - name: NODE_ENV
               value: production
