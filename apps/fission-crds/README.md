@@ -1,1 +1,0 @@
-Server-Side Applyを有効にし、crdsはArgoCDでsyncしましょう
