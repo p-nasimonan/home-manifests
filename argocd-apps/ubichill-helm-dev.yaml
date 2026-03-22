@@ -43,6 +43,8 @@ spec:
           backend:
             existingSecret: "ubichill-helm-dev-secrets"
             replicaCount: 1
+            autoscaling:
+              enabled: false
             env:
               RATE_LIMIT_MAX_REQUESTS: "10000"
               RATE_LIMIT_WINDOW_MS: "60000"
