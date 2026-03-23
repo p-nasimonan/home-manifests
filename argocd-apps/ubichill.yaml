@@ -153,7 +153,23 @@ spec:
               repository: bitnami/redis
               tag: latest
           postgresql:
-            enabled: false
+            enabled: true
+            image:
+              registry: docker.io
+              repository: bitnami/postgresql
+              tag: latest
+            auth:
+              existingSecret: "ubichill-secrets"
+              secretKeys:
+                adminPasswordKey: POSTGRES_PASSWORD
+                userPasswordKey: POSTGRES_PASSWORD
+              username: "ubichill"
+              database: "ubichill"
+            primary:
+              persistence:
+                enabled: true
+                storageClass: "proxmox-data"
+                size: 10Gi
           ingress:
             enabled: true
             className: cloudflare
