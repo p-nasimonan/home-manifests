@@ -28,7 +28,7 @@ spec:
       targetRevision: main
       path: apps/ubichill
     - repoURL: https://ubichill.github.io/ubichill
-      targetRevision: 0.1.5
+      targetRevision: 0.1.6
       chart: ubichill
       helm:
         valuesObject:
