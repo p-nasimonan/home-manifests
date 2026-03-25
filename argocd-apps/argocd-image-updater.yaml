@@ -9,23 +9,26 @@ metadata:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
-  source:
-    repoURL: https://argoproj.github.io/argo-helm
-    chart: argocd-image-updater
-    targetRevision: 0.9.6
-    helm:
-      releaseName: argocd-image-updater
-      values: |
-        replicaCount: 1
-        serviceAccount:
-          create: true
-        config:
-          registries:
-            - name: GitHub Container Registry
-              prefix: ghcr.io
-              api_url: https://ghcr.io
-              defaultns: library
-              insecure: false
+  sources:
+    - repoURL: https://github.com/p-nasimonan/home-manifests.git
+      targetRevision: main
+      path: apps/argocd
+    - repoURL: https://argoproj.github.io/argo-helm
+      chart: argocd-image-updater
+      targetRevision: 0.9.6
+      helm:
+        releaseName: argocd-image-updater
+        values: |
+          replicaCount: 1
+          serviceAccount:
+            create: true
+          config:
+            registries:
+              - name: GitHub Container Registry
+                prefix: ghcr.io
+                api_url: https://ghcr.io
+                defaultns: library
+                insecure: false
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
