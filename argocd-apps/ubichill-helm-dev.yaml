@@ -55,6 +55,7 @@ spec:
             image:
               repository: ghcr.io/ubichill/ubichill-backend
               tag: dev
+              pullPolicy: Always
             resources:
               requests:
                 cpu: 100m
@@ -83,6 +84,7 @@ spec:
             image:
               repository: ghcr.io/ubichill/ubichill-frontend
               tag: dev
+              pullPolicy: Always
           rooms:
             enabled: true
             custom:
@@ -165,6 +167,7 @@ spec:
                 enabled: false
               image:
                 repository: ghcr.io/ubichill/video-player-backend
+                pullPolicy: Always
                 tag: dev
               env:
                 LOG_LEVEL: DEBUG
@@ -199,6 +202,7 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
+      - RespectIgnoreDifferences=true
       - CreateNamespace=true
       - PrunePropagationPolicy=background
       - ApplyOutOfSyncOnly=true
