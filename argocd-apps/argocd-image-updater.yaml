@@ -15,7 +15,7 @@ spec:
       path: apps/argocd
     - repoURL: https://argoproj.github.io/argo-helm
       chart: argocd-image-updater
-      targetRevision: 0.9.6
+      targetRevision: 1.1.0
       helm:
         releaseName: argocd-image-updater
         values: |
