@@ -1,0 +1,5 @@
+kustomize:
+  images:
+  - ghcr.io/ubichill/ubichill-backend:dev-7cedc62
+  - ghcr.io/ubichill/ubichill-frontend:dev-9f3964f
+  - ghcr.io/ubichill/video-player-backend:dev-be5d8bb24bfb
