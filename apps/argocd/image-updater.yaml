@@ -1,0 +1,14 @@
+apiVersion: argocd-image-updater.argoproj.io/v1alpha1
+kind: ImageUpdater
+metadata:
+  name: apps-image-updater
+  namespace: argocd
+spec:
+  namespace: argocd
+  applicationRefs:
+    - namePattern: "ubichill-helm-dev"
+      useAnnotations: true
+    - namePattern: "ubichill"
+      useAnnotations: true
+    - namePattern: "vrc-queue-monitor"
+      useAnnotations: true
