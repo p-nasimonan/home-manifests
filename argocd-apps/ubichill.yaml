@@ -10,9 +10,9 @@ metadata:
       frontend=ghcr.io/ubichill/ubichill-frontend,
       video-player=ghcr.io/ubichill/video-player-backend
 
-    argocd-image-updater.argoproj.io/backend.update-strategy: latest
-    argocd-image-updater.argoproj.io/frontend.update-strategy: latest
-    argocd-image-updater.argoproj.io/video-player.update-strategy: latest
+    argocd-image-updater.argoproj.io/backend.update-strategy: newest-build
+    argocd-image-updater.argoproj.io/frontend.update-strategy: newest-build
+    argocd-image-updater.argoproj.io/video-player.update-strategy: newest-build
 
     argocd-image-updater.argoproj.io/backend.allow-tags: regexp:^v[0-9]
     argocd-image-updater.argoproj.io/frontend.allow-tags: regexp:^v[0-9]
