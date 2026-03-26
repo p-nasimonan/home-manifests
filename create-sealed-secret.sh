@@ -7,19 +7,26 @@ set -e
 #   ./create-sealed-secret.sh -n <secret-name> -ns <ns> <env-file>
 #   ./create-sealed-secret.sh <secret-name> <namespace> <env-file>  # 位置引数（後方互換性）
 #   ./create-sealed-secret.sh --name <name> --namespace <ns> --from-file <key=path>  # ファイルベース
-# 
+#   ./create-sealed-secret.sh --name <name> --namespaces <ns1,ns2,ns3> --from-file <key=path> --output-dir <dir>  # 複数 namespace
+#
 # 例:
 #   ./create-sealed-secret.sh --name misskey-secrets --namespace misskey misskey-secrets.env
 #   ./create-sealed-secret.sh -n minecraft-secrets -ns minecraft minecraft-secrets.env
 #   ./create-sealed-secret.sh --name proxmox-csi-config --namespace kube-system \
 #     --from-file config.yaml=proxmox-csi-config.yaml
+#   ./create-sealed-secret.sh --name volsync-rclone-config \
+#     --namespaces misskey,vrc-queue-monitor,n8n \
+#     --from-file rclone.conf=volsync-minio.env \
+#     --output-dir apps/volsync-backup
 
 # デフォルト値
 SECRET_NAME=""
 NAMESPACE=""
+NAMESPACES=()
 ENV_FILE=""
 FILE_ARGS=()
 FROM_FILE_MODE=false
+OUTPUT_DIR=""
 
 # オプション引数解析
 while [[ $# -gt 0 ]]; do
@@ -30,6 +37,14 @@ while [[ $# -gt 0 ]]; do
       ;;
     --namespace|--ns|-ns)
       NAMESPACE="$2"
+      shift 2
+      ;;
+    --namespaces)
+      IFS=',' read -ra NAMESPACES <<< "$2"
+      shift 2
+      ;;
+    --output-dir|-o)
+      OUTPUT_DIR="$2"
       shift 2
       ;;
     --env|-e)
@@ -59,26 +74,25 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+# --namespace と --namespaces を統合
+if [ -n "$NAMESPACE" ]; then
+  NAMESPACES=("$NAMESPACE" "${NAMESPACES[@]}")
+fi
+
 # 必須引数チェック
 if [ -z "$SECRET_NAME" ]; then
   echo "❌ Error: Secret name is required"
   echo "Usage: ./create-sealed-secret.sh --name <secret-name> --namespace <namespace> <env-file>"
-  echo "       ./create-sealed-secret.sh -n <secret-name> -ns <namespace> <env-file>"
-  echo "       ./create-sealed-secret.sh <secret-name> <namespace> <env-file>"
-  echo "       ./create-sealed-secret.sh --name <name> --namespace <ns> --from-file <key=path>"
   exit 1
 fi
 
-if [ -z "$NAMESPACE" ]; then
-  echo "❌ Error: Namespace is required"
-  echo "Usage: ./create-sealed-secret.sh --name <secret-name> --namespace <namespace> <env-file>"
+if [ ${#NAMESPACES[@]} -eq 0 ]; then
+  echo "❌ Error: --namespace or --namespaces is required"
   exit 1
 fi
 
 if [ "$FROM_FILE_MODE" = false ] && [ -z "$ENV_FILE" ]; then
   echo "❌ Error: Env file or --from-file is required"
-  echo "Usage: ./create-sealed-secret.sh --name <secret-name> --namespace <namespace> <env-file>"
-  echo "       ./create-sealed-secret.sh --name <name> --namespace <ns> --from-file <key=path>"
   exit 1
 fi
 
@@ -87,20 +101,16 @@ CERT_PATH="${HOME}/my-sealed-secrets-public-key.crt"
 # === ステップ 1: 公開鍵を取得（初回または更新） ===
 echo "🔑 Fetching K3s sealed-secrets public key from k3s-1..."
 
-# 一時ファイル
 TEMP_CERT="/tmp/sealed-secrets-temp.crt"
 
-# 方法1: SSH経由でリモートサーバーから取得
 if ssh k3s-1 'SECRET_NAME=$(sudo kubectl get secret -n kube-system -o name | grep sealed-secrets | head -1 | cut -d/ -f2) && [ -n "$SECRET_NAME" ] && sudo kubectl get secret "$SECRET_NAME" -n kube-system -o jsonpath="{.data.tls\.crt}" 2>/dev/null | base64 -d' > "$TEMP_CERT" 2>/dev/null && \
    [ -s "$TEMP_CERT" ]; then
   cp "$TEMP_CERT" "$CERT_PATH"
   echo "✅ Public key fetched and saved to $CERT_PATH"
 
-# 方法2: 既存の公開鍵を使用（フォールバック）
 elif [ -f "$CERT_PATH" ] && [ -s "$CERT_PATH" ]; then
   echo "✅ Using existing public key at $CERT_PATH"
 
-# エラー
 else
   echo "❌ Error: Could not fetch sealed-secrets public key via SSH"
   echo "Make sure:"
@@ -115,7 +125,6 @@ rm -f "$TEMP_CERT"
 # === ステップ 2: 入力ファイルをチェック ===
 if [ "$FROM_FILE_MODE" = true ]; then
   for file_arg in "${FILE_ARGS[@]}"; do
-    # key=path 形式または path 形式
     file_path="${file_arg#*=}"
     if [ ! -f "$file_path" ]; then
       echo "❌ Error: File not found: $file_path"
@@ -129,41 +138,50 @@ else
   fi
 fi
 
-# === ステップ 3: Sealed Secret を作成 ===
-SEALED_FILE="${SECRET_NAME}.enc.yaml"
+# === ステップ 3: namespace ごとに Sealed Secret を作成 ===
+MULTI=${#NAMESPACES[@]}
 
-echo "📦 Creating sealed secret..."
-echo "   Secret Name: $SECRET_NAME"
-echo "   Namespace: $NAMESPACE"
+for NS in "${NAMESPACES[@]}"; do
+  # 出力ファイル名: 複数 namespace のときは <name>-<ns>.enc.yaml
+  if [ "$MULTI" -gt 1 ]; then
+    SEALED_FILE="${SECRET_NAME}-${NS}.enc.yaml"
+  else
+    SEALED_FILE="${SECRET_NAME}.enc.yaml"
+  fi
 
-if [ "$FROM_FILE_MODE" = true ]; then
-  # --from-file モード (YAML ファイルなど任意形式)
-  FROM_FILE_OPTS=()
-  for file_arg in "${FILE_ARGS[@]}"; do
-    FROM_FILE_OPTS+=("--from-file=$file_arg")
-  done
-  echo "   Files: ${FILE_ARGS[*]}"
+  # --output-dir が指定されていれば移動先のパスに
+  if [ -n "$OUTPUT_DIR" ]; then
+    SEALED_FILE="${OUTPUT_DIR}/${SEALED_FILE}"
+  fi
 
-  kubectl create secret generic "$SECRET_NAME" \
-    --namespace "$NAMESPACE" \
-    "${FROM_FILE_OPTS[@]}" \
-    --dry-run=client -o yaml | \
-    kubeseal --cert "$CERT_PATH" -o yaml \
-    > "$SEALED_FILE"
-else
-  # --from-env-file モード (KEY=VALUE 形式)
-  echo "   Env file: $ENV_FILE"
+  echo "📦 Creating sealed secret..."
+  echo "   Secret Name: $SECRET_NAME"
+  echo "   Namespace:   $NS"
+  echo "   Output:      $SEALED_FILE"
 
-  kubectl create secret generic "$SECRET_NAME" \
-    --namespace "$NAMESPACE" \
-    --from-env-file="$ENV_FILE" \
-    --dry-run=client -o yaml | \
-    kubeseal --cert "$CERT_PATH" -o yaml \
-    > "$SEALED_FILE"
-fi
+  if [ "$FROM_FILE_MODE" = true ]; then
+    FROM_FILE_OPTS=()
+    for file_arg in "${FILE_ARGS[@]}"; do
+      FROM_FILE_OPTS+=("--from-file=$file_arg")
+    done
 
-echo "✅ Sealed secret created: $SEALED_FILE"
-echo ""
-cat "$SEALED_FILE"
-echo ""
+    kubectl create secret generic "$SECRET_NAME" \
+      --namespace "$NS" \
+      "${FROM_FILE_OPTS[@]}" \
+      --dry-run=client -o yaml | \
+      kubeseal --cert "$CERT_PATH" -o yaml \
+      > "$SEALED_FILE"
+  else
+    kubectl create secret generic "$SECRET_NAME" \
+      --namespace "$NS" \
+      --from-env-file="$ENV_FILE" \
+      --dry-run=client -o yaml | \
+      kubeseal --cert "$CERT_PATH" -o yaml \
+      > "$SEALED_FILE"
+  fi
+
+  echo "✅ Sealed secret created: $SEALED_FILE"
+  echo ""
+done
+
 echo "💡 After pushing, ArgoCD will automatically apply the sealed secret to the cluster"

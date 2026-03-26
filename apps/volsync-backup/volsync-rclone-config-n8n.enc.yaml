@@ -1,0 +1,13 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: volsync-rclone-config
+  namespace: n8n
+spec:
+  encryptedData:
+    rclone.conf: AgBV/PmGgxpkBELVqBNtH1NGoK/Qq6+5Mx3kd68U+BNTVI5f3YIC9khkLuuqCdzF+1HDpuuTQyFrjUbEnEwP6FpnmLKXhWB7zVOgk6P99FmBeqOwxA3RrC+Ke4adSLH8xk0y1K+AGW/Fx4drNgTZoHVWbMEtgtMwlDcQmaiKfYMm9z0jrkSOPOw44CWZOVKYXQAP4oel5psORr8MGmXCKHIIuBt+d+O3diToJHjkjGmKyRKPO4jVpTwR9mI02geuJRkVt+ipqPazwN78QjeA18vVsl7t5F7zDd06VArLxhr1iynypJhMUhXRaCQFlD2hFFiFGMSJpAG2g7P7cgSPMrCBCTOzvg7240h5mIlw8ev3m1FZQNrj1UAR+KIxEQQTVEJND8AH0YlYF3ufygX3ulnKQv0iucKmA32GNooecjDooQd/Pk6GtcuQBunLLQDZsOgXXHNmLqm9u+xe8QL5T5uEOnBbnJCZV8Av29ii/xgJUtwWvKB7buQuGsaodhR/v3LOieY6l3SldUqGXBev85WqAg3ks7UrNYeAi/1BMUJW/xD7dZgWG6jaqjA+Hzi3eoUc6iFJHyqNnojyAVw8QUIXKzGG2fjP3k2cstB52cubYJFM3IcRpJcnXdXMrWBwZmzFxhYN6cU/AQvwgBiJeuef0jCceegr4H82cqxWoMH8IK897lbFP/VA47kWjJiDzzKAUB4MhNdT7s9UlX70shwq8a2XBf8HtMecolS8jfrtojN3rkf4jHNOtfJot/K5ikatyZIX+du+iPXv62Ew1t9qk+bnFWv0NIyS8fwrqkmEcmmFMpIwldRlBeYymhJnTGNVwhThl3B5RAAfxAC76gPykOCg+2ggxj1u+3Z3RHql6cAFgaifxvwc+sYBHq2arfQu7NZGAgkxM8IpYIIiKwbJYu3TcGJsy4YsL7yx04nLliLx4ie6Z7aE3KjDMWSVovi5NRE=
+  template:
+    metadata:
+      name: volsync-rclone-config
+      namespace: n8n

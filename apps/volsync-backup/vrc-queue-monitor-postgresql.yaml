@@ -10,8 +10,7 @@ spec:
   trigger:
     schedule: "0 4 * * *"  # 毎日午前4時
   rclone:
-    rcloneConfigSection: nfs-backup
+    rcloneConfigSection: s3-backup
     rcloneDestPath: volsync/vrc-queue-monitor-postgresql
-    copyMethod: Clone
-    storageClassName: proxmox-data
+    copyMethod: Direct
     rcloneConfig: volsync-rclone-config

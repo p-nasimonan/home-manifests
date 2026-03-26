@@ -10,8 +10,7 @@ spec:
   trigger:
     schedule: "30 3 * * *"  # 毎日午前3時30分
   rclone:
-    rcloneConfigSection: nfs-backup
+    rcloneConfigSection: s3-backup
     rcloneDestPath: volsync/misskey-meilisearch
-    copyMethod: Clone
-    storageClassName: proxmox-data
+    copyMethod: Direct
     rcloneConfig: volsync-rclone-config

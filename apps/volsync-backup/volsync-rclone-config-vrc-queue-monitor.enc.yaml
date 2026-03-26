@@ -1,0 +1,13 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: volsync-rclone-config
+  namespace: vrc-queue-monitor
+spec:
+  encryptedData:
+    rclone.conf: AgAprtRYFCC4rCu/2u2+pXx8KYmD9VX9EeVg01F2AyzEqK/5hsPCoFaLN1SCfNxRsc8MlwKwEmaGmwsOVsEY83X6S/SxHSzQ7MVh0iO1tRSYJ3o58vnY6Pk/haJ842/XKH5NYPvgGVi2mV1ZOX556p0pAtt4itmJzO7ojqt9ArrhSU3X3SjOvuBHgpJdFLJ13m5X8aN8U4hIoLa7vYVCgZ6Z7z7tKdxHYUgC2GVMg59HXGO08RTSdoJ+d1BKFTe1cDFezd8I4ZI0/ERxNMj/ndvUeoGYuMtaMQ/JOhCfdvvuJjVocIQIskfi0+76jIqZYirlx2TOS9oQkuv19HDqFIoEzSTmP+dJzYQ6OBoTSTo3hqnG7noJnU2KdckjlcxtaA7+/15cOWFgK2ShjKjUtolD/PlhJJXWJMF8NySx8OmTJmA3BDGCSZrS+niddVVlJb9w+lI02JK1i/WNstivBUqFBW6HUbcf1EoVWBRBc4FQaoWl/A+iyAkvtxZaviX040DMN+c5RMgPzaiWnWYNjp5Oyt8lFK/0X4CdU75qApXPmPy8q7qZ6doYIcBCp5Et/0YHGg5+Vj4bVQP+O/iVp89eBOGZJs/if0+DPT5ZnOU+SZ9guQqQeR32k06NA1XOp/zLI67uJCWveOhdREdT3c5OLCVuSzbTgHkfdIt+tvvpJ7J0+nvxqtXHgX3NEfeijPUCi8IKsVhi+pvPEtxaytxk4xLZut8ewgr2nwLV6gAEb4BqbjMENICgKo4RwaTNkEB+zzxnvuiFYLnjjhnMYj+WI5Fj90fZ7f/k3vPJTGCf6tfep5XaT5iZUuEpmbkYjKAYPXC+qcZp2nRXsj87UFyqtI3RZ687sD8Ps2Jr67H3jpA8bnMh9qXvXOi3JH9O2B7RAEMAGELnqH1X5hKkOxIxA0EX5HNOh75+lwtTmGPpaweJkfhHknv4hdNse5wrTbcZfIg=
+  template:
+    metadata:
+      name: volsync-rclone-config
+      namespace: vrc-queue-monitor
