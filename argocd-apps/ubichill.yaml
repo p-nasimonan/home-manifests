@@ -32,9 +32,9 @@ spec:
     - repoURL: https://github.com/p-nasimonan/home-manifests.git
       targetRevision: main
       path: apps/ubichill
-    - repoURL: https://github.com/ubichill/ubichill
-      targetRevision: ubichill-0.1.6
-      path: charts/ubichill
+    - repoURL: https://ubichill.github.io/ubichill
+      chart: ubichill
+      targetRevision: 0.1.6
       helm:
         valuesObject:
           global:
