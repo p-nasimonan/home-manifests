@@ -30,14 +30,11 @@ metadata:
     component: ubichill
 spec:
   project: default
-  sources:
-    - repoURL: https://github.com/p-nasimonan/home-manifests.git
-      targetRevision: main
-      path: apps/ubichill-dev
-    - repoURL: https://github.com/ubichill/ubichill
-      targetRevision: dev
-      path: charts/ubichill
-      helm:
+  source:
+    repoURL: https://github.com/ubichill/ubichill
+    targetRevision: dev
+    path: charts/ubichill
+    helm:
         valuesObject:
           global:
             imageRegistry: ""
