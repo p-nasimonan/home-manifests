@@ -14,3 +14,5 @@ spec:
     rcloneDestPath: volsync/vrc-queue-monitor-postgresql
     copyMethod: Direct
     rcloneConfig: volsync-rclone-config
+    moverSecurityContext:
+      runAsUser: 0
