@@ -15,4 +15,4 @@ spec:
     copyMethod: Direct
     rcloneConfig: volsync-rclone-config
     moverSecurityContext:
-      runAsUser: 0
+      runAsUser: 1001
