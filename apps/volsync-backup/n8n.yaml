@@ -11,7 +11,7 @@ spec:
     schedule: "0 4 * * *"  # 毎日午前4時
   rclone:
     rcloneConfigSection: s3-backup
-    rcloneDestPath: volsync/n8n
+    rcloneDestPath: k3s/n8n
     copyMethod: Direct
     rcloneConfig: volsync-rclone-config
     moverSecurityContext:

@@ -11,7 +11,7 @@ spec:
     schedule: "0 4 * * *"  # 毎日午前4時
   rclone:
     rcloneConfigSection: s3-backup
-    rcloneDestPath: volsync/vrc-queue-monitor-postgresql
+    rcloneDestPath: k3s/vrc-queue-monitor-postgresql
     copyMethod: Direct
     rcloneConfig: volsync-rclone-config
     moverSecurityContext:

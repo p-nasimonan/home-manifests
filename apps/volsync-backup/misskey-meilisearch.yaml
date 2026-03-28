@@ -11,7 +11,7 @@ spec:
     schedule: "30 3 * * *"  # 毎日午前3時30分
   rclone:
     rcloneConfigSection: s3-backup
-    rcloneDestPath: volsync/misskey-meilisearch
+    rcloneDestPath: k3s/misskey-meilisearch
     copyMethod: Direct
     rcloneConfig: volsync-rclone-config
     moverSecurityContext:
