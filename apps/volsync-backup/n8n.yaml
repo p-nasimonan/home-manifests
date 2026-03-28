@@ -16,3 +16,4 @@ spec:
     rcloneConfig: volsync-rclone-config
     moverSecurityContext:
       runAsUser: 1000
+      fsGroup: 1000
