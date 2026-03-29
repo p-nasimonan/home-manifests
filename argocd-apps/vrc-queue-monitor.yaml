@@ -5,12 +5,21 @@ metadata:
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "0"
-    argocd-image-updater.argoproj.io/image-list: backend=ghcr.io/p-nasimonan/vrc-queue-monitor/backend
-    argocd-image-updater.argoproj.io/backend.update-strategy: newest-build
-    argocd-image-updater.argoproj.io/backend.force-update: "true"
+    argocd-image-updater.argoproj.io/image-list: >-
+      frontend=ghcr.io/p-nasimonan/vrc-queue-monitor/frontend,
+      backend-api=ghcr.io/p-nasimonan/vrc-queue-monitor/backend,
+      backend-collector=ghcr.io/p-nasimonan/vrc-queue-monitor/backend
+    argocd-image-updater.argoproj.io/frontend.update-strategy: newest-build
+    argocd-image-updater.argoproj.io/backend-api.update-strategy: newest-build
+    argocd-image-updater.argoproj.io/backend-collector.update-strategy: newest-build
+    argocd-image-updater.argoproj.io/frontend.force-update: "true"
+    argocd-image-updater.argoproj.io/backend-api.force-update: "true"
+    argocd-image-updater.argoproj.io/backend-collector.force-update: "true"
     argocd-image-updater.argoproj.io/write-back-method: git:secret:argocd/argocd-image-updater-git-creds
     argocd-image-updater.argoproj.io/git-branch: main
-    argocd-image-updater.argoproj.io/backend.helm.image-tag: image.tag
+    argocd-image-updater.argoproj.io/frontend.helm.image-tag: frontend.image.tag
+    argocd-image-updater.argoproj.io/backend-api.helm.image-tag: backendApi.image.tag
+    argocd-image-updater.argoproj.io/backend-collector.helm.image-tag: backendCollector.image.tag
 spec:
   project: default
   sources:
@@ -30,11 +39,13 @@ spec:
             registry: ghcr.io
             repository: p-nasimonan/vrc-queue-monitor
             pullPolicy: Always
-            tag: "latest"  # argocd-image-updater が管理
+            tag: "latest"  # fallback only (primary is frontend/backend* image.tag)
 
           ## ── フロントエンド ──
           frontend:
             replicaCount: 1
+            image:
+              tag: "latest"
             config:
               NEXT_PUBLIC_SITE_NAME: "ぷぷりえ待機列モニター"
               NEXT_PUBLIC_REFRESH_INTERVAL: "120000"  # 2分
@@ -52,6 +63,8 @@ spec:
           ## ── バックエンド API ──
           backendApi:
             replicaCount: 1
+            image:
+              tag: "latest"
             config:
               API_PORT: "8000"
               ENV: "production"
@@ -73,6 +86,8 @@ spec:
 
           ## ── バックエンド コレクター ──
           backendCollector:
+            image:
+              tag: "latest"
             config:
               LOG_LEVEL: "DEBUG"
               SCHEDULE_TYPE: "day_of_month"

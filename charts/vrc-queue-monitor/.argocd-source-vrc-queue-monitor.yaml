@@ -1,8 +1,11 @@
 helm:
   parameters:
-  - name: image.name
-    value: ghcr.io/p-nasimonan/vrc-queue-monitor/backend
+  - name: frontend.image.tag
+    value: latest
     forcestring: true
-  - name: image.tag
-    value: sha-28df0c2
+  - name: backendApi.image.tag
+    value: latest
+    forcestring: true
+  - name: backendCollector.image.tag
+    value: latest
     forcestring: true
