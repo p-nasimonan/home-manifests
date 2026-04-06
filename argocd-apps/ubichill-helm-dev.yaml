@@ -55,12 +55,20 @@ spec:
         redis:
           global:
             imageRegistry: ""
+          image:
+            registry: docker.io
+            repository: bitnami/redis
+            pullPolicy: IfNotPresent
           master:
             persistence:
               storageClass: local-path
         postgresql:
           global:
             imageRegistry: ""
+          image:
+            registry: docker.io
+            repository: bitnami/postgresql
+            pullPolicy: IfNotPresent
           primary:
             persistence:
               storageClass: local-path
