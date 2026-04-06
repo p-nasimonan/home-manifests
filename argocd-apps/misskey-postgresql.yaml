@@ -19,6 +19,7 @@ spec:
             registry: docker.io
             repository: bitnami/os-shell
             tag: latest
+            pullPolicy: IfNotPresent
         global:
           storageClass: proxmox-monaka
           security:
@@ -26,6 +27,7 @@ spec:
         image:
           repository: bitnami/postgresql
           tag: latest
+          pullPolicy: IfNotPresent
         auth:
           username: misskey
           database: misskey
