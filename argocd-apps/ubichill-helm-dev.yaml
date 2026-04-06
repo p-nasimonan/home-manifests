@@ -54,20 +54,22 @@ spec:
           className: cloudflare
         redis:
           global:
-            imageRegistry: ""
+            imageRegistry: "docker.io"
           image:
             registry: docker.io
             repository: bitnami/redis
+            tag: latest
             pullPolicy: IfNotPresent
           master:
             persistence:
               storageClass: local-path
         postgresql:
           global:
-            imageRegistry: ""
+            imageRegistry: "docker.io"
           image:
             registry: docker.io
             repository: bitnami/postgresql
+            tag: latest
             pullPolicy: IfNotPresent
           primary:
             persistence:
