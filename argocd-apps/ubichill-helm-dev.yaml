@@ -69,6 +69,18 @@ spec:
             image:
               repository: ghcr.io/ubichill/video-player-backend
               tag: dev
+            port: 8000
+            pathPrefix: /plugins/video-player/api
+            env:
+              ROOT_PATH: /plugins/video-player/api
+              CORS_ORIGINS: "*"
+            resources:
+              limits:
+                cpu: 500m
+                memory: 512Mi
+              requests:
+                cpu: 100m
+                memory: 128Mi
   destination:
     server: https://kubernetes.default.svc
     namespace: ubichill-helm
