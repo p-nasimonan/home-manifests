@@ -22,8 +22,8 @@ metadata:
     argocd-image-updater.argoproj.io/backend.helm.image-tag: backend.image.tag
     argocd-image-updater.argoproj.io/frontend.helm.image-name: frontend.image.repository
     argocd-image-updater.argoproj.io/frontend.helm.image-tag: frontend.image.tag
-    argocd-image-updater.argoproj.io/video-player.helm.image-name: video-player.backend.image.repository
-    argocd-image-updater.argoproj.io/video-player.helm.image-tag: video-player.backend.image.tag
+    argocd-image-updater.argoproj.io/video-player.helm.image-name: pluginBackends[0].image.repository
+    argocd-image-updater.argoproj.io/video-player.helm.image-tag: pluginBackends[0].image.tag
   labels:
     environment: development
     component: ubichill
@@ -34,163 +34,41 @@ spec:
     targetRevision: dev
     path: charts/ubichill
     helm:
-        valuesObject:
+      valueFiles:
+        - values.yaml
+        - values-dev.yaml
+      valuesObject:
+        global:
+          imageRegistry: "ghcr.io"
+          domain: ubichill-dev.youkan.uk
+        backend:
+          existingSecret: "ubichill-helm-dev-secrets"
+          image:
+            repository: ghcr.io/ubichill/ubichill-backend
+            tag: dev
+        frontend:
+          image:
+            repository: ghcr.io/ubichill/ubichill-frontend
+            tag: dev
+        ingress:
+          className: cloudflare
+        redis:
           global:
             imageRegistry: ""
-          backend:
-            existingSecret: "ubichill-helm-dev-secrets"
-            replicaCount: 1
-            autoscaling:
-              enabled: false
-            env:
-              RATE_LIMIT_MAX_REQUESTS: "10000"
-              RATE_LIMIT_WINDOW_MS: "60000"
-              REDIS_URL: "redis://ubichill-helm-dev-redis-master:6379"
-              NODE_ENV: "development"
-              DEBUG: "true"
-              CORS_ORIGIN: "*"
+          master:
+            persistence:
+              storageClass: local-path
+        postgresql:
+          global:
+            imageRegistry: ""
+          primary:
+            persistence:
+              storageClass: local-path
+        pluginBackends:
+          - id: video-player
             image:
-              repository: ghcr.io/ubichill/ubichill-backend
+              repository: ghcr.io/ubichill/video-player-backend
               tag: dev
-              pullPolicy: Always
-            resources:
-              requests:
-                cpu: 100m
-                memory: 256Mi
-              limits:
-                cpu: 1000m
-                memory: 1Gi
-            healthcheck:
-              enabled: true
-              livenessProbe:
-                initialDelaySeconds: 90
-                periodSeconds: 45
-                timeoutSeconds: 15
-                failureThreshold: 6
-              readinessProbe:
-                initialDelaySeconds: 45
-                periodSeconds: 15
-                timeoutSeconds: 10
-                failureThreshold: 5
-          frontend:
-            replicaCount: 1
-            autoscaling:
-              enabled: false
-            env:
-              NODE_ENV: "development"
-            image:
-              repository: ghcr.io/ubichill/ubichill-frontend
-              tag: dev
-              pullPolicy: Always
-          rooms:
-            enabled: true
-            custom:
-              meeting-room:
-                apiVersion: ubichill.com/v1alpha1
-                kind: Room
-                metadata:
-                  name: meeting-room
-                  version: "1.0.0"
-                spec:
-                  displayName: "会議室"
-                  description: "プレゼンテーション用の部屋"
-                  environment:
-                    backgroundColor: "#2C3E50"
-          redis:
-            enabled: true
-            commonConfiguration: |-
-              appendonly no
-              save ""
-            master:
-              persistence:
-                enabled: true
-                storageClass: "local-path"
-                size: 1Gi
-            image:
-              registry: docker.io
-              repository: bitnami/redis
-              tag: "latest"
-          postgresql:
-            enabled: true
-            primary:
-              persistence:
-                enabled: true
-                storageClass: "local-path"
-                size: 5Gi
-            image:
-              registry: docker.io
-              repository: bitnami/postgresql
-              tag: "latest"
-          ingress:
-            enabled: true
-            className: cloudflare
-            hosts:
-              - host: ubichill-dev.youkan.uk
-                paths:
-                  - path: /api
-                    pathType: Prefix
-                    backend:
-                      service:
-                        name: backend
-                        port:
-                          number: 3001
-                  - path: /socket.io
-                    pathType: Prefix
-                    backend:
-                      service:
-                        name: backend
-                        port:
-                          number: 3001
-                  - path: /plugin/video-player
-                    pathType: Prefix
-                    backend:
-                      service:
-                        name: video-player-backend
-                        port:
-                          number: 8000
-                  - path: /
-                    pathType: Prefix
-                    backend:
-                      service:
-                        name: frontend
-                        port:
-                          number: 3000
-          video-player:
-            enabled: true
-            backend:
-              replicaCount: 1
-              rootPath: "/plugin/video-player"
-              autoscaling:
-                enabled: false
-              image:
-                repository: ghcr.io/ubichill/video-player-backend
-                pullPolicy: Always
-                tag: dev
-              env:
-                LOG_LEVEL: DEBUG
-                ROOT_PATH: "/plugin/video-player"
-                CORS_ORIGIN: "https://ubichill-dev.youkan.uk"
-              resources:
-                requests:
-                  cpu: 200m
-                  memory: 256Mi
-                limits:
-                  cpu: 1500m
-                  memory: 2Gi
-              healthcheck:
-                enabled: true
-                livenessProbe:
-                  initialDelaySeconds: 45
-                  periodSeconds: 20
-                  timeoutSeconds: 10
-                  failureThreshold: 5
-                readinessProbe:
-                  initialDelaySeconds: 20
-                  periodSeconds: 10
-                  timeoutSeconds: 5
-                  failureThreshold: 3
-            redis:
-              enabled: false
   destination:
     server: https://kubernetes.default.svc
     namespace: ubichill-helm
@@ -222,7 +100,6 @@ spec:
       kind: HorizontalPodAutoscaler
       jsonPointers:
         - /status
-    # PVC の storage は拡張後に縮小不可 → ArgoCD が diff を検出しても変更できないため無視
     - group: ""
       kind: PersistentVolumeClaim
       jsonPointers:
@@ -230,9 +107,3 @@ spec:
   info:
     - name: 'Environment'
       value: 'Development'
-    - name: 'Backend'
-      value: 'Node.js/TypeScript'
-    - name: 'Frontend'
-      value: 'Next.js'
-    - name: 'Shared Redis'
-      value: 'Enabled'
