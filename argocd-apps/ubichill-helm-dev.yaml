@@ -39,7 +39,7 @@ spec:
         - values-dev.yaml
       valuesObject:
         global:
-          imageRegistry: "ghcr.io"
+          imageRegistry: ""
           domain: ubichill-dev.youkan.uk
         backend:
           existingSecret: "ubichill-helm-dev-secrets"
