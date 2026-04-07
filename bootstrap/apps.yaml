@@ -23,3 +23,12 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
+      - RespectIgnoreDifferences=true
+  ignoreDifferences:
+    - group: argoproj.io
+      kind: Application
+      name: vrc-queue-monitor
+      namespace: argocd
+      jqPathExpressions:
+        - .spec.source.helm.parameters
+        - .spec.sources[].helm.parameters
