@@ -15,8 +15,7 @@ metadata:
     argocd-image-updater.argoproj.io/frontend.force-update: "true"
     argocd-image-updater.argoproj.io/backend-api.force-update: "true"
     argocd-image-updater.argoproj.io/backend-collector.force-update: "true"
-    argocd-image-updater.argoproj.io/write-back-method: git:secret:argocd/argocd-image-updater-git-creds
-    argocd-image-updater.argoproj.io/git-branch: main
+    argocd-image-updater.argoproj.io/write-back-method: argocd
     argocd-image-updater.argoproj.io/frontend.helm.image-tag: frontend.image.tag
     argocd-image-updater.argoproj.io/backend-api.helm.image-tag: backendApi.image.tag
     argocd-image-updater.argoproj.io/backend-collector.helm.image-tag: backendCollector.image.tag
