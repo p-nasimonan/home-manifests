@@ -51,7 +51,7 @@ spec:
               CORS_ORIGIN: "https://ubichill.youkan.uk"
             image:
               repository: ghcr.io/ubichill/ubichill-backend
-              tag: v0.0.101
+              tag: latest
             resources:
               requests:
                 cpu: 200m
@@ -86,7 +86,7 @@ spec:
               NODE_ENV: "production"
             image:
               repository: ghcr.io/ubichill/ubichill-frontend
-              tag: v0.0.101
+              tag: latest
           rooms:
             enabled: true
             custom:
@@ -219,7 +219,7 @@ spec:
                 enabled: false
               image:
                 repository: ghcr.io/ubichill/video-player-backend
-                tag: v0.0.101
+                tag: latest
               env:
                 LOG_LEVEL: INFO
                 ROOT_PATH: "/plugin/video-player"
