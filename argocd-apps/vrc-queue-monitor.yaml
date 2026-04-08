@@ -15,7 +15,8 @@ metadata:
     argocd-image-updater.argoproj.io/frontend.allow-tags: regexp:^sha-[0-9a-f]+$
     argocd-image-updater.argoproj.io/backend-api.allow-tags: regexp:^sha-[0-9a-f]+$
     argocd-image-updater.argoproj.io/backend-collector.allow-tags: regexp:^sha-[0-9a-f]+$
-    argocd-image-updater.argoproj.io/write-back-method: argocd
+    argocd-image-updater.argoproj.io/write-back-method: git:secret:argocd/argocd-image-updater-git-creds
+    argocd-image-updater.argoproj.io/git-branch: main
     argocd-image-updater.argoproj.io/frontend.helm.image-tag: frontend.image.tag
     argocd-image-updater.argoproj.io/backend-api.helm.image-tag: backendApi.image.tag
     argocd-image-updater.argoproj.io/backend-collector.helm.image-tag: backendCollector.image.tag
@@ -44,7 +45,7 @@ spec:
           frontend:
             replicaCount: 1
             image:
-              tag: "sha-fa60b24"
+              tag: "sha-dfe315b"
             config:
               NEXT_PUBLIC_SITE_NAME: "ぷぷりえ待機列モニター"
               NEXT_PUBLIC_REFRESH_INTERVAL: "120000"  # 2分
