@@ -39,7 +39,6 @@ spec:
         - values-dev.yaml
       valuesObject:
         global:
-          imageRegistry: ""
           domain: ubichill-dev.youkan.uk
         backend:
           existingSecret: "ubichill-helm-dev-secrets"
@@ -53,22 +52,14 @@ spec:
         ingress:
           className: cloudflare
         redis:
-          global:
-            imageRegistry: "docker.io"
           image:
-            registry: docker.io
-            repository: bitnami/redis
             tag: latest
             pullPolicy: IfNotPresent
           master:
             persistence:
               storageClass: local-path
         postgresql:
-          global:
-            imageRegistry: "docker.io"
           image:
-            registry: docker.io
-            repository: bitnami/postgresql
             tag: latest
             pullPolicy: IfNotPresent
           primary:
