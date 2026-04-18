@@ -64,6 +64,8 @@ spec:
             image:
               repository: ghcr.io/ubichill/ubichill-frontend
               tag: latest
+          nodeAffinity:
+            enabled: false
           ingress:
             className: cloudflare
           redis:
