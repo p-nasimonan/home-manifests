@@ -19,7 +19,6 @@ metadata:
     argocd-image-updater.argoproj.io/video-player.allow-tags: regexp:^v[0-9]
 
     argocd-image-updater.argoproj.io/write-back-method: argocd
-    argocd-image-updater.argoproj.io/write-back-target: "helmvalues:1"
     argocd-image-updater.argoproj.io/backend.helm.image-name: backend.image.repository
     argocd-image-updater.argoproj.io/backend.helm.image-tag: backend.image.tag
     argocd-image-updater.argoproj.io/frontend.helm.image-name: frontend.image.repository
@@ -28,87 +27,84 @@ metadata:
     argocd-image-updater.argoproj.io/video-player.helm.image-tag: pluginBackends[0].image.tag
 spec:
   project: default
-  sources:
-    - repoURL: https://github.com/p-nasimonan/home-manifests.git
-      targetRevision: main
-      path: apps/ubichill
-    - repoURL: https://github.com/ubichill/ubichill
-      targetRevision: main
-      path: charts/ubichill
-      helm:
-        valueFiles:
-          - values.yaml
-          - values-prod.yaml
-        valuesObject:
-          global:
-            domain: ubichill.youkan.uk
-          backend:
+  source:
+    repoURL: https://github.com/ubichill/ubichill
+    targetRevision: main
+    path: charts/ubichill
+    helm:
+      valueFiles:
+        - values.yaml
+        - values-prod.yaml
+      valuesObject:
+        global:
+          domain: ubichill.youkan.uk
+        backend:
+          existingSecret: "ubichill-secrets"
+          image:
+            repository: ghcr.io/ubichill/ubichill-backend
+            tag: latest
+          env:
+            RATE_LIMIT_MAX_REQUESTS: "10000"
+            RATE_LIMIT_WINDOW_MS: "900000"
+          healthcheck:
+            livenessProbe:
+              initialDelaySeconds: 90
+              periodSeconds: 45
+              timeoutSeconds: 15
+              failureThreshold: 6
+            readinessProbe:
+              initialDelaySeconds: 45
+              periodSeconds: 15
+              timeoutSeconds: 10
+              failureThreshold: 5
+        frontend:
+          image:
+            repository: ghcr.io/ubichill/ubichill-frontend
+            tag: latest
+        nodeAffinity:
+          enabled: false
+        ingress:
+          className: cloudflare
+        redis:
+          image:
+            tag: latest
+            pullPolicy: IfNotPresent
+          master:
+            persistence:
+              storageClass: "proxmox-data"
+        postgresql:
+          image:
+            tag: latest
+            pullPolicy: IfNotPresent
+          auth:
             existingSecret: "ubichill-secrets"
+            secretKeys:
+              adminPasswordKey: POSTGRES_PASSWORD
+              userPasswordKey: POSTGRES_PASSWORD
+            username: "ubichill"
+            database: "ubichill"
+          primary:
+            persistence:
+              storageClass: "proxmox-data"
+              size: 10Gi
+        pluginBackends:
+          - id: video-player
             image:
-              repository: ghcr.io/ubichill/ubichill-backend
+              repository: ghcr.io/ubichill/video-player-backend
               tag: latest
+            port: 8000
+            pathPrefix: /plugins/video-player/api
+            replicaCount: 1
             env:
-              RATE_LIMIT_MAX_REQUESTS: "10000"
-              RATE_LIMIT_WINDOW_MS: "900000"
-            healthcheck:
-              livenessProbe:
-                initialDelaySeconds: 90
-                periodSeconds: 45
-                timeoutSeconds: 15
-                failureThreshold: 6
-              readinessProbe:
-                initialDelaySeconds: 45
-                periodSeconds: 15
-                timeoutSeconds: 10
-                failureThreshold: 5
-          frontend:
-            image:
-              repository: ghcr.io/ubichill/ubichill-frontend
-              tag: latest
-          nodeAffinity:
-            enabled: false
-          ingress:
-            className: cloudflare
-          redis:
-            image:
-              tag: latest
-              pullPolicy: IfNotPresent
-            master:
-              persistence:
-                storageClass: "proxmox-data"
-          postgresql:
-            image:
-              tag: latest
-              pullPolicy: IfNotPresent
-            auth:
-              existingSecret: "ubichill-secrets"
-              secretKeys:
-                adminPasswordKey: POSTGRES_PASSWORD
-                userPasswordKey: POSTGRES_PASSWORD
-              username: "ubichill"
-              database: "ubichill"
-            primary:
-              persistence:
-                storageClass: "proxmox-data"
-                size: 10Gi
-          pluginBackends:
-            - id: video-player
-              image:
-                repository: ghcr.io/ubichill/video-player-backend
-                tag: latest
-              port: 8000
-              pathPrefix: /plugins/video-player/api
-              replicaCount: 1
-              env:
-                ROOT_PATH: /plugins/video-player/api
-                CORS_ORIGINS: "https://ubichill.youkan.uk"
-              resources:
-                requests:
-                  cpu: 500m
-                  memory: 512Mi
-                limits:
-                  cpu: 2000m
-                  memory: 3Gi
+              ROOT_PATH: /plugins/video-player/api
+              CORS_ORIGINS: "https://ubichill.youkan.uk"
+            resources:
+              requests:
+                cpu: 500m
+                memory: 512Mi
+              limits:
+                cpu: 2000m
+                memory: 3Gi
   destination:
     server: https://kubernetes.default.svc
     namespace: ubichill
