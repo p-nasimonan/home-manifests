@@ -38,6 +38,7 @@ spec:
       valuesObject:
         global:
           domain: ubichill.youkan.uk
+          imageRegistry: ""
         backend:
           existingSecret: "ubichill-secrets"
           image:
