@@ -66,6 +66,7 @@ spec:
           enabled: false
         ingress:
           className: cloudflare
+          annotations: {}
         redis:
           image:
             tag: latest
