@@ -12,12 +12,15 @@ metadata:
     argocd-image-updater.argoproj.io/frontend.update-strategy: newest-build
     argocd-image-updater.argoproj.io/backend-api.update-strategy: newest-build
     argocd-image-updater.argoproj.io/backend-collector.update-strategy: newest-build
-    argocd-image-updater.argoproj.io/frontend.allow-tags: regexp:^sha-[0-9a-f]+$
-    argocd-image-updater.argoproj.io/backend-api.allow-tags: regexp:^sha-[0-9a-f]+$
-    argocd-image-updater.argoproj.io/backend-collector.allow-tags: regexp:^sha-[0-9a-f]+$
+    argocd-image-updater.argoproj.io/frontend.allow-tags: regexp:^v[0-9]
+    argocd-image-updater.argoproj.io/backend-api.allow-tags: regexp:^v[0-9]
+    argocd-image-updater.argoproj.io/backend-collector.allow-tags: regexp:^v[0-9]
     argocd-image-updater.argoproj.io/write-back-method: argocd
+    argocd-image-updater.argoproj.io/frontend.helm.image-name: frontend.image.name
     argocd-image-updater.argoproj.io/frontend.helm.image-tag: frontend.image.tag
+    argocd-image-updater.argoproj.io/backend-api.helm.image-name: backendApi.image.name
     argocd-image-updater.argoproj.io/backend-api.helm.image-tag: backendApi.image.tag
+    argocd-image-updater.argoproj.io/backend-collector.helm.image-name: backendCollector.image.name
     argocd-image-updater.argoproj.io/backend-collector.helm.image-tag: backendCollector.image.tag
 spec:
   project: default
@@ -46,7 +49,7 @@ spec:
             replicaCount: 1
             image:
               name: frontend  # registry/repository/name:tag
-              tag: "latest"
+              tag: ""
             resources:
               requests:
                 cpu: 100m
@@ -92,7 +95,7 @@ spec:
             replicaCount: 1
             image:
               name: backend
-              tag: "latest"
+              tag: ""
             command: ["python", "api.py"]
             resources:
               requests:
@@ -110,7 +113,7 @@ spec:
             enabled: true
             image:
               name: backend
-              tag: "latest"
+              tag: ""
             command: ["python", "main.py"]
             resources:
               requests:
