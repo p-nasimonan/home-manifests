@@ -10,3 +10,5 @@ spec:
       useAnnotations: true
     - namePattern: "ubichill"
       useAnnotations: true
+    - namePattern: "vrc-queue-monitor"
+      useAnnotations: true
