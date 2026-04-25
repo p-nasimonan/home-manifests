@@ -135,7 +135,7 @@ spec:
               port: 5432
             persistence:
               enabled: true
-              storageClass: ""
+              storageClass: "proxmox-data"
               size: 5Gi
             config:
               DB_NAME: vrc_monitor
