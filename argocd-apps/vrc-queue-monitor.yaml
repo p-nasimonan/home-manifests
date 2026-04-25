@@ -33,24 +33,20 @@ spec:
       helm:
         releaseName: vrc-queue-monitor
         valuesObject:
-          ## ── イメージ設定 ──
+          ## ── イメージ設定 ─────────────────────────────────────
           image:
             registry: ghcr.io
             repository: p-nasimonan/vrc-queue-monitor
-            pullPolicy: Always
-            tag: "latest"  # fallback only (primary is frontend/backend* image.tag)
+            pullPolicy: IfNotPresent
+            tag: "latest"  # 空のときは Chart.yaml の appVersion を使用
 
-          ## ── フロントエンド ──
+          ## ── フロントエンド ────────────────────────────────────
           frontend:
+            enabled: true
             replicaCount: 1
             image:
+              name: frontend  # registry/repository/name:tag
               tag: "latest"
-            config:
-              NEXT_PUBLIC_SITE_NAME: "ぷぷりえ待機列モニター"
-              NEXT_PUBLIC_REFRESH_INTERVAL: "120000"  # 2分
-              NEXT_PUBLIC_DISPLAY_DAYS: "30"
-              NEXT_PUBLIC_DEFAULT_THEME: "light"
-              NEXT_PUBLIC_USE_MOCK_API: "false"
             resources:
               requests:
                 cpu: 100m
@@ -58,23 +54,46 @@ spec:
               limits:
                 cpu: 500m
                 memory: 512Mi
-
-          ## ── バックエンド API ──
-          backendApi:
-            replicaCount: 1
-            image:
-              tag: "latest"
+            service:
+              type: ClusterIP
+              port: 3000
+            ## フロントエンドの環境変数（ConfigMap に書き出される）
             config:
+              NEXT_PUBLIC_SITE_NAME: "VRC Queue Monitor"
+              NEXT_PUBLIC_REFRESH_INTERVAL: "60000"
+              NEXT_PUBLIC_DISPLAY_DAYS: "30"
+              NEXT_PUBLIC_DEFAULT_THEME: "light"
+              NEXT_PUBLIC_USE_MOCK_API: "false"
+              ## BACKEND_API_URL はサーバーサイド変数。自動設定される（backendApi.service.name:port）
+              ## 上書きしたい場合は以下をコメントアウト
+              # BACKEND_API_URL: "https://api.example.com"
+
+          ## ── バックエンド共通設定 ──────────────────────────────
+          ## API・コレクター両方が参照する ConfigMap に書き出される。
+          ## 使わない変数は各プロセスが無視する。
+          backend:
+            config:
+              # API サーバー設定
               API_PORT: "8000"
               ENV: "production"
-              SCHEDULE_TYPE: "day_of_month"
-              SCHEDULE_DAYS: "5,15,25"
+              ## CORS_ORIGINS: "https://vrc-monitor.example.com"
+              # コレクター設定
+              POLL_INTERVAL_MINUTES: "5"
+              DISCOVERY_INTERVAL_MINUTES: "10"
+              # スケジュール設定（両方で共有）
+              SCHEDULE_TYPE: "always"   # always | weekday | day_of_month
+              SCHEDULE_DAYS: ""         # 例: "sat,sun" または "5,15,25"
               SCHEDULE_START_TIME: "22:00"
-              SCHEDULE_DURATION_MINUTES: "120"
-              POLL_INTERVAL_MINUTES: "2"
-              DISCOVERY_INTERVAL_MINUTES: "5"
-              BURST_DURATION_MINUTES: "5"
-              BURST_INTERVAL_SECONDS: "30"
+              SCHEDULE_DURATION_MINUTES: "150"
+
+          ## ── バックエンド API ──────────────────────────────────
+          backendApi:
+            enabled: true
+            replicaCount: 1
+            image:
+              name: backend
+              tag: "latest"
+            command: ["python", "api.py"]
             resources:
               requests:
                 cpu: 100m
@@ -82,21 +101,17 @@ spec:
               limits:
                 cpu: 500m
                 memory: 256Mi
+            service:
+              type: ClusterIP
+              port: 8000
 
-          ## ── バックエンド コレクター ──
+          ## ── バックエンド コレクター ───────────────────────────
           backendCollector:
+            enabled: true
             image:
+              name: backend
               tag: "latest"
-            config:
-              LOG_LEVEL: "DEBUG"
-              #SCHEDULE_TYPE: "day_of_month"
-              #SCHEDULE_DAYS: "5,15,25"
-              #SCHEDULE_START_TIME: "22:00"
-              #SCHEDULE_DURATION_MINUTES: "120"
-              #POLL_INTERVAL_MINUTES: "2"
-              #DISCOVERY_INTERVAL_MINUTES: "5"
-              #BURST_DURATION_MINUTES: "5"
-              #BURST_INTERVAL_SECONDS: "30"
+            command: ["python", "main.py"]
             resources:
               requests:
                 cpu: 100m
@@ -105,8 +120,10 @@ spec:
                 cpu: 200m
                 memory: 256Mi
 
-          ## ── PostgreSQL ──
+          ## ── PostgreSQL ────────────────────────────────────────
           postgres:
+            enabled: true
+            image: postgres:15-alpine
             resources:
               requests:
                 cpu: 100m
@@ -114,22 +131,28 @@ spec:
               limits:
                 cpu: 500m
                 memory: 512Mi
+            service:
+              port: 5432
             persistence:
               enabled: true
-              storageClass: "proxmox-data"
+              storageClass: ""
               size: 5Gi
             config:
               DB_NAME: vrc_monitor
               DB_USER: postgres
 
-          ## ── シークレット（SealedSecret 経由） ──
+          ## ── シークレット（VRChat 認証情報・DB パスワード） ────
+          ## 本番では SealedSecret または外部シークレット管理を推奨
           secrets:
+            ## 既存の k8s Secret を使う場合は existingSecret に名前を設定
+            ## SealedSecret 使用時は復号後の Secret 名を指定
             existingSecret: "vrc-queue-monitor-secrets"
 
-          ## ── Ingress ──
+
           ingress:
             enabled: true
             className: cloudflare
+            annotations: {}
             hosts:
               - host: vrc-monitor.youkan.uk
                 paths:
