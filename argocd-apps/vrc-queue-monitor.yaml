@@ -89,14 +89,14 @@ spec:
               tag: "latest"
             config:
               LOG_LEVEL: "DEBUG"
-              SCHEDULE_TYPE: "day_of_month"
-              SCHEDULE_DAYS: "5,15,25"
-              SCHEDULE_START_TIME: "22:00"
-              SCHEDULE_DURATION_MINUTES: "120"
-              POLL_INTERVAL_MINUTES: "2"
-              DISCOVERY_INTERVAL_MINUTES: "5"
-              BURST_DURATION_MINUTES: "5"
-              BURST_INTERVAL_SECONDS: "30"
+              #SCHEDULE_TYPE: "day_of_month"
+              #SCHEDULE_DAYS: "5,15,25"
+              #SCHEDULE_START_TIME: "22:00"
+              #SCHEDULE_DURATION_MINUTES: "120"
+              #POLL_INTERVAL_MINUTES: "2"
+              #DISCOVERY_INTERVAL_MINUTES: "5"
+              #BURST_DURATION_MINUTES: "5"
+              #BURST_INTERVAL_SECONDS: "30"
             resources:
               requests:
                 cpu: 100m
