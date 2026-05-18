@@ -1,0 +1,250 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: harbor
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  project: default
+  source:
+    repoURL: https://helm.goharbor.io
+    chart: harbor
+    targetRevision: 1.16.0
+    releaseName: harbor
+    helm:
+      releaseName: harbor
+      valuesObject:
+        # ===================================
+        # Expose Configuration
+        # ===================================
+        expose:
+          type: ingress
+          tls:
+            enabled: true
+            certSource: cert-manager
+            certManager:
+              issuerName: letsencrypt-prod
+              issuerKind: ClusterIssuer
+          ingress:
+            hosts:
+              core: harbor.youkan.uk
+              notary: notary.youkan.uk
+            className: cloudflare
+            annotations:
+              cert-manager.io/cluster-issuer: "letsencrypt-prod"
+
+        # ===================================
+        # External URL
+        # ===================================
+        externalURL: https://harbor.youkan.uk
+
+        # ===================================
+        # Admin Password (via Sealed Secret)
+        # ===================================
+        # Use sealed secret for admin password
+        existingSecretAdminPassword: harbor-secrets
+        existingSecretAdminPasswordKey: HARBOR_ADMIN_PASSWORD
+
+        # ===================================
+        # Persistence Configuration
+        # ===================================
+        persistence:
+          enabled: true
+          resourcePolicy: "keep"
+          persistentVolumeClaim:
+            registry:
+              size: 100Gi
+            jobservice:
+              jobLog:
+                size: 10Gi
+            database:
+              size: 10Gi
+            redis:
+              size: 1Gi
+            trivy:
+              size: 5Gi
+          imageChartStorage:
+            type: filesystem
+            disableredirect: false
+
+        # ===================================
+        # Security & Logging
+        # ===================================
+        logLevel: info
+        # secretKey is managed via sealed secret
+        containerSecurityContext:
+          privileged: false
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+          runAsNonRoot: true
+          capabilities:
+            drop:
+              - ALL
+
+        # ===================================
+        # Internal TLS
+        # ===================================
+        internalTLS:
+          enabled: false
+
+        # ===================================
+        # Database
+        # ===================================
+        database:
+          type: internal
+          internal:
+            # password is managed via sealed secret
+            shmSizeLimit: 512Mi
+            resources:
+              requests:
+                memory: 256Mi
+                cpu: 100m
+              limits:
+                memory: 1Gi
+                cpu: 1000m
+          maxIdleConns: 100
+          maxOpenConns: 900
+
+        # ===================================
+        # Redis
+        # ===================================
+        redis:
+          type: internal
+          internal:
+            resources:
+              requests:
+                memory: 256Mi
+                cpu: 100m
+              limits:
+                memory: 512Mi
+                cpu: 500m
+
+        # ===================================
+        # Core Component
+        # ===================================
+        core:
+          replicas: 1
+          # Use sealed secret for core communication secret
+          existingSecret: harbor-secrets
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: 100m
+            limits:
+              memory: 2Gi
+              cpu: 1000m
+
+        # ===================================
+        # Registry Component
+        # ===================================
+        registry:
+          replicas: 1
+          # Use sealed secret for registry HTTP secret and credentials
+          existingSecret: harbor-secrets
+          existingSecretKey: REGISTRY_HTTP_SECRET
+          registry:
+            resources:
+              requests:
+                memory: 256Mi
+                cpu: 100m
+              limits:
+                memory: 1Gi
+                cpu: 1000m
+          controller:
+            resources:
+              requests:
+                memory: 256Mi
+                cpu: 100m
+              limits:
+                memory: 1Gi
+                cpu: 1000m
+
+        # ===================================
+        # Portal Component
+        # ===================================
+        portal:
+          replicas: 1
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: 100m
+            limits:
+              memory: 1Gi
+              cpu: 500m
+
+        # ===================================
+        # JobService Component
+        # ===================================
+        jobservice:
+          replicas: 1
+          # Use sealed secret for jobservice communication secret
+          existingSecret: harbor-secrets
+          existingSecretKey: JOBSERVICE_SECRET
+          maxJobWorkers: 10
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: 100m
+            limits:
+              memory: 1Gi
+              cpu: 1000m
+
+        # ===================================
+        # Trivy Vulnerability Scanner
+        # ===================================
+        trivy:
+          enabled: true
+          replicas: 1
+          resources:
+            requests:
+              cpu: 200m
+              memory: 512Mi
+            limits:
+              cpu: 1
+              memory: 1Gi
+          debugMode: false
+          vulnType: "os,library"
+          severity: "UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL"
+          ignoreUnfixed: false
+          skipUpdate: false
+          skipJavaDBUpdate: false
+          timeout: 5m0s
+
+        # ===================================
+        # Notary (Signing)
+        # ===================================
+        notary:
+          enabled: true
+          server:
+            replicas: 1
+          signer:
+            replicas: 1
+
+        # ===================================
+        # Metrics
+        # ===================================
+        metrics:
+          enabled: false
+
+        # ===================================
+        # Update Strategy
+        # ===================================
+        updateStrategy:
+          type: RollingUpdate
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: harbor
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+
+
