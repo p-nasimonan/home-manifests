@@ -23,18 +23,13 @@ spec:
         expose:
           type: ingress
           tls:
-            enabled: true
-            certSource: cert-manager
-            certManager:
-              issuerName: letsencrypt-prod
-              issuerKind: ClusterIssuer
+            enabled: false
           ingress:
             hosts:
               core: harbor.youkan.uk
               notary: notary.youkan.uk
             className: cloudflare
-            annotations:
-              cert-manager.io/cluster-issuer: "letsencrypt-prod"
+            annotations: {}
 
         # ===================================
         # External URL
@@ -42,11 +37,11 @@ spec:
         externalURL: https://harbor.youkan.uk
 
         # ===================================
-        # Admin Password (via Sealed Secret)
+        # Secret Material (via Sealed Secret)
         # ===================================
-        # Use sealed secret for admin password
         existingSecretAdminPassword: harbor-secrets
         existingSecretAdminPasswordKey: HARBOR_ADMIN_PASSWORD
+        existingSecretSecretKey: harbor-secrets
 
         # ===================================
         # Persistence Configuration
@@ -74,7 +69,6 @@ spec:
         # Security & Logging
         # ===================================
         logLevel: info
-        # secretKey is managed via sealed secret
         containerSecurityContext:
           privileged: false
           allowPrivilegeEscalation: false
@@ -97,7 +91,7 @@ spec:
         database:
           type: internal
           internal:
-            # password is managed via sealed secret
+            # internal database password is still chart-managed; Harbor Helm does not expose an existingSecret hook here
             shmSizeLimit: 512Mi
             resources:
               requests:
@@ -128,8 +122,9 @@ spec:
         # ===================================
         core:
           replicas: 1
-          # Use sealed secret for core communication secret
           existingSecret: harbor-secrets
+          existingXsrfSecret: harbor-secrets
+          existingXsrfSecretKey: CSRF_KEY
           resources:
             requests:
               memory: 256Mi
@@ -143,9 +138,10 @@ spec:
         # ===================================
         registry:
           replicas: 1
-          # Use sealed secret for registry HTTP secret and credentials
           existingSecret: harbor-secrets
           existingSecretKey: REGISTRY_HTTP_SECRET
+          credentials:
+            existingSecret: harbor-secrets
           registry:
             resources:
               requests:
@@ -181,7 +177,6 @@ spec:
         # ===================================
         jobservice:
           replicas: 1
-          # Use sealed secret for jobservice communication secret
           existingSecret: harbor-secrets
           existingSecretKey: JOBSERVICE_SECRET
           maxJobWorkers: 10
