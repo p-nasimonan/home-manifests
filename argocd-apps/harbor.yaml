@@ -13,7 +13,6 @@ spec:
     repoURL: https://helm.goharbor.io
     chart: harbor
     targetRevision: 1.16.0
-    releaseName: harbor
     helm:
       releaseName: harbor
       valuesObject:
