@@ -1,0 +1,1 @@
+fatal: path 'argocd-apps/cert-manager.yaml' exists on disk, but not in 'HEAD'
