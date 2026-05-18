@@ -51,13 +51,14 @@ spec:
           persistentVolumeClaim:
             registry:
               size: 100Gi
-              storageClass: local-path
+              storageClass: proxmox-data
             jobservice:
               jobLog:
                 size: 10Gi
                 storageClass: local-path
             database:
               size: 10Gi
+              storageClass: proxmox-data
             redis:
               size: 1Gi
             trivy:
