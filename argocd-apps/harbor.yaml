@@ -51,15 +51,20 @@ spec:
           persistentVolumeClaim:
             registry:
               size: 100Gi
+              storageClass: local-path
             jobservice:
               jobLog:
                 size: 10Gi
+                storageClass: local-path
             database:
               size: 10Gi
+              storageClass: local-path
             redis:
               size: 1Gi
+              storageClass: local-path
             trivy:
               size: 5Gi
+              storageClass: local-path
           imageChartStorage:
             type: filesystem
             disableredirect: false
