@@ -29,7 +29,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: livekit
+                name: livekit-livekit-server
                 port:
                   number: 7880
           - path: /
