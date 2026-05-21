@@ -91,7 +91,7 @@ spec:
         # Internal TLS
         # ===================================
         internalTLS:
-          enabled: true
+          enabled: false
           certSource: auto
 
         # ===================================
