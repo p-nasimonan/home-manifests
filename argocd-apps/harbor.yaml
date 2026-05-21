@@ -33,6 +33,8 @@ spec:
             className: cloudflare
             annotations:
               cert-manager.io/cluster-issuer: "letsencrypt-prod"
+              cloudflare-tunnel-ingress-controller.strrl.dev/backend-protocol: "https"
+              cloudflare-tunnel-ingress-controller.strrl.dev/proxy-ssl-verify: "off"
 
         # ===================================
         # External URL
@@ -89,7 +91,8 @@ spec:
         # Internal TLS
         # ===================================
         internalTLS:
-          enabled: false
+          enabled: true
+          certSource: auto
 
         # ===================================
         # Database
