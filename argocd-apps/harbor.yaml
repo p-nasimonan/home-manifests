@@ -149,6 +149,9 @@ spec:
           replicas: 1
           existingSecret: harbor-secrets
           existingSecretKey: REGISTRY_HTTP_SECRET
+          env:
+            - name: REGISTRY_HTTP_RELATIVEURLS
+              value: "true"
           credentials:
             existingSecret: harbor-secrets
           registry:
