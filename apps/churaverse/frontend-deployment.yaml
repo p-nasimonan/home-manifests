@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: churaverse
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: harbor.youkan.uk/churaverse/frontend:0.0.1
+          ports:
+            - containerPort: 3000
+              name: http
+          env:
+            - name: SERVER_DOMAIN
+              value: churaverse.youkan.uk
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi

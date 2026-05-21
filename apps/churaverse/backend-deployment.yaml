@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: churaverse
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: harbor.youkan.uk/churaverse/backend:0.0.1
+          ports:
+            - containerPort: 12100
+              name: http
+          env:
+            - name: NODE_ENV
+              value: development
+            - name: BACKEND_CORS
+              value: churaverse.youkan.uk
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi

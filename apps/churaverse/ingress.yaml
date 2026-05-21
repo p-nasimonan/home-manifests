@@ -1,0 +1,41 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: churaverse
+  namespace: churaverse
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: churaverse.youkan.uk
+spec:
+  ingressClassName: cloudflare
+  rules:
+    - host: churaverse.youkan.uk
+      http:
+        paths:
+          - path: /backend_livekit
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-livekit
+                port:
+                  number: 12150
+          - path: /backend
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 12100
+          - path: /livekit
+            pathType: Prefix
+            backend:
+              service:
+                name: livekit
+                port:
+                  number: 7880
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 3000
