@@ -126,14 +126,12 @@ spec:
                 memory: 512Mi
                 cpu: 500m
 
-        # ===================================
+        #  ===================================
         # Core Component
         # ===================================
         core:
           replicas: 1
-          existingSecret: harbor-secrets
-          existingXsrfSecret: harbor-secrets
-          existingXsrfSecretKey: CSRF_KEY
+          # ↓ 内部連携用のSecret指定を削除（Helmに自動生成させる）
           resources:
             requests:
               memory: 256Mi
@@ -147,14 +145,11 @@ spec:
         # ===================================
         registry:
           replicas: 1
-          existingSecret: harbor-secrets
-          existingSecretKey: REGISTRY_HTTP_SECRET
-          env:
-            - name: REGISTRY_HTTP_RELATIVEURLS
-              value: "true"
-          credentials:
-            existingSecret: harbor-secrets
+          # ↓ 内部連携用のSecret指定と、間違ったenvを削除
           registry:
+            # ↓ 代わりにここに customEnvVars を追加
+            customEnvVars:
+              REGISTRY_HTTP_RELATIVEURLS: "true"
             resources:
               requests:
                 memory: 256Mi
@@ -189,8 +184,7 @@ spec:
         # ===================================
         jobservice:
           replicas: 1
-          existingSecret: harbor-secrets
-          existingSecretKey: JOBSERVICE_SECRET
+          # ↓ ここも内部用なので削除
           maxJobWorkers: 10
           resources:
             requests:
