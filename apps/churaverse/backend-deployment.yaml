@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: harbor.youkan.uk/churaverse/backend:0.0.1
+          image: harbor.youkan.uk/churaverse/backend:0.0.2
           ports:
             - containerPort: 12100
               name: http
@@ -24,6 +24,8 @@ spec:
               value: development
             - name: BACKEND_CORS
               value: churaverse.youkan.uk
+            - name: SOCKET_IO_PATH
+              value: /backend/socket.io/
           resources:
             requests:
               cpu: 100m
