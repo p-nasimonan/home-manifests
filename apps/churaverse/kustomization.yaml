@@ -22,7 +22,7 @@ helmCharts:
     valuesInline:
       livekit:
         port: 7880
-        key_file: /etc/livekit/keys.yaml
+        key_file: keys.yaml
         rtc:
           tcp_port: 7881
           port_range_start: 50000
