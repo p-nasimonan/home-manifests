@@ -16,6 +16,7 @@ spec:
       containers:
         - name: backend
           image: harbor.youkan.uk/churaverse/backend:0.0.2
+          imagePullPolicy: Always
           ports:
             - containerPort: 12100
               name: http
