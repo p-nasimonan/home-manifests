@@ -47,4 +47,4 @@ spec:
               service:
                 name: livekit-livekit-server
                 port:
-                  number: 7880
+                  number: 80
