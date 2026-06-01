@@ -20,6 +20,11 @@ spec:
           ports:
             - containerPort: 3000
               name: http
+          env:
+            - name: SERVER_DOMAIN
+              value: churaverse.youkan.uk
+            - name: LIVEKIT_DOMAIN
+              value: churaverse-livekit.youkan.uk
           resources:
             requests:
               cpu: 100m

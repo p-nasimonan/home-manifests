@@ -4,13 +4,28 @@ metadata:
   name: churaverse
   namespace: churaverse
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: churaverse.youkan.uk,churaverse-api.youkan.uk,churaverse-livekit-api.youkan.uk,churaverse-livekit.youkan.uk
+    external-dns.alpha.kubernetes.io/hostname: churaverse.youkan.uk,churaverse-livekit.youkan.uk
 spec:
   ingressClassName: cloudflare
   rules:
     - host: churaverse.youkan.uk
       http:
         paths:
+          # backend より先に定義しないと /backend が /backend_livekit にマッチしてしまう
+          - path: /backend_livekit/
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-livekit
+                port:
+                  number: 12150
+          - path: /backend/
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 12100
           - path: /
             pathType: Prefix
             backend:
@@ -18,26 +33,6 @@ spec:
                 name: frontend
                 port:
                   number: 3000
-    - host: churaverse-api.youkan.uk
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: backend
-                port:
-                  number: 12100
-    - host: churaverse-livekit-api.youkan.uk
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: backend-livekit
-                port:
-                  number: 12150
     - host: churaverse-livekit.youkan.uk
       http:
         paths:
