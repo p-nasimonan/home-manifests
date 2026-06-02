@@ -28,6 +28,10 @@ helmCharts:
           port_range_start: 50000
           port_range_end: 60000
           use_external_ip: true
+      # UDP WebRTC メディアをノードのネットワークに直接バインドする
+      # Cloudflare Tunnel は UDP を通せないため hostNetwork 必須
+      deployment:
+        hostNetwork: true
       storeKeysInSecret:
         enabled: true
         existingSecret: "churaverse-secrets"
