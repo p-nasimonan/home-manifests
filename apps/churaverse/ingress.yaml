@@ -12,14 +12,14 @@ spec:
       http:
         paths:
           # backend より先に定義しないと /backend が /backend_livekit にマッチしてしまう
-          - path: /backend_livekit/
+          - path: /backend_livekit
             pathType: Prefix
             backend:
               service:
                 name: backend-livekit
                 port:
                   number: 12150
-          - path: /backend/
+          - path: /backend
             pathType: Prefix
             backend:
               service:
