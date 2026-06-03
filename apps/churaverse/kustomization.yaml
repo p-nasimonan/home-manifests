@@ -16,7 +16,7 @@ resources:
 helmCharts:
   - name: livekit-server
     repo: https://helm.livekit.io
-    version: 1.5.0
+    version: 1.8.4
     releaseName: livekit
     namespace: churaverse
     valuesInline:
