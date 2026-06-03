@@ -62,6 +62,13 @@ spec:
           image:
             tag: latest
             pullPolicy: IfNotPresent
+          auth:
+            existingSecret: "ubichill-helm-dev-secrets"
+            secretKeys:
+              adminPasswordKey: POSTGRES_PASSWORD
+              userPasswordKey: POSTGRES_PASSWORD
+            username: "ubichill"
+            database: "ubichill"
           primary:
             persistence:
               storageClass: local-path
