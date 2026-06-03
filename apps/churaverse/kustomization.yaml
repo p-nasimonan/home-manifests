@@ -30,10 +30,10 @@ helmCharts:
           use_external_ip: true
       # UDP WebRTC メディアをノードのネットワークに直接バインドする
       # Cloudflare Tunnel は UDP を通せないため hostNetwork 必須
+      nodeSelector:
+        kubernetes.io/hostname: k3s-worker-1
       deployment:
         hostNetwork: true
-        nodeSelector:
-          kubernetes.io/hostname: k3s-worker-1
       storeKeysInSecret:
         enabled: true
         existingSecret: "churaverse-secrets"
