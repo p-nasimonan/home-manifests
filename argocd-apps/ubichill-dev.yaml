@@ -42,6 +42,8 @@ spec:
           domain: ubichill-dev.youkan.uk
         backend:
           existingSecret: "ubichill-dev-secrets"
+          migrate:
+            enabled: false
           env:
             SKIP_EMAIL_VERIFICATION: "true"
           image:
