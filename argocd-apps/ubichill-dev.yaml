@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: ubichill-helm-dev
+  name: ubichill-dev
   namespace: argocd
   annotations:
     argocd-image-updater.argoproj.io/image-list: >-
@@ -41,7 +41,9 @@ spec:
         global:
           domain: ubichill-dev.youkan.uk
         backend:
-          existingSecret: "ubichill-helm-dev-secrets"
+          existingSecret: "ubichill-dev-secrets"
+          env:
+            SKIP_EMAIL_VERIFICATION: "true"
           image:
             repository: ghcr.io/ubichill/ubichill-backend
             tag: dev
@@ -63,7 +65,7 @@ spec:
             tag: latest
             pullPolicy: IfNotPresent
           auth:
-            existingSecret: "ubichill-helm-dev-secrets"
+            existingSecret: "ubichill-dev-secrets"
             secretKeys:
               adminPasswordKey: POSTGRES_PASSWORD
               userPasswordKey: POSTGRES_PASSWORD
@@ -91,7 +93,7 @@ spec:
                 memory: 128Mi
   destination:
     server: https://kubernetes.default.svc
-    namespace: ubichill-helm
+    namespace: ubichill-dev
   syncPolicy:
     automated:
       prune: true
