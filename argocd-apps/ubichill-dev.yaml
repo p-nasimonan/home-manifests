@@ -46,6 +46,7 @@ spec:
             enabled: false
           env:
             SKIP_EMAIL_VERIFICATION: "true"
+            DEBUG: "true"
           image:
             repository: ghcr.io/ubichill/ubichill-backend
             tag: dev
@@ -53,19 +54,7 @@ spec:
           image:
             repository: ghcr.io/ubichill/ubichill-frontend
             tag: dev
-        ingress:
-          className: cloudflare
-        redis:
-          image:
-            tag: latest
-            pullPolicy: IfNotPresent
-          master:
-            persistence:
-              storageClass: local-path
         postgresql:
-          image:
-            tag: latest
-            pullPolicy: IfNotPresent
           auth:
             existingSecret: "ubichill-dev-secrets"
             secretKeys:
