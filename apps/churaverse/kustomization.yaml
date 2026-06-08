@@ -20,6 +20,8 @@ helmCharts:
     releaseName: livekit
     namespace: churaverse
     valuesInline:
+      image:
+        tag: latest
       livekit:
         port: 7880
         key_file: keys.yaml
