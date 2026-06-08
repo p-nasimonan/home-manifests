@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: backend-livekit
-          image: harbor.youkan.uk/churaverse/backend_livekit:0.0.5
+          image: harbor.youkan.uk/churaverse/backend_livekit:0.0.6
           ports:
             - containerPort: 12150
               name: http
