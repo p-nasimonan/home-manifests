@@ -49,11 +49,9 @@ spec:
             DEBUG: "true"
           image:
             repository: ghcr.io/ubichill/ubichill-backend
-            tag: dev-ffd3d19
         frontend:
           image:
             repository: ghcr.io/ubichill/ubichill-frontend
-            tag: dev-eb6ae77
         postgresql:
           auth:
             existingSecret: "ubichill-dev-secrets"
@@ -69,7 +67,6 @@ spec:
           - id: video-player
             image:
               repository: ghcr.io/ubichill/video-player-backend
-              tag: dev-fb440d2
             port: 8000
             pathPrefix: /plugins/video-player/api
             env:
