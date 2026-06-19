@@ -6,7 +6,7 @@ metadata:
 spec:
   namespace: argocd
   applicationRefs:
-    - namePattern: "ubichill-helm-dev"
+    - namePattern: "ubichill-dev"
       useAnnotations: true
     - namePattern: "ubichill"
       useAnnotations: true
