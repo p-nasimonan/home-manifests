@@ -29,59 +29,56 @@ metadata:
     component: ubichill
 spec:
   project: default
-  sources:
-    - repoURL: https://github.com/ubichill/ubichill
-      targetRevision: dev
-      path: charts/ubichill
-      helm:
-        valueFiles:
-          - values.yaml
-          - values-dev.yaml
-        valuesObject:
-          global:
-            domain: ubichill-dev.youkan.uk
-          backend:
+  source:
+    repoURL: https://github.com/ubichill/ubichill
+    targetRevision: dev
+    path: charts/ubichill
+    helm:
+      valueFiles:
+        - values.yaml
+        - values-dev.yaml
+      valuesObject:
+        global:
+          domain: ubichill-dev.youkan.uk
+        backend:
+          existingSecret: "ubichill-dev-secrets"
+          migrate:
+            enabled: false
+          env:
+            SKIP_EMAIL_VERIFICATION: "true"
+            DEBUG: "true"
+          image:
+            repository: ghcr.io/ubichill/ubichill-backend
+        frontend:
+          image:
+            repository: ghcr.io/ubichill/ubichill-frontend
+        postgresql:
+          auth:
             existingSecret: "ubichill-dev-secrets"
-            migrate:
-              enabled: false
+            secretKeys:
+              adminPasswordKey: POSTGRES_PASSWORD
+              userPasswordKey: POSTGRES_PASSWORD
+            username: "ubichill"
+            database: "ubichill"
+          primary:
+            persistence:
+              storageClass: local-path
+        pluginBackends:
+          - id: video-player
+            image:
+              repository: ghcr.io/ubichill/video-player-backend
+            port: 8000
+            pathPrefix: /plugins/video-player/api
             env:
-              SKIP_EMAIL_VERIFICATION: "true"
-              DEBUG: "true"
-            image:
-              repository: ghcr.io/ubichill/ubichill-backend
-          frontend:
-            image:
-              repository: ghcr.io/ubichill/ubichill-frontend
-          postgresql:
-            auth:
-              existingSecret: "ubichill-dev-secrets"
-              secretKeys:
-                adminPasswordKey: POSTGRES_PASSWORD
-                userPasswordKey: POSTGRES_PASSWORD
-              username: "ubichill"
-              database: "ubichill"
-            primary:
-              persistence:
-                storageClass: local-path
-          pluginBackends:
-            - id: video-player
-              image:
-                repository: ghcr.io/ubichill/video-player-backend
-              port: 8000
-              pathPrefix: /plugins/video-player/api
-              env:
-                ROOT_PATH: /plugins/video-player/api
-                CORS_ORIGINS: "*"
-              resources:
-                limits:
-                  cpu: 500m
-                  memory: 512Mi
-                requests:
-                  cpu: 100m
-                  memory: 128Mi
-    - repoURL: https://github.com/p-nasimonan/home-manifests.git
-      targetRevision: main
-      path: apps/ubichill-dev-migrate
+              ROOT_PATH: /plugins/video-player/api
+              CORS_ORIGINS: "*"
+            resources:
+              limits:
+                cpu: 500m
+                memory: 512Mi
+              requests:
+                cpu: 100m
+                memory: 128Mi
   destination:
     server: https://kubernetes.default.svc
     namespace: ubichill-dev
