@@ -27,6 +27,7 @@ spec:
         helm:
           valueFiles:
             - values.yaml
+            - values-dev.yaml
           parameters:
             - name: global.domain
               value: 'pr-{{number}}.youkan.uk'
