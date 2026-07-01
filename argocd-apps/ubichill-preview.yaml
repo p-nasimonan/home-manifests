@@ -30,11 +30,11 @@ spec:
             - name: global.domain
               value: 'pr-{{number}}.youkan.uk'
             - name: backend.image.tag
-              value: 'pr-{{number}}'
+              value: 'sha-{{head_sha}}'
             - name: frontend.image.tag
-              value: 'pr-{{number}}'
+              value: 'sha-{{head_sha}}'
             - name: 'pluginBackends[0].image.tag'
-              value: 'pr-{{number}}'
+              value: 'sha-{{head_sha}}'
           valuesObject:
             global:
               imageRegistry: ""
