@@ -29,7 +29,7 @@ spec:
             - values.yaml
           parameters:
             - name: global.domain
-              value: 'pr-{{number}}.dev.youkan.uk'
+              value: 'pr-{{number}}.youkan.uk'
             - name: backend.image.tag
               value: 'pr-{{number}}'
             - name: frontend.image.tag
