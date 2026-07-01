@@ -42,6 +42,13 @@ spec:
               auth:
                 password: "preview-pr-{{number}}"
                 postgresPassword: "preview-pr-{{number}}-admin"
+              primary:
+                persistence:
+                  enabled: false
+            redis:
+              master:
+                persistence:
+                  enabled: false
             backend:
               image:
                 repository: ghcr.io/ubichill/ubichill-backend
