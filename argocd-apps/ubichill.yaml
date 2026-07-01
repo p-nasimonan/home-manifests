@@ -47,6 +47,7 @@ spec:
           env:
             RATE_LIMIT_MAX_REQUESTS: "10000"
             RATE_LIMIT_WINDOW_MS: "900000"
+            MAIL_FROM: "Ubichill <noreply@youkan.uk>"
           healthcheck:
             livenessProbe:
               initialDelaySeconds: 90
@@ -122,7 +123,6 @@ spec:
     - group: apps
       kind: Deployment
       jsonPointers:
-        - /spec/template/metadata/annotations/rollme
         - /spec/template/spec/containers/0/securityContext/allowPrivilegeEscalation
         - /spec/template/spec/containers/0/securityContext/capabilities
         - /spec/template/spec/containers/0/securityContext/readOnlyRootFilesystem

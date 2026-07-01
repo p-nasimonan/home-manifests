@@ -1,0 +1,90 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: ubichill-preview
+  namespace: argocd
+spec:
+  generators:
+    - pullRequest:
+        github:
+          owner: ubichill
+          repo: ubichill
+          labels:
+            - preview
+          tokenRef:
+            secretName: github-token
+            key: token
+        requeueAfterSeconds: 60
+  template:
+    metadata:
+      name: 'ubichill-preview-pr-{{number}}'
+      labels:
+        environment: preview
+        component: ubichill
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/ubichill/ubichill
+        targetRevision: '{{head_sha}}'
+        path: charts/ubichill
+        helm:
+          valueFiles:
+            - values.yaml
+          parameters:
+            - name: global.domain
+              value: 'pr-{{number}}.dev.youkan.uk'
+            - name: backend.image.tag
+              value: 'pr-{{number}}'
+            - name: frontend.image.tag
+              value: 'pr-{{number}}'
+            - name: 'pluginBackends[0].image.tag'
+              value: 'pr-{{number}}'
+          valuesObject:
+            global:
+              imageRegistry: ""
+            backend:
+              image:
+                repository: ghcr.io/ubichill/ubichill-backend
+              env:
+                SKIP_EMAIL_VERIFICATION: "true"
+            frontend:
+              image:
+                repository: ghcr.io/ubichill/ubichill-frontend
+            nodeAffinity:
+              enabled: false
+            ingress:
+              className: cloudflare
+              annotations: {}
+            pluginBackends:
+              - id: video-player
+                image:
+                  repository: ghcr.io/ubichill/video-player-backend
+                port: 8000
+                pathPrefix: /plugins/video-player/api
+                env:
+                  ROOT_PATH: /plugins/video-player/api
+                  CORS_ORIGINS: "*"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: 'preview-pr-{{number}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - PrunePropagationPolicy=background
+        retry:
+          limit: 3
+          backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 1m
+      ignoreDifferences:
+        - group: apps
+          kind: Deployment
+          jsonPointers:
+            - /spec/template/spec/containers/0/securityContext/allowPrivilegeEscalation
+            - /spec/template/spec/containers/0/securityContext/capabilities
+            - /spec/template/spec/containers/0/securityContext/readOnlyRootFilesystem
+      revisionHistoryLimit: 2
