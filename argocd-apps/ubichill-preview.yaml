@@ -74,6 +74,7 @@ spec:
         syncOptions:
           - CreateNamespace=true
           - PrunePropagationPolicy=background
+          - Replace=true
         retry:
           limit: 3
           backoff:
