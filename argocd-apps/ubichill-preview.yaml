@@ -11,9 +11,6 @@ spec:
           repo: ubichill
           labels:
             - preview
-          tokenRef:
-            secretName: github-token
-            key: token
         requeueAfterSeconds: 60
   template:
     metadata:
