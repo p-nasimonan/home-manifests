@@ -38,6 +38,10 @@ spec:
           valuesObject:
             global:
               imageRegistry: ""
+            postgresql:
+              auth:
+                password: "preview-pr-{{number}}"
+                postgresPassword: "preview-pr-{{number}}-admin"
             backend:
               image:
                 repository: ghcr.io/ubichill/ubichill-backend
