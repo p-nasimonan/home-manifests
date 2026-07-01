@@ -25,9 +25,7 @@ spec:
         targetRevision: '{{head_sha}}'
         path: charts/ubichill
         helm:
-          valueFiles:
-            - values.yaml
-            - values-dev.yaml
+          valueFiles: ["values-dev.yaml"]
           parameters:
             - name: global.domain
               value: 'pr-{{number}}.youkan.uk'
