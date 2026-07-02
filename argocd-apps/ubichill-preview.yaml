@@ -28,7 +28,7 @@ spec:
           valueFiles: ["values-dev.yaml"]
           parameters:
             - name: global.domain
-              value: 'pr-{{number}}.youkan.uk'
+              value: 'pr-{{number}}.ubichill.com'
             - name: backend.image.tag
               value: 'sha-{{head_sha}}'
             - name: frontend.image.tag

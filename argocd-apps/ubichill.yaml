@@ -37,7 +37,7 @@ spec:
         - values-prod.yaml
       valuesObject:
         global:
-          domain: ubichill.youkan.uk
+          domain: ubichill.com
           imageRegistry: ""
         backend:
           existingSecret: "ubichill-secrets"
@@ -47,7 +47,7 @@ spec:
           env:
             RATE_LIMIT_MAX_REQUESTS: "10000"
             RATE_LIMIT_WINDOW_MS: "900000"
-            MAIL_FROM: "Ubichill <noreply@youkan.uk>"
+            MAIL_FROM: "Ubichill <noreply@ubichill.com>"
           healthcheck:
             livenessProbe:
               initialDelaySeconds: 90
