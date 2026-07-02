@@ -1,0 +1,78 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ubichill-youkan-redirect-nginx
+  namespace: redirects
+data:
+  default.conf: |
+    server {
+        listen 80;
+        return 301 https://ubichill.com$request_uri;
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ubichill-youkan-redirect
+  namespace: redirects
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ubichill-youkan-redirect
+  template:
+    metadata:
+      labels:
+        app: ubichill-youkan-redirect
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: nginx-config
+          mountPath: /etc/nginx/conf.d/default.conf
+          subPath: default.conf
+        resources:
+          limits:
+            cpu: 50m
+            memory: 32Mi
+          requests:
+            cpu: 10m
+            memory: 16Mi
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: ubichill-youkan-redirect-nginx
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ubichill-youkan-redirect
+  namespace: redirects
+spec:
+  selector:
+    app: ubichill-youkan-redirect
+  ports:
+  - port: 80
+    targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ubichill-youkan-redirect
+  namespace: redirects
+spec:
+  ingressClassName: cloudflare
+  rules:
+  - host: ubichill.youkan.uk
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: ubichill-youkan-redirect
+            port:
+              number: 80
