@@ -34,7 +34,30 @@ data:
             }]
           }
 
-  # sync 成功 かつ Healthy になったときに通知
+  # プレビュー: sync 成功 かつ Healthy になったときに通知
   trigger.on-preview-deployed: |
     - when: app.status.operationState.phase in ['Succeeded'] and app.status.health.status == 'Healthy'
       send: [preview-deployed]
+
+  # prod デプロイ完了通知テンプレート
+  template.prod-deployed: |
+    webhook:
+      discord:
+        method: POST
+        path: /
+        body: |
+          {
+            "embeds": [{
+              "title": "✅ {{.app.metadata.name}} deployed",
+              "description": "**Image:** `{{(index .app.status.summary.images 0)}}`",
+              "color": 3447003,
+              "footer": {
+                "text": "{{.app.status.operationState.operation.sync.revision | substr 0 7}}"
+              }
+            }]
+          }
+
+  # prod: sync 成功時に通知
+  trigger.on-prod-deployed: |
+    - when: app.status.operationState.phase in ['Succeeded']
+      send: [prod-deployed]
