@@ -3,3 +3,5 @@ kind: Kustomization
 resources:
   - argocd-image-updater-git-creds.enc.yaml
   - image-updater.yaml
+  - argocd-notifications-secret.enc.yaml
+  - argocd-notifications-cm.yaml

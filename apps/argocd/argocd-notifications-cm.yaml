@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-notifications-cm
+  namespace: argocd
+data:
+  context: |
+    argocdUrl: https://argocd.youkan.uk
+
+  # Discord webhook サービス定義
+  # argocd-notifications-secret の discord-webhook-url キーを参照
+  service.webhook.discord: |
+    url: $discord-webhook-url
+    headers:
+    - name: Content-Type
+      value: application/json
+
+  # プレビュー環境デプロイ完了通知テンプレート
+  template.preview-deployed: |
+    webhook:
+      discord:
+        method: POST
+        path: /
+        body: |
+          {
+            "embeds": [{
+              "title": "🚀 Preview deployed: PR #{{index .app.metadata.labels \"pr-number\"}}",
+              "url": "https://github.com/ubichill/ubichill/pull/{{index .app.metadata.labels \"pr-number\"}}",
+              "description": "**URL:** https://pr-{{index .app.metadata.labels \"pr-number\"}}.app.ubichill.com\n**Status:** {{.app.status.health.status}}",
+              "color": 5763719,
+              "footer": {
+                "text": "{{.app.metadata.name}}"
+              }
+            }]
+          }
+
+  # sync 成功 かつ Healthy になったときに通知
+  trigger.on-preview-deployed: |
+    - when: app.status.operationState.phase in ['Succeeded'] and app.status.health.status == 'Healthy'
+      send: [preview-deployed]

@@ -18,6 +18,9 @@ spec:
       labels:
         environment: preview
         component: ubichill
+        pr-number: '{{number}}'
+      annotations:
+        notifications.argoproj.io/subscribe.on-preview-deployed.discord: ""
     spec:
       project: default
       source:
