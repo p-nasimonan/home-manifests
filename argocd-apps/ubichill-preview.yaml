@@ -11,6 +11,9 @@ spec:
           repo: ubichill
           labels:
             - preview
+          tokenRef:
+            secretName: argocd-image-updater-git-creds
+            key: password
         requeueAfterSeconds: 60
   template:
     metadata:
