@@ -24,6 +24,7 @@ spec:
         pr-number: '{{number}}'
       annotations:
         notifications.argoproj.io/subscribe.on-preview-deployed.discord: ""
+        notifications.argoproj.io/subscribe.on-sync-failed.discord: ""
     spec:
       project: default
       source:

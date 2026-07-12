@@ -61,3 +61,26 @@ data:
   trigger.on-prod-deployed: |
     - when: app.status.operationState.phase in ['Succeeded']
       send: [prod-deployed]
+
+  # 失敗通知テンプレート（prod・preview 共通）
+  template.sync-failed: |
+    webhook:
+      discord:
+        method: POST
+        path: /
+        body: |
+          {
+            "embeds": [{
+              "title": "❌ Sync failed: {{.app.metadata.name}}",
+              "description": "```{{.app.status.operationState.message}}```",
+              "color": 15548997,
+              "footer": {
+                "text": "{{.app.status.operationState.operation.sync.revision | substr 0 7}}"
+              }
+            }]
+          }
+
+  # sync 失敗時に通知
+  trigger.on-sync-failed: |
+    - when: app.status.operationState.phase in ['Error', 'Failed']
+      send: [sync-failed]
