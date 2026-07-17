@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: wolweb
+  namespace: wolweb
+spec:
+  # hostNetwork: true のため ClusterIP は使えない → NodePort か Ingress 経由
+  selector:
+    app: wolweb
+  ports:
+  - port: 8089
+    targetPort: 8089

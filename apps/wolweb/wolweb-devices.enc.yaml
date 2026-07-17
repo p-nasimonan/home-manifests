@@ -1,0 +1,13 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: wolweb-devices
+  namespace: wolweb
+spec:
+  encryptedData:
+    devices.json: AgC8yxG4nkdTHyQ6EgBbJap6ZQZV9kw6tdyDyOijnTf+Dc9fMdO76f/bSJNT5kmp6RqtFla6YrPlhRwUJ6maRVlijAkBY04pa5Kwplpdp0YFIgYpxphbqK/8KBtfBDGNdLr4Zn861AfqIKO1TMxxIcpZkH9cfOTsNYVdZIDNRdgdFHa2mdEhfIcRMWhSPlvcf+ilsNLuoK+Ntkapp5OtfC0HYVR73+gx4a2ojoqZshOW8Iqn1c9MSw2fq5goNgMIy20xRxupAKDNEllPZJ56X2YZNy0xfIharxxzU0Vv+RJtLdD+WV4g0vNOJcgLx+w4TlEmDkBHtmzFg01RCHwU7j/y19xkjVRsg/j6q1bQLsqsG8G2u//0hm7cshQUH8b2NTGm4srYtG+aIFoWrDFpPpd2uVnaTYFKJYGkwEk1vOdU+HrEz2dcuoMjduYngrG4ann1KNxH2bvay/eq28gdlNWv4pazVrdyhA3N/8zUsclucIW/QPNF7kVcFQDK76T2M2fjUPH4cW4vTQjA8qckhaFaFcFB1gZRqn/LkL4yPs4O6v4xWXvaP3lU//MDWrmcihlAxJE5SR9XH8+Ib/9bh6oZzJIJ8PuR1Vs9s/4tNPxQQPc6fyPBk4AZvXq+HxZtvLundVr7pZGGsY/VrLhj2JN6tfVtJXIsk8VEejm2ruwYTR5WVNvruP/rblK7RdFIrmrWW/Lazl9DO+Spr4SgdjqVFEyLzZ76Mikkz5OzAQGpK1voGFjnIpqAkU4WERWNhkMnRa59/n2NYh2QLsfo7/+HuvUmj0BIfiFNXDT70iZ+M3Z4Px65ahYikJSkg6kWGdvZMnK9A5cV7YbdkV5GmNFA4zlizg==
+  template:
+    metadata:
+      name: wolweb-devices
+      namespace: wolweb

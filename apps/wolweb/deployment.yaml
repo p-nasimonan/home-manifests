@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wolweb
+  namespace: wolweb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wolweb
+  template:
+    metadata:
+      labels:
+        app: wolweb
+    spec:
+      # magic packet を L2 ブロードキャストで送るためホストネットワークが必須
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+      - name: wolweb
+        image: bnhf/wolweb:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8089
+        volumeMounts:
+        - name: config
+          mountPath: /wolweb/config.json
+          subPath: config.json
+        - name: devices
+          mountPath: /wolweb/devices.json
+          subPath: devices.json
+        resources:
+          limits:
+            cpu: 100m
+            memory: 64Mi
+          requests:
+            cpu: 10m
+            memory: 32Mi
+      volumes:
+      - name: config
+        configMap:
+          name: wolweb-config
+      - name: devices
+        secret:
+          secretName: wolweb-devices
