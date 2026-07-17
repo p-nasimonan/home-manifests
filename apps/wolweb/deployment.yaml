@@ -27,7 +27,7 @@ spec:
           mountPath: /wolweb/config.json
           subPath: config.json
         - name: devices
-          mountPath: /wolweb/devices.json
+          mountPath: /wolweb/data/devices.json
           subPath: devices.json
         resources:
           limits:
