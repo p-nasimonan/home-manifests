@@ -22,13 +22,12 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 8089
+        env:
+        - name: WOLWEBBCASTIP
+          value: "192.168.1.255:9"
         volumeMounts:
-        - name: config
-          mountPath: /wolweb/config.json
-          subPath: config.json
         - name: devices
-          mountPath: /wolweb/data/devices.json
-          subPath: devices.json
+          mountPath: /wolweb/data
         resources:
           limits:
             cpu: 100m
@@ -37,9 +36,6 @@ spec:
             cpu: 10m
             memory: 32Mi
       volumes:
-      - name: config
-        configMap:
-          name: wolweb-config
       - name: devices
         secret:
           secretName: wolweb-devices
