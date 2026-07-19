@@ -25,7 +25,7 @@ data:
             "embeds": [{
               "title": "🚀 Preview deployed: PR #{{index .app.metadata.labels "pr-number"}}",
               "url": "https://github.com/ubichill/ubichill/pull/{{index .app.metadata.labels "pr-number"}}",
-              "description": "**URL:** https://pr-{{index .app.metadata.labels "pr-number"}}.app.ubichill.com\n**Status:** {{.app.status.health.status}}",
+              "description": "**URL:** https://pr-{{index .app.metadata.labels "pr-number"}}.ubichill.com\n**Status:** {{.app.status.health.status}}",
               "color": 5763719,
               "footer": {
                 "text": "{{.app.metadata.name}}"
