@@ -33,12 +33,36 @@ data:
             }]
           }
 
-  # プレビュー: sync 成功 かつ Healthy になったときに通知
+  # プレビュー: 新規 PR アプリが初めて sync 成功 かつ Healthy になったときに通知（PR 中の再デプロイでは送らない）
   trigger.on-preview-deployed: |
     - when: app.status.operationState.phase in ['Succeeded'] and app.status.health.status == 'Healthy'
+      oncePer: app.metadata.name
       send: [preview-deployed]
 
-  # prod デプロイ完了通知テンプレート
+  # プレビュー環境削除通知テンプレート（PR クローズで ApplicationSet が Application を削除したとき）
+  template.preview-deleted: |
+    webhook:
+      discord:
+        method: POST
+        body: |
+          {
+            "embeds": [{
+              "title": "🗑️ Preview removed: PR #{{index .app.metadata.labels "pr-number"}}",
+              "url": "https://github.com/ubichill/ubichill/pull/{{index .app.metadata.labels "pr-number"}}",
+              "color": 9807270,
+              "footer": {
+                "text": "{{.app.metadata.name}}"
+              }
+            }]
+          }
+
+  # プレビュー: PR がクローズされ Application が削除されるときに通知
+  trigger.on-preview-deleted: |
+    - when: app.metadata.deletionTimestamp != nil
+      oncePer: app.metadata.name
+      send: [preview-deleted]
+
+  # prod デプロイ完了通知テンプレート（アプリ自身のイメージだけを表示。postgresql/redis 等の依存イメージは除外）
   template.prod-deployed: |
     webhook:
       discord:
@@ -47,7 +71,7 @@ data:
           {
             "embeds": [{
               "title": "✅ {{.app.metadata.name}} deployed",
-              "description": "**Image:** `{{(index .app.status.summary.images 0)}}`",
+              "description": "**Images:**\n{{range .app.status.summary.images}}{{if or (contains "ubichill-backend" .) (contains "ubichill-frontend" .) (contains "video-player-backend" .)}}`{{.}}`\n{{end}}{{end}}",
               "color": 3447003,
               "footer": {
                 "text": "{{.app.status.operationState.operation.sync.revision | substr 0 7}}"
@@ -55,9 +79,10 @@ data:
             }]
           }
 
-  # prod: sync 成功時に通知
+  # prod: sync 成功時に通知（同一 revision への再 sync では重複送信しない）
   trigger.on-prod-deployed: |
     - when: app.status.operationState.phase in ['Succeeded']
+      oncePer: app.status.sync.revision
       send: [prod-deployed]
 
   # 失敗通知テンプレート（prod・preview 共通）

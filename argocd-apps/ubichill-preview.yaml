@@ -24,7 +24,10 @@ spec:
         pr-number: '{{number}}'
       annotations:
         notifications.argoproj.io/subscribe.on-preview-deployed.discord: ""
+        notifications.argoproj.io/subscribe.on-preview-deleted.discord: ""
         notifications.argoproj.io/subscribe.on-sync-failed.discord: ""
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
     spec:
       project: default
       source:
