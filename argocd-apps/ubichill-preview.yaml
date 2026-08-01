@@ -88,6 +88,10 @@ spec:
         automated:
           prune: true
           selfHeal: true
+        managedNamespaceMetadata:
+          labels:
+            environment: preview
+            component: ubichill
         syncOptions:
           - CreateNamespace=true
           - PrunePropagationPolicy=background
