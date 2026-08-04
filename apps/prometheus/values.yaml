@@ -1,170 +1,78 @@
-kube-prometheus-stack:
-  ## Disable the built-in Grafana since we already have one deployed
-  grafana:
-    enabled: false
+## Grafana は既存のものを使用するため無効化
+grafana:
+  enabled: false
 
-  ## Prometheus configuration
-  prometheus:
-    prometheusSpec:
-      ## Retention period for Prometheus data
-      retention: 30d
-      
-      ## Storage configuration using NFS
-      storageSpec:
-        volumeClaimTemplate:
-          spec:
-            storageClassName: proxmox-data
-            accessModes: ["ReadWriteOnce"]
-            resources:
-              requests:
-                storage: 50Gi
-      
-      ## Enable ServiceMonitor discovery across all namespaces
-      serviceMonitorSelectorNilUsesHelmValues: false
-      podMonitorSelectorNilUsesHelmValues: false
-      ruleSelectorNilUsesHelmValues: false
-      
-      ## Resource limits
-      resources:
-        requests:
-          cpu: 200m
-          memory: 512Mi
-        limits:
-          memory: 2Gi
-      
-      ## Allow scheduling on control-plane nodes
-      tolerations:
-        - key: node-role.kubernetes.io/control-plane
-          operator: Exists
-          effect: NoSchedule
-        - key: node-role.kubernetes.io/master
-          operator: Exists
-          effect: NoSchedule
+## Prometheus 設定
+prometheus:
+  prometheusSpec:
+    ## データ保持期間
+    retention: 30d
 
-      ## Exclude specific nodes (e.g. for power saving)
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: kubernetes.io/hostname
-                    operator: NotIn
-                    values:
-                      - k3s-worker-2
+    ## Persistent Volume 設定
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: proxmox-data
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 50Gi
 
-  ## Alertmanager configuration
-  alertmanager:
-    alertmanagerSpec:
-      ## Storage configuration using NFS
-      storage:
-        volumeClaimTemplate:
-          spec:
-            storageClassName: proxmox-data
-            accessModes: ["ReadWriteOnce"]
-            resources:
-              requests:
-                storage: 10Gi
-      
-      ## Resource limits
-      resources:
-        requests:
-          cpu: 200m
-          memory: 512Mi
-        limits:
-          memory: 3Gi
-      
-      ## Allow scheduling on control-plane nodes
-      tolerations:
-        - key: node-role.kubernetes.io/control-plane
-          operator: Exists
-          effect: NoSchedule
-        - key: node-role.kubernetes.io/master
-          operator: Exists
-          effect: NoSchedule
+    ## 全ネームスペースの Custom Resource を自動検出
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false
 
-      ## Exclude specific nodes (e.g. for power saving)
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: kubernetes.io/hostname
-                    operator: NotIn
-                    values:
-                      - k3s-worker-2
-
-  ## Prometheus Operator configuration
-  prometheusOperator:
+    ## リソース制限
     resources:
       requests:
-        cpu: 100m
-        memory: 128Mi
-      limits:
+        cpu: 200m
         memory: 512Mi
-    admissionWebhooks:
-      enabled: false 
-      patch:
-        enabled: false
-    tls:
+      limits:
+        memory: 2Gi
+
+## Alertmanager 設定
+alertmanager:
+  alertmanagerSpec:
+    ## Persistent Volume 設定
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: proxmox-data
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 10Gi
+
+    ## リソース制限
+    resources:
+      requests:
+        cpu: 200m
+        memory: 512Mi
+      limits:
+        memory: 3Gi
+
+## Prometheus Operator 設定
+prometheusOperator:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      memory: 512Mi
+  admissionWebhooks:
+    enabled: false
+    patch:
       enabled: false
+  tls:
+    enabled: false
 
-    ## Exclude specific nodes (e.g. for power saving)
-    affinity:
-      nodeAffinity:
-        requiredDuringSchedulingIgnoredDuringExecution:
-          nodeSelectorTerms:
-            - matchExpressions:
-                - key: kubernetes.io/hostname
-                  operator: NotIn
-                  values:
-                    - k3s-worker-2
+## Node Exporter 設定（全ノードにデプロイするため tolerations を付与）
+nodeExporter:
+  enabled: true
+  tolerations:
+    - operator: Exists
 
-  ## Node Exporter configuration
-  nodeExporter:
-    enabled: true
-    tolerations:
-      - operator: Exists
-
-  prometheus-node-exporter:
-    affinity:
-      nodeAffinity:
-        requiredDuringSchedulingIgnoredDuringExecution:
-          nodeSelectorTerms:
-            - matchExpressions:
-                - key: kubernetes.io/hostname
-                  operator: NotIn
-                  values:
-                    - k3s-worker-2
-
-  ## Kube State Metrics configuration
-  kubeStateMetrics:
-    enabled: true
-
-  ## Default rules for monitoring Kubernetes components
-  defaultRules:
-    create: true
-    rules:
-      alertmanager: true
-      etcd: true
-      configReloaders: true
-      general: true
-      k8s: true
-      kubeApiserverAvailability: true
-      kubeApiserverSlos: true
-      kubelet: true
-      kubeProxy: true
-      kubePrometheusGeneral: true
-      kubePrometheusNodeRecording: true
-      kubernetesApps: true
-      kubernetesResources: true
-      kubernetesStorage: true
-      kubernetesSystem: true
-      kubeSchedulerAlerting: true
-      kubeSchedulerRecording: true
-      kubeStateMetrics: true
-      network: true
-      node: true
-      nodeExporterAlerting: true
-      nodeExporterRecording: true
-      prometheus: true
-      prometheusOperator: true
+## Kube State Metrics 設定
+kubeStateMetrics:
+  enabled: true
