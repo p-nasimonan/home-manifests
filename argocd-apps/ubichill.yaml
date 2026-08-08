@@ -86,23 +86,7 @@ spec:
             persistence:
               storageClass: "proxmox-data"
               size: 10Gi
-        pluginBackends:
-          - id: video-player
-            image:
-              repository: ghcr.io/ubichill/video-player-backend
-              tag: latest
-            port: 8000
-            pathPrefix: /plugins/video-player/api
-            replicaCount: 1
-            env:
-              ROOT_PATH: /plugins/video-player/api
-            resources:
-              requests:
-                cpu: 500m
-                memory: 512Mi
-              limits:
-                cpu: 2000m
-                memory: 3Gi
+
   destination:
     server: https://kubernetes.default.svc
     namespace: ubichill

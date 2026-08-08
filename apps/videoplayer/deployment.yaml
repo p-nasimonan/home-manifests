@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: videoplayer
+  namespace: wolweb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: videoplayer
+  template:
+    metadata:
+      labels:
+        app: videoplayer
+    spec:
+      containers:
+        - name: video-player-backend
+          image: ghcr.io/p-nasimonan/video-player-backend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          resources:
+            limits:
+              cpu: 500m
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: videoplayer
+  namespace: wolweb
+spec:
+  selector:
+    app: videoplayer
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
